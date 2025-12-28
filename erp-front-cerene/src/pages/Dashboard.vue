@@ -4,7 +4,7 @@
     <v-navigation-drawer
       class="pt-10"
       v-model="isDrawerOpen"
-      color="amber"
+      style="background-color: #528ad0"
       expand-on-hover
       rail
     >
@@ -17,9 +17,9 @@
           title="Dashboard"
         ></v-list-item>
         <v-list-item
-          @click="() => handleClick('Produtos')"
-          prepend-icon="mdi-storefront"
-          title="Afiliados"
+          @click="() => handleClick('Colaboradores-cerene')"
+          prepend-icon="mdi-account-circle"
+          title="Colaboradores"
         ></v-list-item>
         <v-list-item
           @click="() => handleClick('Serviços')"
@@ -32,7 +32,7 @@
             <v-list-item
               v-bind="props"
               prepend-icon="mdi-account-circle"
-              title="Estoque"
+              title="Relatórios"
             ></v-list-item>
           </template>
           <v-list-item
@@ -46,9 +46,14 @@
             title="Inativos"
           ></v-list-item>
         </v-list-group>
+        <v-list-item
+          @click="logout"
+          prepend-icon="mdi-logout"
+          title="Sair"
+        ></v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar flat class="border-b" color="amber">
+    <v-app-bar flat class="border-b" style="background-color: #528ad0">
       <v-app-bar-nav-icon
         @click="isDrawerOpen = !isDrawerOpen"
       ></v-app-bar-nav-icon>
@@ -121,7 +126,9 @@
         </v-card>
       </v-menu>
     </v-app-bar>
-    <StatisticsDash />
+
+    <router-view />
+
     <AppFooter />
   </v-app>
   <div class="loader" v-show="isLoading">
@@ -131,11 +138,13 @@
 
 <script setup>
 import { ref, defineProps, watch } from "vue";
-import StatisticsDash from "./financeiro/StatisticsDash.vue";
+// import StatisticsDash from "./financeiro/StatisticsDash.vue";
 import AppFooter from "@/painel/painel-components/AppFooter.vue";
 import { useRouter } from "vue-router";
+// import ColaboradoresAdm from "./Colaboradores/ColaboradoresAdm.vue";
 // import { eventBus } from "../eventBus";
 import { useToast } from "vue-toastification";
+import LoginService from "../services/loginService";
 
 const props = defineProps({
   title: String,
@@ -149,7 +158,7 @@ const theme = ref("light");
 const router = useRouter();
 const isFullScreen = ref(false);
 const isLoading = ref(true);
-import LoginService from "../services/loginService";
+// const renderizerComponent = ref("Dashboard");
 
 function navigateToImportacao() {
   router.push("/importacao");
@@ -169,7 +178,6 @@ const validateToken = async () => {
   const isValid = await LoginService.validateToken(token);
 
   if (isValid) {
-    router.push("/dashboard");
     isLoading.value = false;
   } else {
     localStorage.removeItem("token");
@@ -187,7 +195,11 @@ const handleClick = (event) => {
     case "Dashboard":
       router.push("/dashboard");
       break;
-
+    case "Colaboradores-cerene":
+      console.log("Entrou aqui - colaboradores-cerene");
+      // router.push("/colaboradores-cerene");
+      router.push("/dashboard/colaboradores-cerene");
+      break;
     default:
       break;
   }
@@ -275,6 +287,10 @@ body {
   flex-direction: column;
 }
 
+.white-item {
+  color: #ffffff !important;
+}
+
 .v-app-bar {
   position: fixed;
   width: 100%;
@@ -312,7 +328,7 @@ body {
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: #ffc107;
+  background-color: #528ad0;
   opacity: 0.8;
   z-index: 999;
   overflow: hidden !important;

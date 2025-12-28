@@ -1,6 +1,6 @@
 <template>
   <div
-    class="auth-wrapper pa-4"
+    class="auth-wrapper pa-4 animate-slideDown"
     :style="{
       // backgroundImage: 'url(/_img/_bg-login.png)',
       backgroundSize: '30%',
@@ -16,7 +16,7 @@
     rounded="lg"
     color=""
     >
-    <h3 class="text-center pb-4 text-black" style="opacity: .70; color: white;">CADASTRE SEU NEGÓCIO</h3>
+    <h3 class="text-center pb-4 text-black" style="opacity: .70; color: white;">CADASTRO CONTROLE PONTO</h3>
     <v-text-field
       v-model="nome"
       density="compact"
@@ -25,16 +25,86 @@
       variant="outlined" 
       type="text"
       autocomplete="name"
-    ></v-text-field>
+      required
+    ><template #label>
+        <span>Digite seu nome <span style="color: red">*</span></span>
+      </template>
+    </v-text-field>
+    
     <v-text-field
-      v-model="empresa"
+      v-model="cpf"
       density="compact"
-      label="Empresa"
-      prepend-inner-icon="mdi-office-building"
+      label="Digite seu CPF"
+      prepend-inner-icon="mdi-card-account-details-outline"
       variant="outlined"
       type="text"
+      autocomplete="off"
+      maxlength="14"
+      required
+    >
+      <template #label>
+        <span>Digite seu CPF <span style="color: red">*</span></span>
+      </template>
+    </v-text-field>
+
+    <v-text-field
+      v-model="nasc"
+      density="compact"
+      label="Data de Nascimento"
+      prepend-inner-icon="mdi-calendar"
+      variant="outlined"
+      type="date"
+      autocomplete="bday"
+    ><template #label>
+        <span>Data de Nascimento <span style="color: red">*</span></span>
+      </template>
+    </v-text-field>
+
+    <v-text-field
+      v-model="cargo"
+      density="compact"
+      label="Digite seu cargo"
+      prepend-inner-icon="mdi-briefcase-outline"
+      variant="outlined"
+      type="text"
+      autocomplete="organization-title"
+    ><template #label>
+        <span>Digite seu cargo <span style="color: red">*</span></span>
+      </template>
+    </v-text-field>
+
+
+    <v-select
+      v-model="unidade"
+      :items="unidadesMap"
+      item-title="desc"
+      item-value="enum"
+      density="compact"
+      label="Unidade de Trabalho"
+      prepend-inner-icon="mdi-office-building"
+      variant="outlined"
       autocomplete="organization"
-    ></v-text-field>
+    ><template #label>
+        <span>Unidade de Trabalho <span style="color: red">*</span></span>
+      </template>
+    </v-select>
+
+    <v-select
+      v-model="sexo"
+      :items="['Masculino', 'Feminino']"
+      label="Sexo"
+      density="compact"
+      variant="outlined"
+      prepend-inner-icon="mdi-gender-male-female"
+    >
+      <template #label>
+        <span>Sexo <span style="color: red">*</span></span>
+      </template>
+    </v-select>
+
+
+
+
 
 
     <v-text-field
@@ -45,10 +115,13 @@
       variant="outlined"
       type="e-mail"
       autocomplete="email"
-    ></v-text-field>
+    ><template #label>
+        <span>Digite seu e-mail <span style="color: red">*</span></span>
+      </template>
+    </v-text-field>
 
     <v-text-field
-      v-model="senha"
+      v-model="password"
       :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
       :type="visible ? 'text' : 'password'"
       density="compact"
@@ -56,25 +129,26 @@
       prepend-inner-icon="mdi-lock-outline"
       variant="outlined"
       @click:append-inner="visible = !visible"
-    ></v-text-field>
+    ><template #label>
+        <span>Digite sua senha <span style="color: red">*</span></span>
+      </template>
+    </v-text-field>
 
       <v-btn
         class="mb-3"
         size="large"
         variant="tonal"
         block
-        @click="cadastrar"
+        @click="validateForm"
       >
         Cadastrar
       </v-btn>
     </v-card>
     <div class="text-center mt-3">
       <a
-        class="text-decoration-none text-black"
-        href="#"
+        class="text-black text-decoration-none"
+        href="javascript:void(0);"
         @click="redirectToLogin"
-        rel="noopener noreferrer"
-        target="_self"
       >
         voltar a página de login</a
       >
@@ -83,32 +157,102 @@
 </template>
 
   <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import cadastroService from "@/services/cadastroService";
 import { useToast } from "vue-toastification";
+// import maska from "maska";
+// import * as Maska from "maska";
 
 const toast = useToast();
 const router = useRouter();
 const visible = ref(false);
 const nome = ref("");
-const empresa = ref("");
+const cpf = ref("");
+const unidade = ref("");
+const nasc = ref("");
+const cargo = ref("");
+const unidadesMap = [
+  { desc: "Administração Central", enum: 1 },
+  { desc: "Cerene Blumenau", enum: 2 },
+  { desc: "Cerene Joinville", enum: 3 },
+  { desc: "Cerene São Bento do Sul", enum: 4 },
+  { desc: "Cerene Lapa", enum: 5 },
+  { desc: "Cerene Ituporanga", enum: 6 },
+  { desc: "Cerene Palhoça", enum: 7 },
+];
+const sexo = ref("");
+
+const usuariosMap = [
+  { desc: "Administrador", role: "ADMIN", enum: 1 },
+  { desc: "Gerente", role: "MANAGER", enum: 2 },
+  { desc: "Usuário", role: "USER", enum: 3 },
+];
+
 const email = ref("");
-const senha = ref("");
+const password = ref("");
 
 const redirectToLogin = () => {
   router.push("/login");
 };
 
+const validateForm = () => {
+  const rawCpf = cpf.value;
+
+  const digitsOnly = rawCpf.replace(/\D/g, "");
+
+  if (!/^\d+$/.test(digitsOnly)) {
+    toast.error("No campo CPF Somente números são permitidos!");
+    return;
+  }
+
+  if (digitsOnly.length !== 11) {
+    toast.error("CPF deve ter exatamente 11 dígitos!");
+    return;
+  }
+
+  cadastrar();
+};
+
+const formatCpf = (value) => {
+  let digits = value.replace(/\D/g, "").substring(0, 11);
+  if (digits.length > 9) {
+    return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+  } else if (digits.length > 6) {
+    return digits.replace(/(\d{3})(\d{3})(\d{1,3})/, "$1.$2.$3");
+  } else if (digits.length > 3) {
+    return digits.replace(/(\d{3})(\d{1,3})/, "$1.$2");
+  } else {
+    return digits;
+  }
+};
+
 const cadastrar = async () => {
+  // exemplo: sempre USER por padrão
+  const usuarioSelecionado = usuariosMap.find((u) => u.role === "USER");
+
+  // encontra a unidade selecionada pelo enum
+  const unidadeSelecionada = unidadesMap.find((u) => u.enum === unidade.value);
+
   const dadosCadastro = {
     nome: nome.value,
-    empresa: empresa.value,
-    usuarios: [
+    cpf: cpf.value,
+    dataNascimento: nasc.value,
+    cargo: cargo.value,
+    email: email.value,
+    unidade: [
+      {
+        desc: unidadeSelecionada?.desc,
+        enum: unidadeSelecionada?.enum,
+      },
+    ],
+    sexo: sexo.value,
+    usuario: [
       {
         login: email.value,
-        password: senha.value,
-        role: "USER",
+        password: password.value,
+        role: usuarioSelecionado?.role,
+        enum: usuarioSelecionado?.enum,
       },
     ],
   };
@@ -127,6 +271,10 @@ onMounted(() => {
   if (token) {
     router.push("/dashboard");
   }
+});
+
+watch(cpf, (newVal) => {
+  cpf.value = formatCpf(newVal);
 });
 </script>
 
@@ -157,5 +305,20 @@ textarea:-webkit-autofill:focus {
 
 .custom-padding {
   margin-top: 10px !important;
+}
+
+@keyframes slideDown {
+  0% {
+    transform: translateY(-320px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slideDown {
+  animation: slideDown 0.95s ease-out;
 }
 </style>

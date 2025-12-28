@@ -11,15 +11,15 @@
 </template>
 
 <script setup>
-
 </script>
 
 <style scoped lang="scss">
-  .custom-card-text {
+.custom-card-text {
   // border: 1px solid rgba(0, 0, 0, 0.1);
   padding: 10px 0;
   text-align: center;
   width: 100%;
+  margin-top: 24px;
   margin-bottom: 24px;
   border-radius: 8px;
 }

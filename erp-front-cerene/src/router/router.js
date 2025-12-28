@@ -1,9 +1,12 @@
-import { createRouter, createWebHistory } from "vue-router/auto";
+import { createRouter, createWebHistory } from "vue-router";
 import { routes as autoRoutes } from "vue-router/auto-routes";
 import CadastroUser from "@/pages/CadastroUser.vue";
 import Login from "@/pages/Login.vue";
 import Dashboard from "@/pages/Dashboard.vue";
-import Importacao from "@/pages/Importacao.vue"; // Adiciona manualmente o componente
+import StatisticsDash from "@/pages/financeiro/StatisticsDash.vue";
+import ColaboradoresAdm from "@/pages/Colaboradores/ColaboradoresAdm.vue";
+// import Importacao from "@/pages/Importacao.vue"; // Adiciona manualmente o componente
+// import ColaboradoresAdm from "@/pages/Colaboradores/ColaboradoresAdm.vue";
 
 // Adiciona manualmente as rotas protegidas e não protegidas
 const routes = [
@@ -19,19 +22,25 @@ const routes = [
     component: CadastroUser,
   },
 
-  // Rotas protegidas (com meta.requiresAuth configurado manualmente)
+  // Rota protegida com filhos
   {
     path: "/dashboard",
-    name: "Dashboard",
     component: Dashboard,
     meta: { requiresAuth: true },
+    children: [
+      {
+        path: "", // rota padrão filha
+        name: "StatisticsDash",
+        component: StatisticsDash,
+      },
+      {
+        path: "colaboradores-cerene",
+        name: "ColaboradoresCerene",
+        component: ColaboradoresAdm,
+      },
+    ],
   },
-  {
-    path: "/import",
-    name: "Importacao",
-    component: Importacao,
-    meta: { requiresAuth: true },
-  },
+
   ...autoRoutes,
 ];
 

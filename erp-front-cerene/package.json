@@ -13,14 +13,17 @@
     "apexcharts": "^4.0.0",
     "axios": "^1.7.9",
     "core-js": "^3.37.1",
+    "firebase": "^12.6.0",
+    "maska": "^3.2.0",
     "roboto-fontface": "*",
     "vue": "^3.4.31",
-    "vue3-apexcharts": "^1.7.0",
     "vue-toastification": "^2.0.0-rc.5",
+    "vue3-apexcharts": "^1.7.0",
     "vuetify": "^3.6.11",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/node": "^25.0.2",
     "@vitejs/plugin-vue": "^5.0.5",
     "eslint": "^8.57.0",
     "eslint-config-standard": "^17.1.0",

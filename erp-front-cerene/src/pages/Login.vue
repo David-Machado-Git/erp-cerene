@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div
-    class="auth-wrapper pa-4 pt-6"
+    class="auth-wrapper pa-4 pt-6 animate-slideDown"
     :style="{
       // backgroundImage: 'url(/_img/_bg-login.png)',
       backgroundSize: '30%',
@@ -30,7 +30,10 @@
         autocomplete="email"
         v-model="email"
         @keydown.enter="login()"
-      ></v-text-field>
+      ><template #label>
+          <span>e-mail <span style="color: red">*</span></span>
+        </template>
+      </v-text-field>
 
       <v-text-field
         :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
@@ -42,7 +45,10 @@
         @click:append-inner="visible = !visible"
         v-model="password"
         @keydown.enter="login()"
-      ></v-text-field>
+      ><template #label>
+          <span>Digite sua senha <span style="color: red">*</span></span>
+        </template>
+      </v-text-field>
 
       <v-btn
         class="mb-8"
@@ -85,7 +91,10 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import LoginService from "../services/loginService";
+// import LoginService from "../firebase/ConectDb";
+import "@/firebase/ConectDb";
 import { useToast } from "vue-toastification";
+
 // import axios from "axios";
 
 const toast = useToast();
@@ -93,18 +102,18 @@ const router = useRouter();
 const visible = ref(false);
 const email = ref("");
 const password = ref("");
-// const api = axios.create({
-//   baseURL: import.meta.env.VITE_API_URL,
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-// });
 
 const login = async () => {
   try {
-    const token = await LoginService.loginUser(email.value, password.value);
-    localStorage.setItem("token", token);
-    router.push("/dashboard");
+    const token = await LoginService.validarLogin(email.value, password.value);
+
+    if (token) {
+      localStorage.setItem("token", token.id);
+      await LoginService.registerToken(token.id, token.id);
+      router.push("/dashboard");
+    }
+
+    // console.log("O Token é o id do usuário que acessar: => ", token.id);
   } catch (error) {
     toast.error("Credenciais inválidas ou erro na autenticação.");
     console.error("Erro de autenticação: ", error);
@@ -119,31 +128,6 @@ onMounted(() => {
     router.push("/dashboard");
   }
 });
-
-// const validateToken = async () => {
-//   const token = localStorage.getItem("token");
-//   if (!token) return;
-
-//   try {
-//     console.log("FAZENDO VALIDAÇÃO!");
-
-//     const response = await api.get("/auth/validate-token", {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     });
-
-//     // Se o token for válido, redireciona para o dashboard
-//     if (response.status === 200) {
-//       router.push("/dashboard");
-//     }
-//   } catch (error) {
-//     // Se o token for inválido, remove-o do localStorage
-//     localStorage.removeItem("token");
-//     toast.error("Sessão expirada. Por favor, faça login novamente.");
-//     console.error("Token inválido: ", error);
-//   }
-// };
 
 const navigateToCadastroUser = () => {
   router.push("/parceiro");
@@ -177,5 +161,20 @@ textarea:-webkit-autofill:focus {
 
 .custom-padding {
   margin-top: 10px !important;
+}
+
+@keyframes slideDown {
+  0% {
+    transform: translateY(-320px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slideDown {
+  animation: slideDown 0.95s ease-out;
 }
 </style>
