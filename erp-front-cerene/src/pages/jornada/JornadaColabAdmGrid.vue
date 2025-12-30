@@ -324,7 +324,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, watch, computed } from "vue";
-import colaboradorService from "@/services/colaboradorService";
+import JornadaColabAdmService from "@/services/JornadaColabAdmService";
 import { useToast } from "vue-toastification";
 import cadastroService from "@/services/cadastroService";
 import Swal from "sweetalert2";
@@ -451,7 +451,7 @@ const handleSavePerson = async () => {
       await cadastroService.registrarUsuario(dadosCadastro);
       toast.success("Cadastro realizado com sucesso!");
     } else if (typeAction.value === "EDIT" && recuverData.value?.id) {
-      await colaboradorService.atualizarColaborador(recuverData.value.id, dadosCadastro);
+      await JornadaColabAdmService.atualizarColaborador(recuverData.value.id, dadosCadastro);
       toast.success("Colaborador atualizado com sucesso!");
     }
 
@@ -516,47 +516,6 @@ const formatCpf = (value) => {
   }
 };
 
-// const cadastrar = async () => {
-//   const usuarioSelecionado = usuariosMap.find((u) => u.role === "USER");
-//   const unidadeSelecionada = unidadesMap.find((u) => u.enum === Number(unidade.value));
-
-//   const dadosCadastro = {
-//     nome: nome.value,
-//     cpf: cpf.value,
-//     dataNascimento: nasc.value,
-//     cargo: cargo.value,
-//     email: email.value,
-//     unidade: [
-//       {
-//         desc: unidadeSelecionada?.desc,
-//         enum: unidadeSelecionada?.enum,
-//       },
-//     ],
-//     sexo: sexo.value,
-//     usuario: [
-//       {
-//         login: email.value,
-//         password: password.value,
-//         role: usuarioSelecionado?.role,
-//         enum: usuarioSelecionado?.enum,
-//       },
-//     ],
-//   };
-
-//   try {
-//     await cadastroService.registrarUsuario(dadosCadastro);
-
-//     dialog.value = false;
-
-//     await atualizarGrid()
-
-//     toast.success("Cadastro realizado com sucesso!");
-//   } catch (error) {
-//     console.error("Erro ao cadastrar usuário:", error);
-//   }
-// };
-
-
 
 watch(filters, () => {}, { deep: true });
 
@@ -565,7 +524,7 @@ watch(cpf, (newVal) => {
 });
 
 const atualizarGrid = async () => {
-  const colaboradores = await colaboradorService.findColaboradores();
+  const colaboradores = await JornadaColabAdmService.findColaboradores();
   colaboradores.sort((a: any, b: any) => a.nome.localeCompare(b.nome));
   completeData.value = colaboradores;
 
@@ -589,7 +548,7 @@ const toggleActiveStatus = async (item: any) => {
   try {
     const novoStatus = !item.isActive;
 
-    await colaboradorService.atualizarColaborador(item.id, {
+    await JornadaColabAdmService.atualizarColaborador(item.id, {
       isActive: novoStatus,
     });
 
@@ -607,87 +566,9 @@ const toggleActiveStatus = async (item: any) => {
   }
 };
 
-
-
 onMounted(async () => {
   await atualizarGrid();
-  // popularBaseDeTeste();
 });
-
-const popularBaseDeTeste = async () => {
-  const nomes = [
-    "Jean", "Fabio", "Armando", "Ana", "Beatriz", "Carlos", "Daniela", "Eduardo", "Fernanda", "Gustavo",
-    "Helena", "Igor", "Juliana", "Kleber", "Larissa", "Marcos", "Nathalia", "Otávio", "Patrícia", "Rafael",
-    "Sandra", "Thiago", "Ursula", "Vinícius", "Wesley", "Xuxa", "Yasmin", "Zeca", "Bruna", "Caio",
-    "Débora", "Eliane", "Felipe", "Gabriela", "Henrique", "Isabela", "João", "Karen", "Leonardo", "Marta",
-    "Nicole", "Orlando", "Paula", "Renato", "Sabrina", "Tadeu", "Valéria", "William", "Yuri", "Zuleica"
-  ];
-
-  const unidades = [
-    { desc: "Administração Central", enum: 1 },
-    { desc: "Cerene Blumenau", enum: 2 },
-    { desc: "Cerene Gaspar - NVR", enum: 3 },
-    { desc: "Cerene Joinville", enum: 4 },
-    { desc: "Cerene São Bento do Sul", enum: 5 },
-    { desc: "Cerene Lapa", enum: 6 },
-    { desc: "Cerene Ituporanga", enum: 7 },
-    { desc: "Cerene Palhoça", enum: 8 },
-  ];
-
-  const perfis = [
-    { desc: "Administrador", role: "ADMIN", enum: 1 },
-    { desc: "Gerente", role: "MANAGER", enum: 2 },
-    { desc: "Usuário", role: "USER", enum: 3 },
-  ];
-
-  const gerarCpfFormatado = (i: number) => {
-    const base = String(100000000 + i).padStart(9, "0");
-    return `${base.slice(0, 3)}.${base.slice(3, 6)}.${base.slice(6, 9)}-${String(i).padStart(2, "0")}`;
-  };
-
-  for (let i = 0; i < 50; i++) {
-    const nome = `${nomes[i % nomes.length]} ${nomes[(i + 1) % nomes.length]} ${nomes[(i + 2) % nomes.length]}`;
-    const email = `usuario${i + 1}@teste.com`;
-    const cpf = gerarCpfFormatado(i + 1);
-    const unidade = unidades[i % unidades.length];
-    const perfil = perfis[i % perfis.length];
-    const sexo = i % 2 === 0 ? "Masculino" : "Feminino";
-
-    const dadosCadastro = {
-      id: `fake-id-${i + 1}`,
-      nome,
-      cpf,
-      dataNascimento: `199${i % 10}-0${(i % 9) + 1}-15`,
-      cargo: perfil.desc,
-      email,
-      isActive: true,
-      role: perfil.role,
-      unidade: [
-        {
-          desc: unidade.desc,
-          enum: unidade.enum,
-        },
-      ],
-      sexo,
-      password: "Teste123",
-      usuario: [
-        {
-          login: email,
-          password: "Teste123",
-          role: perfil.role,
-          enum: perfil.enum,
-        },
-      ],
-    };
-
-    try {
-      await cadastroService.registrarUsuario(dadosCadastro);
-      console.log(`✅ ${nome} cadastrado com sucesso!`);
-    } catch (error) {
-      console.error(`❌ Erro ao cadastrar ${nome}:`, error);
-    }
-  }
-};
 
 
 const handleDeletePerson = async (task) => {
@@ -704,7 +585,7 @@ const handleDeletePerson = async (task) => {
     });
 
     if (result.isConfirmed) {
-      await colaboradorService.deleteColaborador(task.id);
+      await JornadaColabAdmService.deleteColaborador(task.id);
 
       toast.success(`Colaborador ${task.nome} excluído com sucesso!`);
 
@@ -804,12 +685,4 @@ const pagination = ref({
   }
 }
 
-// @media (max-width: 980px) {
-//   .icon-pers {
-//     // display: none;
-//     // position: relative;
-//     // top: 5px !important;
-//     font-size: 18px;
-//   }
-// }
 </style>

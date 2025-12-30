@@ -65,7 +65,7 @@ async validarLogin(email, senha) {
       if (userDoc.isActive) {
         return userDoc;
       } else {
-        toast.warning("Sua conta ainda não está liberada. Solicite a liberação junto ao responsável.", {
+        toast.info("Sua conta ainda não está liberada. Solicite a liberação.", {
         toastClassName: "toast-orange",
         });
         return null;

@@ -44,5 +44,9 @@ export default defineConfig({
   },
   server: {
     port: 8060,
+    allowedHosts: [
+      'localhost',
+      '0b9aaa37b1ca.ngrok-free.app', // ✅ adicione o host do ngrok aqui
+    ],
   },
 });

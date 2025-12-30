@@ -9,18 +9,27 @@
       backgroundRepeat: 'no-repeat',
     }"
   >
-  <v-img class="mx-auto my-2" max-width="228" src="/_img/_logo_rascunho.png"></v-img>
+    <v-img
+      class="mx-auto my-2"
+      max-width="228"
+      src="/_img/_logo_rascunho.png"
+    />
   
   
-  <v-card
-  class="mx-auto pa-4 custom-padding"
-  elevation="8"
-  max-width="448"
-  rounded="lg"
-  color=""
-  >
-  <v-img class="mx-auto my-4" max-width="68" src="/_img/imp_digital.gif"></v-img>
+    <v-card
+      class="mx-auto pa-4 custom-padding"
+      elevation="8"
+      max-width="448"
+      rounded="lg"
+      color=""
+    >
+      <!-- <v-img
+        class="mx-auto my-4"
+        max-width="68"
+        src="/_img/imp_digital.gif"
+      /> -->
       <v-text-field
+        v-model="email"
         class="color-custom"
         density="compact"
         label="e-mail"
@@ -28,14 +37,15 @@
         variant="outlined"
         type="e-mail"
         autocomplete="email"
-        v-model="email"
         @keydown.enter="login()"
-      ><template #label>
+      >
+        <template #label>
           <span>e-mail <span style="color: red">*</span></span>
         </template>
       </v-text-field>
 
       <v-text-field
+        v-model="password"
         :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
         :type="visible ? 'text' : 'password'"
         density="compact"
@@ -43,9 +53,9 @@
         prepend-inner-icon="mdi-lock-outline"
         variant="outlined"
         @click:append-inner="visible = !visible"
-        v-model="password"
         @keydown.enter="login()"
-      ><template #label>
+      >
+        <template #label>
           <span>Digite sua senha <span style="color: red">*</span></span>
         </template>
       </v-text-field>
@@ -68,7 +78,7 @@
               href="javascript:void(0);"
               @click="navigateToCadastroUser"
             >
-              Criar conta <v-icon icon="mdi-chevron-right"></v-icon>
+              Criar conta <v-icon icon="mdi-chevron-right" />
             </a>
           </v-card-text>
         </v-col>
@@ -81,8 +91,7 @@
         rel="noopener noreferrer"
         target="_self"
       >
-        Esqueceu a senha?</a
-      >
+        Esqueceu a senha?</a>
     </div>
   </div>
 </template>
@@ -91,11 +100,9 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import LoginService from "../services/loginService";
-// import LoginService from "../firebase/ConectDb";
 import "@/firebase/ConectDb";
 import { useToast } from "vue-toastification";
 
-// import axios from "axios";
 
 const toast = useToast();
 const router = useRouter();
@@ -113,7 +120,6 @@ const login = async () => {
       router.push("/dashboard");
     }
 
-    // console.log("O Token é o id do usuário que acessar: => ", token.id);
   } catch (error) {
     toast.error("Credenciais inválidas ou erro na autenticação.");
     console.error("Erro de autenticação: ", error);
@@ -121,7 +127,6 @@ const login = async () => {
 };
 
 onMounted(() => {
-  // validateToken();
   const token = localStorage.getItem("token");
 
   if (token) {
@@ -130,7 +135,7 @@ onMounted(() => {
 });
 
 const navigateToCadastroUser = () => {
-  router.push("/parceiro");
+  router.push("/cadastro");
 };
 </script>
 

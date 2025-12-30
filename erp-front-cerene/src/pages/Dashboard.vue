@@ -1,154 +1,243 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <v-app :theme="theme">
+  <v-app 
+    :theme="theme"
+  >
     <v-navigation-drawer
-      class="pt-10"
       v-model="isDrawerOpen"
+      class="pt-10"
       style="background-color: #528ad0"
       expand-on-hover
       rail
     >
       <v-list>
-        <img class="ml-13" src="/_img/_logo_rascunho.png" />
-        <v-divider></v-divider>
+        <img
+          class="ml-13"
+          src="/_img/_logo_rascunho.png"
+        >
+        <v-divider />
         <v-list-item
-          @click="() => handleClick('Dashboard')"
+          class="custum-drop-dal"
           prepend-icon="mdi-view-dashboard"
           title="Dashboard"
-        ></v-list-item>
+          @click="() => handleClick('Dashboard')"
+        />
         <v-list-item
-          @click="() => handleClick('Colaboradores-cerene')"
+          class="custum-drop-dal"
           prepend-icon="mdi-account-circle"
-          title="Colaboradores"
-        ></v-list-item>
+          title="Colaboradores Cerene"
+          @click="() => handleClick('Colaboradores-cerene')"
+        />
         <v-list-item
-          @click="() => handleClick('Serviços')"
+          class="custum-drop-dal"
           prepend-icon="mdi-calendar"
-          title="Agenda"
-        ></v-list-item>
+          title="Jornada de Trabalho"
+          @click="() => handleClick('Colabradores-jornada')"
+        />
 
         <v-list-group v-model="usersGroupOpen">
           <template #activator="{ props }">
             <v-list-item
+              class="custum-drop-dal"
               v-bind="props"
               prepend-icon="mdi-account-circle"
               title="Relatórios"
-            ></v-list-item>
+            />
           </template>
           <v-list-item
-            @click="navigateToImportacao"
+            class="custum-drop-dal"
             prepend-icon="mdi-checkbox-marked"
             title="Importação"
-          ></v-list-item>
+            @click="navigateToImportacao"
+          />
           <v-list-item
-            @click="() => handleClick('Inativos')"
+            class="custum-drop-dal"
             prepend-icon="mdi-power-off"
             title="Inativos"
-          ></v-list-item>
+            @click="() => handleClick('Inativos')"
+          />
         </v-list-group>
         <v-list-item
-          @click="logout"
+          class="custum-drop-dal"
           prepend-icon="mdi-logout"
           title="Sair"
-        ></v-list-item>
+          @click="logout"
+        />
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar flat class="border-b" style="background-color: #528ad0">
+    <v-app-bar
+      flat
+      class="border-b"
+      style="background-color: #528ad0"
+    >
       <v-app-bar-nav-icon
         @click="isDrawerOpen = !isDrawerOpen"
-      ></v-app-bar-nav-icon>
+      />
+      <v-breadcrumbs
+        :items="breadcrumbs"
+        divider="/"
+        class="element-visible"
+      >
+        <template #item="{ item, index }">
+          <router-link
+            v-if="item.to"
+            :to="item.to"
+            :class="[
+              'breadcrumb-link',
+              { 'active-breadcrumb': index === breadcrumbs.length - 1 }
+            ]"
+          >
+            {{ item.text }}
+          </router-link>
+          <span
+            v-else
+            :class="[
+              'breadcrumb-link',
+              { 'active-breadcrumb': index === breadcrumbs.length - 1 }
+            ]"
+          >
+            {{ item.text }}
+          </span>
+        </template>
+      </v-breadcrumbs>
 
-      <v-spacer></v-spacer>
-      <v-menu v-model="menuVisible" :close-on-content-click="false">
+
+
+      <!-- <h2>{{ "TESTE" }}</h2> -->
+    
+      <v-spacer />
+      <v-menu
+        v-model="menuVisible"
+        :close-on-content-click="false"
+      >
         <template #activator="{ props }">
-          <v-btn icon class="mr-3" v-bind="props">
-            <v-badge content="3" color="red" overlap>
+          <v-btn
+            icon
+            class="mr-3"
+            v-bind="props"
+          >
+            <v-badge
+              content="3"
+              color="red"
+              overlap
+            >
               <v-icon>mdi-bell</v-icon>
             </v-badge>
           </v-btn>
         </template>
 
-        <v-card width="270" class="pa-4">
+        <v-card
+          width="270"
+          class="pa-4"
+        >
           <v-list-item @click="myProfile">
             <v-icon
               icon="mdi-bell-alert"
               style="font-size: 20px; color: grey"
-            ></v-icon>
+            />
             <span class="ml-2">novo usuário cadast ...</span>
           </v-list-item>
           <v-list-item @click="myProfile">
             <v-icon
               icon="mdi-cash"
               style="font-size: 20px; color: grey"
-            ></v-icon>
+            />
             <span class="ml-2">nova receita ...</span>
           </v-list-item>
           <v-list-item @click="myProfile">
             <v-icon
               icon="mdi-cash"
               style="font-size: 20px; color: grey"
-            ></v-icon>
+            />
             <span class="ml-2">nova receita ...</span>
           </v-list-item>
           <v-list-item @click="myProfile">
             <!-- <v-icon icon="mdi-cash" style="font-size: 20px; color: grey;"></v-icon> -->
-            <span class="ml-2" style="float: right">ver todos</span>
+            <span
+              class="ml-2"
+              style="float: right"
+            >ver todos</span>
           </v-list-item>
         </v-card>
       </v-menu>
-      <v-avatar v-bind="props" class="cursor mr-5" @click="toggleFullScreen">
-        <v-icon>{{
-          isFullScreen ? "mdi-fullscreen-exit" : "mdi-fullscreen"
-        }}</v-icon>
+      <v-avatar
+        v-bind="props"
+        class="cursor mr-5"
+        @click="toggleFullScreen"
+      >
+        <v-icon>
+          {{
+            isFullScreen ? "mdi-fullscreen-exit" : "mdi-fullscreen"
+          }}
+        </v-icon>
       </v-avatar>
 
       <v-menu>
         <template #activator="{ props }">
-          <v-avatar v-bind="props" class="cursor mr-5">
+          <v-avatar
+            v-bind="props"
+            class="cursor mr-5"
+          >
             <v-icon>mdi-dots-vertical</v-icon>
           </v-avatar>
         </template>
-        <v-card width="170" class="pa-4">
-          <v-list-item @click="myProfile"
-            ><v-icon
+        <v-card
+          width="170"
+          class="pa-4"
+        >
+          <v-list-item @click="myProfile">
+            <v-icon
               icon="mdi-account"
               style="font-size: 20px; color: grey"
-            ></v-icon>
-            Meu perfil</v-list-item
-          >
-          <v-list-item @click="logout"
-            ><v-icon
+            />
+            Meu perfil
+          </v-list-item>
+          <v-list-item @click="logout">
+            <v-icon
               icon="mdi-logout"
               style="font-size: 18px; color: grey"
-            ></v-icon>
-            Sair</v-list-item
-          >
+            />
+            Sair
+          </v-list-item>
         </v-card>
       </v-menu>
     </v-app-bar>
-
+    
     <router-view />
-
+    
     <AppFooter />
   </v-app>
-  <div class="loader" v-show="isLoading">
-    <v-img class="position-custom" max-width="64" src="/_img/loader.gif"></v-img>
+  <div
+    v-show="isLoading"
+    class="loader"
+  >
+    <v-img
+      class="position-custom"
+      max-width="64"
+      src="/_img/loader.gif"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, defineProps, watch } from "vue";
+import { computed } from "vue";
 // import StatisticsDash from "./financeiro/StatisticsDash.vue";
 import AppFooter from "@/painel/painel-components/AppFooter.vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 // import ColaboradoresAdm from "./Colaboradores/ColaboradoresAdm.vue";
 // import { eventBus } from "../eventBus";
 import { useToast } from "vue-toastification";
 import LoginService from "../services/loginService";
 
+
 const props = defineProps({
-  title: String,
+  title: {
+    type: String,
+    default: ''
+  }
 });
+
 
 const toast = useToast();
 const isDrawerOpen = ref(false);
@@ -156,9 +245,20 @@ const usersGroupOpen = ref(false);
 const menuVisible = ref(false);
 const theme = ref("light");
 const router = useRouter();
+const route = useRoute();
 const isFullScreen = ref(false);
 const isLoading = ref(true);
 // const renderizerComponent = ref("Dashboard");
+
+// Pega dinamicamente o título definido no meta da rota
+const breadcrumbs = computed(() =>
+  route.matched.map(r => ({
+    text: r.meta.title,
+    to: r.path
+  }))
+);
+
+
 
 function navigateToImportacao() {
   router.push("/importacao");
@@ -196,9 +296,10 @@ const handleClick = (event) => {
       router.push("/dashboard");
       break;
     case "Colaboradores-cerene":
-      console.log("Entrou aqui - colaboradores-cerene");
-      // router.push("/colaboradores-cerene");
       router.push("/dashboard/colaboradores-cerene");
+      break;
+    case "Colabradores-jornada":
+      router.push("/dashboard/jornada-colaborador");
       break;
     default:
       break;
@@ -299,7 +400,8 @@ body {
   z-index: 1000;
 }
 
-.custum-drop-dal {
+.custum-drop-dal{
+  font-weight: 700; /* semi-bold */
   color: #fff;
 }
 
@@ -340,4 +442,43 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.breadcrumb-link {
+  font-size: 13px;
+  color: #fff !important;   /* força branco em todos os links */
+  text-decoration: none;    /* remove sublinhado */
+  transition: opacity 0.3s ease, color 0.3s ease; /* suavidade */
+}
+
+.breadcrumb-link:hover {
+  opacity: 0.3;             /* fica mais apagado ao passar o mouse */
+  color: #fff !important;   /* mantém branco */
+}
+
+.active-breadcrumb {
+  font-size: 13px;
+  color: #fff !important;   /* também branco */
+  opacity: 0.8;             /* mais apagado para o ativo */
+}
+
+@media (max-width: 680px) {
+  /* .breadcrumb-link {
+    display: none;
+  }
+
+  .breadcrumb-link:hover {
+    display: none;
+  }
+
+  .active-breadcrumb {
+    display: none;
+  } */
+
+  .element-visible {
+    display: none !important;
+  }
+
+}
+
+
 </style>

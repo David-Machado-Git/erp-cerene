@@ -1,11 +1,11 @@
 {
-  "name": "my-food-express",
+  "name": "cerene-controle-ponto",
   "version": "1.0.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --fix --ignore-path .gitignore"
+    "lint": "eslint src --ext .ts,.vue"
   },
   "dependencies": {
     "@iconscout/unicons": "^4.0.8",
@@ -16,6 +16,7 @@
     "firebase": "^12.6.0",
     "maska": "^3.2.0",
     "roboto-fontface": "*",
+    "sweetalert2": "^11.26.17",
     "vue": "^3.4.31",
     "vue-toastification": "^2.0.0-rc.5",
     "vue3-apexcharts": "^1.7.0",
@@ -24,8 +25,10 @@
   },
   "devDependencies": {
     "@types/node": "^25.0.2",
+    "@typescript-eslint/eslint-plugin": "^8.50.1",
+    "@typescript-eslint/parser": "^8.50.1",
     "@vitejs/plugin-vue": "^5.0.5",
-    "eslint": "^8.57.0",
+    "eslint": "^8.57.1",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-n": "^16.6.2",

@@ -5,6 +5,7 @@ import Login from "@/pages/Login.vue";
 import Dashboard from "@/pages/Dashboard.vue";
 import StatisticsDash from "@/pages/financeiro/StatisticsDash.vue";
 import ColaboradoresAdm from "@/pages/Colaboradores/ColaboradoresAdm.vue";
+import JornadaColabAdmGrid from "@/pages/jornada/JornadaColabAdmGrid.vue";
 // import Importacao from "@/pages/Importacao.vue"; // Adiciona manualmente o componente
 // import ColaboradoresAdm from "@/pages/Colaboradores/ColaboradoresAdm.vue";
 
@@ -17,7 +18,7 @@ const routes = [
     component: Login,
   },
   {
-    path: "/parceiro",
+    path: "/cadastro",
     name: "CadastroUser",
     component: CadastroUser,
   },
@@ -26,17 +27,25 @@ const routes = [
   {
     path: "/dashboard",
     component: Dashboard,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, title: "Dashboard" },
     children: [
       {
         path: "", // rota padrão filha
         name: "StatisticsDash",
         component: StatisticsDash,
+        // meta: { title: "Dashboard" },
       },
       {
         path: "colaboradores-cerene",
         name: "ColaboradoresCerene",
         component: ColaboradoresAdm,
+        meta: { title: "Colaboradores Cerene" },
+      },
+      {
+        path: "jornada-colaborador",
+        name: "ColaboradoresCereneJornada",
+        component: JornadaColabAdmGrid,
+        meta: { title: "Jornada por Colaborador" },
       },
     ],
   },

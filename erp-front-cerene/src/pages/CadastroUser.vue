@@ -8,131 +8,142 @@
       backgroundRepeat: 'no-repeat',
     }"
   >
-    <v-img class="mx-auto my-6" max-width="228" src="/_img/_logo_rascunho.png"></v-img>
+    <v-img 
+      class="mx-auto my-6" 
+      max-width="228" 
+      src="/_img/_logo_rascunho.png"
+    />
+
     <v-card
-    class="mx-auto pa-6"
-    elevation="8"
-    max-width="448"
-    rounded="lg"
-    color=""
+      class="mx-auto pa-6"
+      elevation="8"
+      max-width="448"
+      rounded="lg"
+      color=""
     >
-    <h3 class="text-center pb-4 text-black" style="opacity: .70; color: white;">CADASTRO CONTROLE PONTO</h3>
-    <v-text-field
-      v-model="nome"
-      density="compact"
-      label="Digite seu nome"
-      prepend-inner-icon="mdi-account-outline"
-      variant="outlined" 
-      type="text"
-      autocomplete="name"
-      required
-    ><template #label>
-        <span>Digite seu nome <span style="color: red">*</span></span>
-      </template>
-    </v-text-field>
+      <h3 
+        class="text-center pb-4 text-black" 
+        style="opacity: .70; color: white;"
+      >
+        CADASTRO CONTROLE PONTO
+      </h3>
+      <v-text-field
+        v-model="nome"
+        density="compact"
+        label="Digite seu nome"
+        prepend-inner-icon="mdi-account-outline"
+        variant="outlined" 
+        type="text"
+        autocomplete="name"
+        required
+      >
+        <template #label>
+          <span>Digite seu nome <span style="color: red">*</span></span>
+        </template>
+      </v-text-field>
     
-    <v-text-field
-      v-model="cpf"
-      density="compact"
-      label="Digite seu CPF"
-      prepend-inner-icon="mdi-card-account-details-outline"
-      variant="outlined"
-      type="text"
-      autocomplete="off"
-      maxlength="14"
-      required
-    >
-      <template #label>
-        <span>Digite seu CPF <span style="color: red">*</span></span>
-      </template>
-    </v-text-field>
+      <v-text-field
+        v-model="cpf"
+        density="compact"
+        label="Digite seu CPF"
+        prepend-inner-icon="mdi-card-account-details-outline"
+        variant="outlined"
+        type="text"
+        autocomplete="off"
+        maxlength="14"
+        required
+      >
+        <template #label>
+          <span>Digite seu CPF <span style="color: red">*</span></span>
+        </template>
+      </v-text-field>
 
-    <v-text-field
-      v-model="nasc"
-      density="compact"
-      label="Data de Nascimento"
-      prepend-inner-icon="mdi-calendar"
-      variant="outlined"
-      type="date"
-      autocomplete="bday"
-    ><template #label>
-        <span>Data de Nascimento <span style="color: red">*</span></span>
-      </template>
-    </v-text-field>
+      <v-text-field
+        v-model="nasc"
+        density="compact"
+        label="Data de Nascimento"
+        prepend-inner-icon="mdi-calendar"
+        variant="outlined"
+        type="date"
+        autocomplete="bday"
+      >
+        <template #label>
+          <span>Data de Nascimento <span style="color: red">*</span></span>
+        </template>
+      </v-text-field>
 
-    <v-text-field
-      v-model="cargo"
-      density="compact"
-      label="Digite seu cargo"
-      prepend-inner-icon="mdi-briefcase-outline"
-      variant="outlined"
-      type="text"
-      autocomplete="organization-title"
-    ><template #label>
-        <span>Digite seu cargo <span style="color: red">*</span></span>
-      </template>
-    </v-text-field>
-
-
-    <v-select
-      v-model="unidade"
-      :items="unidadesMap"
-      item-title="desc"
-      item-value="enum"
-      density="compact"
-      label="Unidade de Trabalho"
-      prepend-inner-icon="mdi-office-building"
-      variant="outlined"
-      autocomplete="organization"
-    ><template #label>
-        <span>Unidade de Trabalho <span style="color: red">*</span></span>
-      </template>
-    </v-select>
-
-    <v-select
-      v-model="sexo"
-      :items="['Masculino', 'Feminino']"
-      label="Sexo"
-      density="compact"
-      variant="outlined"
-      prepend-inner-icon="mdi-gender-male-female"
-    >
-      <template #label>
-        <span>Sexo <span style="color: red">*</span></span>
-      </template>
-    </v-select>
+      <v-text-field
+        v-model="cargo"
+        density="compact"
+        label="Digite seu cargo"
+        prepend-inner-icon="mdi-briefcase-outline"
+        variant="outlined"
+        type="text"
+        autocomplete="organization-title"
+      >
+        <template #label>
+          <span>Digite seu cargo <span style="color: red">*</span></span>
+        </template>
+      </v-text-field>
 
 
+      <v-select
+        v-model="unidade"
+        :items="unidadesMap"
+        item-title="desc"
+        item-value="enum"
+        density="compact"
+        label="Unidade de Trabalho"
+        prepend-inner-icon="mdi-office-building"
+        variant="outlined"
+        autocomplete="organization"
+      >
+        <template #label>
+          <span>Unidade de Trabalho <span style="color: red">*</span></span>
+        </template>
+      </v-select>
 
+      <v-select 
+        v-model="sexo" 
+        :items="['Masculino', 'Feminino']" 
+        label="Sexo" 
+        density="compact" 
+        variant="outlined" 
+        prepend-inner-icon="mdi-gender-male-female"
+      >
+        <template #label>
+          <span>Sexo <span style="color: red">*</span></span>
+        </template>
+      </v-select>
 
+      <v-text-field
+        v-model="email"
+        density="compact"
+        label="Digite seu e-mail"
+        prepend-inner-icon="mdi-email-outline"
+        variant="outlined"
+        type="e-mail"
+        autocomplete="email"
+      >
+        <template #label>
+          <span>Digite seu e-mail <span style="color: red">*</span></span>
+        </template>
+      </v-text-field>
 
-
-    <v-text-field
-      v-model="email"
-      density="compact"
-      label="Digite seu e-mail"
-      prepend-inner-icon="mdi-email-outline"
-      variant="outlined"
-      type="e-mail"
-      autocomplete="email"
-    ><template #label>
-        <span>Digite seu e-mail <span style="color: red">*</span></span>
-      </template>
-    </v-text-field>
-
-    <v-text-field
-      v-model="password"
-      :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-      :type="visible ? 'text' : 'password'"
-      density="compact"
-      label="Digite sua senha"
-      prepend-inner-icon="mdi-lock-outline"
-      variant="outlined"
-      @click:append-inner="visible = !visible"
-    ><template #label>
-        <span>Digite sua senha <span style="color: red">*</span></span>
-      </template>
-    </v-text-field>
+      <v-text-field
+        v-model="password"
+        :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+        :type="visible ? 'text' : 'password'"
+        density="compact"
+        label="Digite sua senha"
+        prepend-inner-icon="mdi-lock-outline"
+        variant="outlined"
+        @click:append-inner="visible = !visible"
+      >
+        <template #label>
+          <span>Digite sua senha <span style="color: red">*</span></span>
+        </template>
+      </v-text-field>
 
       <v-btn
         class="mb-3"
@@ -150,8 +161,7 @@
         href="javascript:void(0);"
         @click="redirectToLogin"
       >
-        voltar a página de login</a
-      >
+        voltar a página de login</a>
     </div>
   </div>
 </template>
@@ -175,11 +185,12 @@ const cargo = ref("");
 const unidadesMap = [
   { desc: "Administração Central", enum: 1 },
   { desc: "Cerene Blumenau", enum: 2 },
-  { desc: "Cerene Joinville", enum: 3 },
-  { desc: "Cerene São Bento do Sul", enum: 4 },
-  { desc: "Cerene Lapa", enum: 5 },
-  { desc: "Cerene Ituporanga", enum: 6 },
-  { desc: "Cerene Palhoça", enum: 7 },
+  { desc: "Cerene Gaspar - NVR", enum: 3 },
+  { desc: "Cerene Joinville", enum: 4 },
+  { desc: "Cerene São Bento do Sul", enum: 5 },
+  { desc: "Cerene Lapa", enum: 6 },
+  { desc: "Cerene Ituporanga", enum: 7 },
+  { desc: "Cerene Palhoça", enum: 8 },
 ];
 const sexo = ref("");
 

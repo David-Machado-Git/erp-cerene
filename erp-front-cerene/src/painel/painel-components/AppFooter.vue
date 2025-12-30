@@ -1,12 +1,16 @@
 <template>
-  <v-footer height="40" app>
+  <v-footer
+    height="40"
+    app
+  >
     <VCardText class="custom-card-text">
-  <span class="text-high-emphasis text-center font-weight-semibold me-1" style="font-size: 1rem;">
-    © 2024 Desenvolvido por David Machado
-  </span>
-</VCardText>
-
-
+      <span
+        class="text-high-emphasis text-center font-weight-semibold me-1"
+        style="font-size: 1rem;"
+      >
+        © 2024 Desenvolvido por David Machado
+      </span>
+    </VCardText>
   </v-footer>
 </template>
 
@@ -19,7 +23,7 @@
   padding: 10px 0;
   text-align: center;
   width: 100%;
-  margin-top: 24px;
+  margin-top: 30px;
   margin-bottom: 24px;
   border-radius: 8px;
 }

@@ -1,10 +1,9 @@
-import { collection, query, getDocs } from "firebase/firestore";
+import { collection, query, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/ConectDb";
 import { useToast } from "vue-toastification";
 
 
 const toast = useToast();
-
 
 class ColaboradorService {
     async findColaboradores() {
@@ -17,7 +16,6 @@ class ColaboradorService {
             id: doc.id,
             ...doc.data(),
           }));
-          console.log('Chegaram esses Colaboradores => ', colaboradores);
           
           return colaboradores;
         }
@@ -30,6 +28,33 @@ class ColaboradorService {
         return [];
       }
     }
+
+    deleteColaborador = async (id: string) => {
+      try {
+        const colaboradorRef = doc(db, "colaboradores", id);
+        await deleteDoc(colaboradorRef);
+        return true;
+      } catch (error) {
+        console.error("Erro ao excluir colaborador:", error);
+        throw error;
+      }
+    };
+
+    atualizarColaborador = async (id: string, dados: any) => {
+      try {
+        const colaboradorRef = doc(db, "colaboradores", id);
+        await updateDoc(colaboradorRef, dados);
+        return true;
+      } catch (error) {
+        console.error("Erro ao atualizar colaborador:", error);
+        throw error;
+      }
+    };
+
+
+
+
+
 }
 
 
