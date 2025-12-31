@@ -247,54 +247,54 @@
     </v-row>
     <main>
       <v-data-table
-        v-model:pagination="pagination"
         :headers="headers"
-        :items="filteredItems"
+        :items="items"
         item-key="id"
         class="elevation-1 mg-pers"
         :items-per-page-options="[5, 10, 15]"
-        :items-per-page="pagination.rowsPerPage"
       >
-        <template #item="props">
+        <template #item="{ item }">
           <tr
-            :key="props.item.cod"
+            :key="item.id"
             class="hover-row"
           >
-            <td class="py-3 px-4 flex items-center">
-              <span>{{ props.item.cod.length > 20 ? props.item.cod.slice(0, 20) + '...' : props.item.cod }}</span>
+            <td class="py-3 px-4">
+              {{ item.date }}
             </td>
             <td class="py-3 px-4">
-              {{ props.item.nome.length > 12 ? props.item.nome.slice(0, 26) + '...' : props.item.nome }}
+              {{ item.workSchedule }}
+            </td>
+
+            <!-- Entrada com cor dinâmica -->
+            <td
+              class="py-3 px-4"
+              :class="{
+                'bg-green-100': item.checkIn <= '08:00',
+                'bg-orange-100': item.checkIn > '08:00' && item.checkIn <= '08:30',
+                'bg-red-100': item.checkIn > '08:30'
+              }"
+            >
+              {{ item.checkIn }}
+            </td>
+
+            <td class="py-3 px-4">
+              {{ item.breakStart }}
             </td>
             <td class="py-3 px-4">
-              {{ props.item.unidade[0].desc }}
-            </td>
-            <td class="py-0 px-4">
-              <v-chip
-                :color="getPriorityColor(props.item.sexo)"
-                text-color="white"
-                class="capitalize"
-              >
-                {{ props.item.sexo }}
-              </v-chip>
+              {{ item.breakEnd }}
             </td>
             <td class="py-3 px-4">
-              <i class="mdi mdi-card-account-details text-gray-500" /> {{ props.item.cpf }}
+              {{ item.checkOut }}
             </td>
             <td class="py-3 px-4">
-              <div class="icon-container">
-                <button
-                  class="text-green-500"
-                  @click="goToCalendar"
-                >
-                  <v-icon color="green">
-                    mdi-calendar
-                  </v-icon>
-                </button>
-              </div>
+              {{ item.totalWorked }}
+            </td>
+            <td class="py-3 px-4">
+              {{ item.timeBank }}
             </td>
           </tr>
         </template>
+
         <template #no-data>
           <div class="text-center py-4">
             <span>Sem dados disponíveis</span>
@@ -371,7 +371,9 @@ const filters = ref({
 });
 const dialog = ref(false);
 const visible = ref(false);
-const items = ref<any[]>([]);
+
+
+// const items = ref<any[]>([]);
 
 const openModal = (typeOfAction: string, data: any | null) => {
   if (typeOfAction === "EDIT") {
@@ -441,33 +443,33 @@ const handleSavePerson = async () => {
     }
 
     dialog.value = false;
-    await atualizarGrid();
+    // await atualizarGrid();
   } catch (error) {
     toast.error("Erro ao salvar colaborador!");
     console.error(error);
   }
 };
 
-const filteredItems = computed(() => {
-  return items.value.filter((item) => {
-    const itemUnidade = item.unidade?.[0]?.desc?.toLowerCase?.() || "";
-    const filtroUnidade = filters.value.unidade?.toLowerCase?.() || "";
+// const filteredItems = computed(() => {
+//   return items.value.filter((item) => {
+//     const itemUnidade = item.unidade?.[0]?.desc?.toLowerCase?.() || "";
+//     const filtroUnidade = filters.value.unidade?.toLowerCase?.() || "";
 
-    const matchUnidade =
-      !filters.value.unidade || itemUnidade === filtroUnidade;
+//     const matchUnidade =
+//       !filters.value.unidade || itemUnidade === filtroUnidade;
 
-    const matchSexo =
-      !filters.value.sexo || item.sexo === filters.value.sexo;
+//     const matchSexo =
+//       !filters.value.sexo || item.sexo === filters.value.sexo;
 
-    const matchKeyword =
-      !filters.value.keyword ||
-      item.nome.toLowerCase().includes(filters.value.keyword.toLowerCase()) ||
-      item.cpf.toLowerCase().includes(filters.value.keyword.toLowerCase()) ||
-      itemUnidade.includes(filters.value.keyword.toLowerCase()); // ✅ agora também busca por unidade
+//     const matchKeyword =
+//       !filters.value.keyword ||
+//       item.nome.toLowerCase().includes(filters.value.keyword.toLowerCase()) ||
+//       item.cpf.toLowerCase().includes(filters.value.keyword.toLowerCase()) ||
+//       itemUnidade.includes(filters.value.keyword.toLowerCase()); // ✅ agora também busca por unidade
 
-    return matchUnidade && matchSexo && matchKeyword;
-  });
-});
+//     return matchUnidade && matchSexo && matchKeyword;
+//   });
+// });
 
 const goToCalendar = () => {
   // aqui você define a rota desejada
@@ -513,31 +515,66 @@ watch(cpf, (newVal) => {
   cpf.value = formatCpf(newVal);
 });
 
-const atualizarGrid = async () => {
-  const colaboradores = await JornadaColabAdmService.findColaboradores();
-  colaboradores.sort((a: any, b: any) => a.nome.localeCompare(b.nome));
-  completeData.value = colaboradores;
+const gerarSemana = (baseDate: Date, qtdDias: number) => {
+  const diasSemana = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
+  const diasGerados: any[] = []
 
-  items.value = colaboradores.map((colab: any, index: number) => ({
-    cod: index + 1,
-    id: colab.id,
-    nome: colab.nome,
-    cpf: colab.cpf,
-    nasc: colab.dataNascimento,
-    cargo: colab.cargo,
-    unidade: colab.unidade,
-    sexo: colab.sexo,
-    email: colab.email,
-    isActive: colab.isActive,
-    password: colab.password,
-    actions: "...",
-  }));
-};
+  const horarios = ["07:50", "08:00", "08:10", "08:20", "08:30", "08:45", "09:00"]
+
+  for (let i = 0; i < qtdDias; i++) {
+    const data = new Date(baseDate)
+    data.setDate(baseDate.getDate() + i)
+
+    const diaSemana = diasSemana[data.getDay()]
+    const dataFormatada = `${diaSemana} ${data.toLocaleDateString("pt-BR")}`
+
+    const checkIn = horarios[i % horarios.length]
+
+    diasGerados.push({
+      id: i + 1,
+      date: dataFormatada,
+      workSchedule: "Escritório 08h às 18h",
+      checkIn,
+      breakStart: "12:00",
+      breakEnd: "13:00",
+      checkOut: "18:00",
+      totalWorked: "09:00",
+      timeBank: "+00:30"
+    })
+  }
+
+  return diasGerados
+}
+
+
+const items = ref(gerarSemana(new Date(2025, 11, 29), 7));
+
+
+// const atualizarGrid = async () => {
+//   const colaboradores = await JornadaColabAdmService.findColaboradores();
+//   colaboradores.sort((a: any, b: any) => a.nome.localeCompare(b.nome));
+//   completeData.value = colaboradores;
+
+//   items.value = colaboradores.map((colab: any, index: number) => ({
+//     cod: index + 1,
+//     id: colab.id,
+//     nome: colab.nome,
+//     cpf: colab.cpf,
+//     nasc: colab.dataNascimento,
+//     cargo: colab.cargo,
+//     unidade: colab.unidade,
+//     sexo: colab.sexo,
+//     email: colab.email,
+//     isActive: colab.isActive,
+//     password: colab.password,
+//     actions: "...",
+//   }));
+// };
 
 
 
 onMounted(async () => {
-  await atualizarGrid();
+//   await atualizarGrid();
 });
 
 const getPriorityColor = (sexo: string) => {
@@ -597,6 +634,17 @@ const pagination = ref({
   flex-direction: row; /* padrão: lado a lado */
   align-items: center;
 }
+
+.bg-green-100 {
+  background-color: #d4edda;
+}
+.bg-orange-100 {
+  background-color: #fff3cd;
+}
+.bg-red-100 {
+  background-color: #f8d7da;
+}
+
 
 @media (max-width: 980px) {
   .icon-container {
