@@ -10,7 +10,7 @@
         no-gutters
         class="d-flex justify-center mb-4 mb-md-0 ml-auto"
       >
-        <v-btn
+        <!-- <v-btn
           color="green"
           class="d-flex align-center mb-4 py-2 px-4 text-uppercase font-weight-bold"
           @click="openModal('CREATE', null)"
@@ -19,7 +19,7 @@
             mdi-plus-circle
           </v-icon>
           CADASTRAR
-        </v-btn>
+        </v-btn> -->
       </v-col>
     </v-row>
 
@@ -283,29 +283,12 @@
             </td>
             <td class="py-3 px-4">
               <div class="icon-container">
-                <!-- Editar -->
                 <button
-                  class="text-blue-500"
-                  @click="openModal('EDIT', props.item)"
+                  class="text-green-500"
+                  @click="goToCalendar"
                 >
-                  <i class="mdi mdi-pencil icon-pers-p" />
-                </button>
-
-                <!-- Deletar -->
-                <button
-                  class="text-red-500 ml-2"
-                  @click="handleDeletePerson(props.item)"
-                >
-                  <i class="mdi mdi-delete icon-pers" />
-                </button>
-
-                <!-- Bloquear / Liberar -->
-                <button
-                  class="ml-2"
-                  @click="toggleActiveStatus(props.item)"
-                >
-                  <v-icon :color="props.item.isActive ? 'green' : 'red'">
-                    {{ props.item.isActive ? 'mdi-lock-open' : 'mdi-lock' }}
+                  <v-icon color="green">
+                    mdi-calendar
                   </v-icon>
                 </button>
               </div>
@@ -327,8 +310,8 @@ import { ref, onMounted, watch, computed } from "vue";
 import JornadaColabAdmService from "@/services/JornadaColabAdmService";
 import { useToast } from "vue-toastification";
 import cadastroService from "@/services/cadastroService";
-import Swal from "sweetalert2";
-
+// import Swal from "sweetalert2";
+import { useRouter } from "vue-router";
 
 interface Task {
   id: string;
@@ -339,6 +322,7 @@ interface Task {
   category: { id: number; title: string };
 }
 
+const router = useRouter();
 const toast = useToast();
 const nome = ref("");
 const cpf = ref("");
@@ -373,12 +357,11 @@ const headers = ref([
   { title: "Unidade", sortable: true, value: "unidade" },
   { title: "Sexo", sortable: true, value: "sexo" },
   { title: "CPF", sortable: true, value: "cpf" },
-  { title: "Ações", sortable: false, value: "actions" },
+  { title: "Jornada", sortable: false, value: "actions" },
 ]);
 
 const recuverData = ref<Task | null>(null);
 const typeAction = ref("CREATE");
-
 const filters = ref({
   unidade: null,
   sexo: null,
@@ -484,6 +467,11 @@ const filteredItems = computed(() => {
   });
 });
 
+const goToCalendar = () => {
+  // aqui você define a rota desejada
+  console.log('CAIU NO GO TO CALENDAR');
+  router.push("/dashboard/minha-jornada"); 
+};
 
 const validateForm = () => {
   const rawCpf = cpf.value;
@@ -544,60 +532,11 @@ const atualizarGrid = async () => {
   }));
 };
 
-const toggleActiveStatus = async (item: any) => {
-  try {
-    const novoStatus = !item.isActive;
 
-    await JornadaColabAdmService.atualizarColaborador(item.id, {
-      isActive: novoStatus,
-    });
-
-    item.isActive = novoStatus; // atualiza localmente
-    toast.success(
-      novoStatus
-        ? "Cadastro liberado com sucesso!"
-        : "Cadastro bloqueado com sucesso!"
-    );
-
-    await atualizarGrid(); // recarrega a tabela
-  } catch (error) {
-    toast.error("Erro ao atualizar status do cadastro!");
-    console.error(error);
-  }
-};
 
 onMounted(async () => {
   await atualizarGrid();
 });
-
-
-const handleDeletePerson = async (task) => {
-  try {
-    const result = await Swal.fire({
-      title: "Confirmação",
-      text: `Deseja mesmo excluir: ${task.nome}?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#e0a99e",
-      cancelButtonColor: "#a9dfab",
-      confirmButtonText: "Sim, excluir",
-      cancelButtonText: "Cancelar",
-    });
-
-    if (result.isConfirmed) {
-      await JornadaColabAdmService.deleteColaborador(task.id);
-
-      toast.success(`Colaborador ${task.nome} excluído com sucesso!`);
-
-      await atualizarGrid();
-    } else {
-      toast.info("Exclusão cancelada.");
-    }
-  } catch (error) {
-    toast.error("Erro ao excluir. Tente novamente!");
-    console.error(error);
-  }
-};
 
 const getPriorityColor = (sexo: string) => {
   switch (sexo) {

@@ -87,6 +87,12 @@
               { 'active-breadcrumb': index === breadcrumbs.length - 1 }
             ]"
           >
+            <v-icon
+              v-if="item.icon"
+              class="mr-1"
+            >
+              {{ item.icon }}
+            </v-icon>
             {{ item.text }}
           </router-link>
           <span
@@ -96,10 +102,16 @@
               { 'active-breadcrumb': index === breadcrumbs.length - 1 }
             ]"
           >
+            <v-icon
+              v-if="item.icon"
+              class="mr-1"
+            >{{ item.icon }}</v-icon>
             {{ item.text }}
           </span>
         </template>
       </v-breadcrumbs>
+
+
 
 
 
@@ -110,11 +122,11 @@
         v-model="menuVisible"
         :close-on-content-click="false"
       >
-        <template #activator="{ props }">
+        <template #activator="{ tsone }">
           <v-btn
             icon
             class="mr-3"
-            v-bind="props"
+            v-bind="tsone"
           >
             <v-badge
               content="3"
@@ -173,9 +185,9 @@
       </v-avatar>
 
       <v-menu>
-        <template #activator="{ props }">
+        <template #activator="{ tstwo }">
           <v-avatar
-            v-bind="props"
+            v-bind="tstwo"
             class="cursor mr-5"
           >
             <v-icon>mdi-dots-vertical</v-icon>
@@ -251,12 +263,14 @@ const isLoading = ref(true);
 // const renderizerComponent = ref("Dashboard");
 
 // Pega dinamicamente o título definido no meta da rota
-const breadcrumbs = computed(() =>
-  route.matched.map(r => ({
+const breadcrumbs = computed(() => [
+  { icon: 'mdi-home', to: '/' }, // casinha sempre primeiro
+  ...route.matched.map(r => ({
     text: r.meta.title,
     to: r.path
   }))
-);
+]);
+
 
 
 

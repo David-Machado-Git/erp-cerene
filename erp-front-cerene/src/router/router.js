@@ -6,6 +6,7 @@ import Dashboard from "@/pages/Dashboard.vue";
 import StatisticsDash from "@/pages/financeiro/StatisticsDash.vue";
 import ColaboradoresAdm from "@/pages/Colaboradores/ColaboradoresAdm.vue";
 import JornadaColabAdmGrid from "@/pages/jornada/JornadaColabAdmGrid.vue";
+import JornadaGrid from "@/pages/jornada/JornadaGrid.vue";
 // import Importacao from "@/pages/Importacao.vue"; // Adiciona manualmente o componente
 // import ColaboradoresAdm from "@/pages/Colaboradores/ColaboradoresAdm.vue";
 
@@ -46,6 +47,12 @@ const routes = [
         name: "ColaboradoresCereneJornada",
         component: JornadaColabAdmGrid,
         meta: { title: "Jornada por Colaborador" },
+      },
+      {
+        path: "minha-jornada",
+        name: "MinhaJornada",
+        component: JornadaGrid,
+        meta: { title: "Minha Jornada" },
       },
     ],
   },

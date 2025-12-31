@@ -8,7 +8,7 @@
         class="text-high-emphasis text-center font-weight-semibold me-1"
         style="font-size: 1rem;"
       >
-        © 2024 Desenvolvido por David Machado
+        © 2025 Desenvolvido por David Machado
       </span>
     </VCardText>
   </v-footer>

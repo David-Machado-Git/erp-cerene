@@ -17,7 +17,7 @@
     <v-card
       class="mx-auto pa-6"
       elevation="8"
-      max-width="448"
+      max-width="1200"
       rounded="lg"
       color=""
     >
@@ -25,9 +25,13 @@
         class="text-center pb-4 text-black" 
         style="opacity: .70; color: white;"
       >
-        CADASTRO CONTROLE PONTO
+        COLABORADOR CERENE
       </h3>
-      <v-text-field
+
+
+      <!-- INÍCIO VELHO AQUI -->
+
+      <!-- <v-text-field
         v-model="nome"
         density="compact"
         label="Digite seu nome"
@@ -143,7 +147,174 @@
         <template #label>
           <span>Digite sua senha <span style="color: red">*</span></span>
         </template>
-      </v-text-field>
+      </v-text-field> -->
+
+      <!-- FIM VELHO AQUI -->
+
+
+
+      <!-- INÍCIO NOVO AQUI -->
+
+
+      <VRow>
+        <VCol>
+          <h3 class="mb-2">
+            Cadastro de Usuário
+          </h3>
+          <p class="mb-6">
+            Preencha as informações abaixo
+          </p>
+
+          <!-- Primeira linha -->
+          <VRow>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VTextField
+                v-model="nome"
+                label="Digite seu nome"
+                prepend-inner-icon="mdi-account-outline"
+                prepend-inner-icon-color="primary"
+                density="comfortable"
+                variant="outlined"
+                required
+              />
+            </VCol>
+
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VTextField
+                v-model="cpf"
+                label="Digite seu CPF"
+                prepend-inner-icon="mdi-card-account-details-outline"
+                prepend-inner-icon-color="indigo"
+                density="comfortable"
+                variant="outlined"
+                maxlength="14"
+                required
+              />
+            </VCol>
+          </VRow>
+
+          <!-- Segunda linha -->
+          <VRow>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VTextField
+                v-model="nasc"
+                label="Data de Nascimento"
+                prepend-inner-icon="mdi-calendar"
+                prepend-inner-icon-color="deep-purple"
+                density="comfortable"
+                variant="outlined"
+                type="date"
+                required
+              />
+            </VCol>
+
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VTextField
+                v-model="cargo"
+                label="Digite seu cargo"
+                prepend-inner-icon="mdi-briefcase-outline"
+                prepend-inner-icon-color="teal"
+                density="comfortable"
+                variant="outlined"
+                required
+              />
+            </VCol>
+          </VRow>
+
+          <!-- Terceira linha -->
+          <VRow>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSelect
+                v-model="unidade"
+                :items="unidadesMap"
+                item-title="desc"
+                item-value="enum"
+                label="Unidade de Trabalho"
+                prepend-inner-icon="mdi-office-building"
+                prepend-inner-icon-color="orange"
+                density="comfortable"
+                variant="outlined"
+                required
+              />
+            </VCol>
+
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSelect
+                v-model="sexo"
+                :items="['Masculino', 'Feminino']"
+                label="Sexo"
+                prepend-inner-icon="mdi-gender-male-female"
+                prepend-inner-icon-color="pink"
+                density="comfortable"
+                variant="outlined"
+                required
+              />
+            </VCol>
+          </VRow>
+
+          <!-- Quarta linha -->
+          <VRow>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VTextField
+                v-model="email"
+                label="Digite seu e-mail"
+                prepend-inner-icon="mdi-email-outline"
+                prepend-inner-icon-color="cyan"
+                density="comfortable"
+                variant="outlined"
+                type="email"
+                required
+              />
+            </VCol>
+
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VTextField
+                v-model="password"
+                :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+                :type="visible ? 'text' : 'password'"
+                label="Digite sua senha"
+                prepend-inner-icon="mdi-lock-outline"
+                prepend-inner-icon-color="red"
+                density="comfortable"
+                variant="outlined"
+                required
+                @click:append-inner="visible = !visible"
+              />
+            </VCol>
+          </VRow>
+        </VCol>
+      </VRow>
+
+
+
+
+
+      
+      <!-- FIM NOVO AQUI -->
 
       <v-btn
         class="mb-3"
@@ -173,6 +344,25 @@ import cadastroService from "@/services/cadastroService";
 import { useToast } from "vue-toastification";
 // import maska from "maska";
 // import * as Maska from "maska";
+
+const value = ref({
+  cadastroFederalTipo: '',
+  cadastroFederal: '',
+  razaoSocial: '',
+  nomeFantasia: '',
+  isMatriz: false,
+  matriz: '',
+  fornecedorRegime: '',
+  naturezaJuridica: '',
+  inscricaoEstadual: '',
+  inscricaoMunicipal: '',
+  situacao: '',
+  dataSituacao: '',
+  criadoEm: '',
+  alteradoEm: ''
+})
+
+
 
 const toast = useToast();
 const router = useRouter();
@@ -332,4 +522,14 @@ textarea:-webkit-autofill:focus {
 .animate-slideDown {
   animation: slideDown 0.95s ease-out;
 }
+
+h3 {
+  font-weight: 600;
+  color: #3f51b5;
+}
+p {
+  color: #666;
+}
+
+
 </style>

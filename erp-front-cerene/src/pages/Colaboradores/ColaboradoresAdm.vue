@@ -18,19 +18,20 @@
           <v-icon left>
             mdi-plus-circle
           </v-icon>
-          CADASTRAR
+          INSERIR
         </v-btn>
       </v-col>
     </v-row>
 
     <v-dialog
       v-model="dialog"
-      max-width="600px"
+      max-width="1200px"
+      height="680px"
     >
       <v-card>
         <v-card-title
           class="d-flex align-center"
-          style="background-color: #1976D2; color: white;"
+          style="background-color: #528ad0; color: white;"
         >
           <v-icon
             left
@@ -45,133 +46,162 @@
           <v-card
             class="mx-auto pa-6"
             elevation="8"
-            max-width="448"
+            max-width="1200"
             rounded="lg"
             color=""
           >
-            <h2 
-              class="text-center pb-4 text-black" 
-              style="opacity: .70; color: white;"
-            >
-              {{ nome }}
-            </h2>
-            <v-text-field
-              v-model="nome"
-              density="compact"
-              label="Digite seu nome"
-              prepend-inner-icon="mdi-account-outline"
-              variant="outlined" 
-              type="text"
-              autocomplete="name"
-              required
-            >
-              <template #label>
-                <span>Digite seu nome <span style="color: red">*</span></span>
-              </template>
-            </v-text-field>
-    
-            <v-text-field
-              v-model="cpf"
-              density="compact"
-              label="Digite seu CPF"
-              prepend-inner-icon="mdi-card-account-details-outline"
-              variant="outlined"
-              type="text"
-              autocomplete="off"
-              maxlength="14"
-              required
-            >
-              <template #label>
-                <span>Digite seu CPF <span style="color: red">*</span></span>
-              </template>
-            </v-text-field>
+            <VRow>
+              <VCol>
+                <h3 class="mb-2">
+                  Cadastro de Usuário
+                </h3>
+                <p class="mb-6">
+                  Preencha as informações abaixo
+                </p>
 
-            <v-text-field
-              v-model="nasc"
-              density="compact"
-              label="Data de Nascimento"
-              prepend-inner-icon="mdi-calendar"
-              variant="outlined"
-              type="date"
-              autocomplete="bday"
-            >
-              <template #label>
-                <span>Data de Nascimento <span style="color: red">*</span></span>
-              </template>
-            </v-text-field>
+                <!-- Primeira linha -->
+                <VRow>
+                  <VCol
+                    cols="12"
+                    md="6"
+                  >
+                    <VTextField
+                      v-model="nome"
+                      label="Digite seu nome"
+                      prepend-inner-icon="mdi-account-outline"
+                      prepend-inner-icon-color="primary"
+                      density="comfortable"
+                      variant="outlined"
+                      required
+                    />
+                  </VCol>
 
-            <v-text-field
-              v-model="cargo"
-              density="compact"
-              label="Digite seu cargo"
-              prepend-inner-icon="mdi-briefcase-outline"
-              variant="outlined"
-              type="text"
-              autocomplete="organization-title"
-            >
-              <template #label>
-                <span>Digite seu cargo <span style="color: red">*</span></span>
-              </template>
-            </v-text-field>
+                  <VCol
+                    cols="12"
+                    md="6"
+                  >
+                    <VTextField
+                      v-model="cpf"
+                      label="Digite seu CPF"
+                      prepend-inner-icon="mdi-card-account-details-outline"
+                      prepend-inner-icon-color="indigo"
+                      density="comfortable"
+                      variant="outlined"
+                      maxlength="14"
+                      required
+                    />
+                  </VCol>
+                </VRow>
 
+                <!-- Segunda linha -->
+                <VRow>
+                  <VCol
+                    cols="12"
+                    md="6"
+                  >
+                    <VTextField
+                      v-model="nasc"
+                      label="Data de Nascimento"
+                      prepend-inner-icon="mdi-calendar"
+                      prepend-inner-icon-color="deep-purple"
+                      density="comfortable"
+                      variant="outlined"
+                      type="date"
+                      required
+                    />
+                  </VCol>
 
-            <v-select
-              v-model="unidade"
-              :items="unidadesMap"
-              item-title="desc"
-              item-value="enum"
-              density="compact"
-              label="Unidade de Trabalho"
-              prepend-inner-icon="mdi-office-building"
-              variant="outlined"
-              autocomplete="organization"
-            >
-              <template #label>
-                <span>Unidade de Trabalho <span style="color: red">*</span></span>
-              </template>
-            </v-select>
+                  <VCol
+                    cols="12"
+                    md="6"
+                  >
+                    <VTextField
+                      v-model="cargo"
+                      label="Digite seu cargo"
+                      prepend-inner-icon="mdi-briefcase-outline"
+                      prepend-inner-icon-color="teal"
+                      density="comfortable"
+                      variant="outlined"
+                      required
+                    />
+                  </VCol>
+                </VRow>
 
-            <v-select 
-              v-model="sexo" 
-              :items="['Masculino', 'Feminino']" 
-              label="Sexo" 
-              density="compact" 
-              variant="outlined" 
-              prepend-inner-icon="mdi-gender-male-female"
-            >
-              <template #label>
-                <span>Sexo <span style="color: red">*</span></span>
-              </template>
-            </v-select>
+                <!-- Terceira linha -->
+                <VRow>
+                  <VCol
+                    cols="12"
+                    md="6"
+                  >
+                    <VSelect
+                      v-model="unidade"
+                      :items="unidadesMap"
+                      item-title="desc"
+                      item-value="enum"
+                      label="Unidade de Trabalho"
+                      prepend-inner-icon="mdi-office-building"
+                      prepend-inner-icon-color="orange"
+                      density="comfortable"
+                      variant="outlined"
+                      required
+                    />
+                  </VCol>
 
-            <v-text-field
-              v-model="email"
-              density="compact"
-              label="Digite seu e-mail"
-              prepend-inner-icon="mdi-email-outline"
-              variant="outlined"
-              type="e-mail"
-              autocomplete="email"
-            >
-              <template #label>
-                <span>Digite seu e-mail <span style="color: red">*</span></span>
-              </template>
-            </v-text-field>
+                  <VCol
+                    cols="12"
+                    md="6"
+                  >
+                    <VSelect
+                      v-model="sexo"
+                      :items="['Masculino', 'Feminino']"
+                      label="Sexo"
+                      prepend-inner-icon="mdi-gender-male-female"
+                      prepend-inner-icon-color="pink"
+                      density="comfortable"
+                      variant="outlined"
+                      required
+                    />
+                  </VCol>
+                </VRow>
 
-            <v-text-field
-              v-model="password"
-              :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-              :type="visible ? 'text' : 'password'"
-              density="compact"
-              label="Digite sua senha"
-              prepend-inner-icon="mdi-lock-outline"
-              variant="outlined"
-              @click:append-inner="visible = !visible"
-            >
-              <template #label>
-                <span>Digite sua senha <span style="color: red">*</span></span>
-              </template>
-            </v-text-field>
+                <!-- Quarta linha -->
+                <VRow>
+                  <VCol
+                    cols="12"
+                    md="6"
+                  >
+                    <VTextField
+                      v-model="email"
+                      label="Digite seu e-mail"
+                      prepend-inner-icon="mdi-email-outline"
+                      prepend-inner-icon-color="cyan"
+                      density="comfortable"
+                      variant="outlined"
+                      type="email"
+                      required
+                    />
+                  </VCol>
+
+                  <VCol
+                    cols="12"
+                    md="6"
+                  >
+                    <VTextField
+                      v-model="password"
+                      :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+                      :type="visible ? 'text' : 'password'"
+                      label="Digite sua senha"
+                      prepend-inner-icon="mdi-lock-outline"
+                      prepend-inner-icon-color="red"
+                      density="comfortable"
+                      variant="outlined"
+                      required
+                      @click:append-inner="visible = !visible"
+                    />
+                  </VCol>
+                </VRow>
+              </VCol>
+            </VRow>
 
             <v-btn
               class="mb-3"
@@ -614,80 +644,80 @@ onMounted(async () => {
   // popularBaseDeTeste();
 });
 
-const popularBaseDeTeste = async () => {
-  const nomes = [
-    "Jean", "Fabio", "Armando", "Ana", "Beatriz", "Carlos", "Daniela", "Eduardo", "Fernanda", "Gustavo",
-    "Helena", "Igor", "Juliana", "Kleber", "Larissa", "Marcos", "Nathalia", "Otávio", "Patrícia", "Rafael",
-    "Sandra", "Thiago", "Ursula", "Vinícius", "Wesley", "Xuxa", "Yasmin", "Zeca", "Bruna", "Caio",
-    "Débora", "Eliane", "Felipe", "Gabriela", "Henrique", "Isabela", "João", "Karen", "Leonardo", "Marta",
-    "Nicole", "Orlando", "Paula", "Renato", "Sabrina", "Tadeu", "Valéria", "William", "Yuri", "Zuleica"
-  ];
+// const popularBaseDeTeste = async () => {
+//   const nomes = [
+//     "Jean", "Fabio", "Armando", "Ana", "Beatriz", "Carlos", "Daniela", "Eduardo", "Fernanda", "Gustavo",
+//     "Helena", "Igor", "Juliana", "Kleber", "Larissa", "Marcos", "Nathalia", "Otávio", "Patrícia", "Rafael",
+//     "Sandra", "Thiago", "Ursula", "Vinícius", "Wesley", "Xuxa", "Yasmin", "Zeca", "Bruna", "Caio",
+//     "Débora", "Eliane", "Felipe", "Gabriela", "Henrique", "Isabela", "João", "Karen", "Leonardo", "Marta",
+//     "Nicole", "Orlando", "Paula", "Renato", "Sabrina", "Tadeu", "Valéria", "William", "Yuri", "Zuleica"
+//   ];
 
-  const unidades = [
-    { desc: "Administração Central", enum: 1 },
-    { desc: "Cerene Blumenau", enum: 2 },
-    { desc: "Cerene Gaspar - NVR", enum: 3 },
-    { desc: "Cerene Joinville", enum: 4 },
-    { desc: "Cerene São Bento do Sul", enum: 5 },
-    { desc: "Cerene Lapa", enum: 6 },
-    { desc: "Cerene Ituporanga", enum: 7 },
-    { desc: "Cerene Palhoça", enum: 8 },
-  ];
+//   const unidades = [
+//     { desc: "Administração Central", enum: 1 },
+//     { desc: "Cerene Blumenau", enum: 2 },
+//     { desc: "Cerene Gaspar - NVR", enum: 3 },
+//     { desc: "Cerene Joinville", enum: 4 },
+//     { desc: "Cerene São Bento do Sul", enum: 5 },
+//     { desc: "Cerene Lapa", enum: 6 },
+//     { desc: "Cerene Ituporanga", enum: 7 },
+//     { desc: "Cerene Palhoça", enum: 8 },
+//   ];
 
-  const perfis = [
-    { desc: "Administrador", role: "ADMIN", enum: 1 },
-    { desc: "Gerente", role: "MANAGER", enum: 2 },
-    { desc: "Usuário", role: "USER", enum: 3 },
-  ];
+//   const perfis = [
+//     { desc: "Administrador", role: "ADMIN", enum: 1 },
+//     { desc: "Gerente", role: "MANAGER", enum: 2 },
+//     { desc: "Usuário", role: "USER", enum: 3 },
+//   ];
 
-  const gerarCpfFormatado = (i: number) => {
-    const base = String(100000000 + i).padStart(9, "0");
-    return `${base.slice(0, 3)}.${base.slice(3, 6)}.${base.slice(6, 9)}-${String(i).padStart(2, "0")}`;
-  };
+//   const gerarCpfFormatado = (i: number) => {
+//     const base = String(100000000 + i).padStart(9, "0");
+//     return `${base.slice(0, 3)}.${base.slice(3, 6)}.${base.slice(6, 9)}-${String(i).padStart(2, "0")}`;
+//   };
 
-  for (let i = 0; i < 50; i++) {
-    const nome = `${nomes[i % nomes.length]} ${nomes[(i + 1) % nomes.length]} ${nomes[(i + 2) % nomes.length]}`;
-    const email = `usuario${i + 1}@teste.com`;
-    const cpf = gerarCpfFormatado(i + 1);
-    const unidade = unidades[i % unidades.length];
-    const perfil = perfis[i % perfis.length];
-    const sexo = i % 2 === 0 ? "Masculino" : "Feminino";
+//   for (let i = 0; i < 50; i++) {
+//     const nome = `${nomes[i % nomes.length]} ${nomes[(i + 1) % nomes.length]} ${nomes[(i + 2) % nomes.length]}`;
+//     const email = `usuario${i + 1}@teste.com`;
+//     const cpf = gerarCpfFormatado(i + 1);
+//     const unidade = unidades[i % unidades.length];
+//     const perfil = perfis[i % perfis.length];
+//     const sexo = i % 2 === 0 ? "Masculino" : "Feminino";
 
-    const dadosCadastro = {
-      id: `fake-id-${i + 1}`,
-      nome,
-      cpf,
-      dataNascimento: `199${i % 10}-0${(i % 9) + 1}-15`,
-      cargo: perfil.desc,
-      email,
-      isActive: true,
-      role: perfil.role,
-      unidade: [
-        {
-          desc: unidade.desc,
-          enum: unidade.enum,
-        },
-      ],
-      sexo,
-      password: "Teste123",
-      usuario: [
-        {
-          login: email,
-          password: "Teste123",
-          role: perfil.role,
-          enum: perfil.enum,
-        },
-      ],
-    };
+//     const dadosCadastro = {
+//       id: `fake-id-${i + 1}`,
+//       nome,
+//       cpf,
+//       dataNascimento: `199${i % 10}-0${(i % 9) + 1}-15`,
+//       cargo: perfil.desc,
+//       email,
+//       isActive: true,
+//       role: perfil.role,
+//       unidade: [
+//         {
+//           desc: unidade.desc,
+//           enum: unidade.enum,
+//         },
+//       ],
+//       sexo,
+//       password: "Teste123",
+//       usuario: [
+//         {
+//           login: email,
+//           password: "Teste123",
+//           role: perfil.role,
+//           enum: perfil.enum,
+//         },
+//       ],
+//     };
 
-    try {
-      await cadastroService.registrarUsuario(dadosCadastro);
-      console.log(`✅ ${nome} cadastrado com sucesso!`);
-    } catch (error) {
-      console.error(`❌ Erro ao cadastrar ${nome}:`, error);
-    }
-  }
-};
+//     try {
+//       await cadastroService.registrarUsuario(dadosCadastro);
+//       console.log(`✅ ${nome} cadastrado com sucesso!`);
+//     } catch (error) {
+//       console.error(`❌ Erro ao cadastrar ${nome}:`, error);
+//     }
+//   }
+// };
 
 
 const handleDeletePerson = async (task) => {
@@ -737,7 +767,7 @@ const pagination = ref({
 
 <style lang="scss" scoped>
 .scrollable-content {
-  max-height: 400px;
+  max-height: 620px;
   overflow-y: auto;
 }
 

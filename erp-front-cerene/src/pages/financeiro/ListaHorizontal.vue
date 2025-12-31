@@ -1,5 +1,8 @@
 <template>
-  <VCard :title="titulo" class="h-100 mt-3">
+  <VCard
+    :title="titulo"
+    class="h-100 mt-3"
+  >
     <VCardText>
       <VRow>
         <VCol
@@ -9,13 +12,23 @@
           style="padding: 0.2em"
         >
           <div class="d-flex align-center gap-2">
-            <VAvatar :color="item.iconeCor" variant="tonal" size="32">
-              <VIcon :icon="'mdi-cash'" :color="item.iconeCor" />
+            <VAvatar
+              :color="item.iconCor"
+              variant="tonal"
+              size="32"
+            >
+              <VIcon
+                :icon="'mdi-cash'"
+                :color="item.iconCor"
+              />
             </VAvatar>
 
             <div class="d-flex flex-column">
               <span class="text-h7 font-weight-medium">{{ item.valor }}</span>
-              <span class="text-sm" style="font-size: 10.5px">
+              <span
+                class="text-sm"
+                style="font-size: 10.5px"
+              >
                 {{ item.descricao }}
               </span>
             </div>
@@ -28,13 +41,17 @@
 
 <script setup lang="ts">
 import { ItemDashBoard } from "./dashboardService";
+import { PropType } from 'vue'
+
 
 const props = defineProps({
   itens: {
-    type: Array<ItemDashBoard>,
+    type: Array as PropType<ItemDashBoard[]>,
+    default: () => [],
   },
   titulo: {
     type: String,
+    default: '',
   },
 });
 </script>

@@ -43,10 +43,12 @@ export default defineConfig({
     extensions: ['.js', '.json', '.jsx', '.mjs', '.ts', '.tsx', '.vue'],
   },
   server: {
-    port: 8060,
-    allowedHosts: [
-      'localhost',
-      '0b9aaa37b1ca.ngrok-free.app', // ✅ adicione o host do ngrok aqui
-    ],
+  watch: {
+    usePolling: true,
+    interval: 100, // checa mudanças a cada 100ms
   },
+  port: 8060,
+  allowedHosts: ['localhost'],
+}
+
 });
