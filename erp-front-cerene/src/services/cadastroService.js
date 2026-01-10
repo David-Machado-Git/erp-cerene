@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc, addDoc  } from "firebase/firestore";
 import { db } from "@/firebase/ConectDb";
 
 class CadastroService {
@@ -36,12 +36,34 @@ async registrarUsuario(dados) {
     };
     
     await setDoc(docRef, dadosTratados);
-
+    await this.sendBoasVindas(dadosTratados.email);
     return docRef.id;
   } catch (error) {
     console.error("Erro ao registrar usuário:", error);
     throw error;
   }
+}
+
+async sendBoasVindas(email) {
+  try {
+    await addDoc(collection(db, "mail"), {
+      to: email,
+      message: {
+        subject: "Bem-vindo ao Cerene!",
+        html: `
+          <h1>Bem-vindo ao Cerene!</h1>
+          <p>Estamos felizes em tê-lo conosco.</p>
+          <hr>
+          <p>Atenciosamente,<br>Cerene</p>
+          <img src="https://firebasestorage.googleapis.com/v0/b/cerene---controle-ponto.firebasestorage.app/o/assinatura_boas_vindas.png?alt=media&token=3321a5c0-09d7-45b9-aadf-28e50744f591" alt="Assinatura Cerene"/>
+        `
+      }
+    });
+    console.log("Documento criado na coleção 'mail' para envio de e-mail.");
+  } catch (error) {
+    console.error("Erro ao enviar e-mail:", error);
+  }
+
 }
 
 capitalizeFirst(str) {

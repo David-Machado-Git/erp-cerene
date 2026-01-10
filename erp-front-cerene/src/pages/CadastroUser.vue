@@ -345,22 +345,22 @@ import { useToast } from "vue-toastification";
 // import maska from "maska";
 // import * as Maska from "maska";
 
-const value = ref({
-  cadastroFederalTipo: '',
-  cadastroFederal: '',
-  razaoSocial: '',
-  nomeFantasia: '',
-  isMatriz: false,
-  matriz: '',
-  fornecedorRegime: '',
-  naturezaJuridica: '',
-  inscricaoEstadual: '',
-  inscricaoMunicipal: '',
-  situacao: '',
-  dataSituacao: '',
-  criadoEm: '',
-  alteradoEm: ''
-})
+// const value = ref({
+//   cadastroFederalTipo: '',
+//   cadastroFederal: '',
+//   razaoSocial: '',
+//   nomeFantasia: '',
+//   isMatriz: false,
+//   matriz: '',
+//   fornecedorRegime: '',
+//   naturezaJuridica: '',
+//   inscricaoEstadual: '',
+//   inscricaoMunicipal: '',
+//   situacao: '',
+//   dataSituacao: '',
+//   criadoEm: '',
+//   alteradoEm: ''
+// })
 
 
 

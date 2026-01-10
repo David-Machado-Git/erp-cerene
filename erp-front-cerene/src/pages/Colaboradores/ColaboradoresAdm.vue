@@ -27,6 +27,7 @@
       v-model="dialog"
       max-width="1200px"
       height="680px"
+      class="custom-dialog"
     >
       <v-card>
         <v-card-title
@@ -37,10 +38,12 @@
             left
             class="mr-2"
           >
-            mdi-plus-circle
+            mdi-account-box
           </v-icon>
-          Novo Colaborador
+          Cadastro
         </v-card-title>
+
+
 
         <v-card-text class="scrollable-content">
           <v-card
@@ -52,153 +55,582 @@
           >
             <VRow>
               <VCol>
+                <v-card
+                  class="pa-4 mb-6"
+                  elevation="6"
+                  rounded="xl"
+                  color="blue-grey-lighten-6"
+                >
+                  <v-row class="align-center">
+                    <!-- Foto redonda com borda + input de upload -->
+                    <v-col
+                      cols="12"
+                      md="2"
+                      class="d-flex flex-column align-center"
+                    >
+                      <v-avatar
+                        size="100"
+                        class="mb-2"
+                      >
+                        <v-img
+                          :src="urlPhoto || 'https://randomuser.me/api/portraits/men/75.jpg'"
+                          alt="Foto do colaborador"
+                          cover
+                        />
+                      </v-avatar>
+
+
+                      <!-- 🔹 Input de upload compacto -->
+                      <!-- Botão com ícone -->
+                      <v-btn
+                        icon
+                        size="32"
+                        color="primary"
+                        @click="triggerUpload"
+                      >
+                        <v-icon size="22">
+                          mdi-camera
+                        </v-icon>
+                      </v-btn>
+
+
+                      <v-file-input
+                        ref="uploadFoto"
+                        accept="image/*"
+                        style="display: none"
+                        @change="handlePhotoUpload"
+                      />
+
+
+                      <!-- Input invisível -->
+                      <v-file-input
+                        ref="uploadFoto"
+                        accept="image/*"
+                        style="display: none"
+                        @change="handlePhotoUpload"
+                      />
+
+                      <div
+                        v-if="isUploading"
+                        class="mt-2 d-flex align-center"
+                      >
+                        <v-progress-circular
+                          :value="progress"
+                          color="primary"
+                          size="24"
+                          width="3"
+                        />
+                        <span
+                          class="text-caption ml-2"
+                          style="animation: blink 1s infinite;"
+                        >
+                          Enviando imagem {{ progress }}%
+                        </span>
+                      </div>
+                    </v-col>
+
+                    <!-- Dados compactados -->
+                    <v-col
+                      cols="12"
+                      md="10"
+                    >
+                      <v-row>
+                        <v-col
+                          cols="12"
+                          md="4"
+                        >
+                          <div
+                            class="text-subtitle-1 font-weight-bold"
+                            style="color:#1976D2;"
+                          >
+                            {{ nome || "" }}
+                          </div>
+                          <div class="text-caption text-grey-darken-1">
+                            {{ cargo || "" }}
+                          </div>
+                        </v-col>
+
+                        <v-col
+                          cols="12"
+                          md="4"
+                        >
+                          <v-icon
+                            color="deep-purple"
+                            class="mr-1"
+                          >
+                            mdi-card-account-details-outline
+                          </v-icon>
+                          <span class="text-caption"><strong>CPF:</strong> {{ cpf || "" }}</span><br>
+                          <v-icon
+                            color="green"
+                            class="mr-1"
+                          >
+                            mdi-calendar
+                          </v-icon>
+                          <span class="text-caption"><strong>Nascimento:</strong> {{ nasc || "" }}</span>
+                        </v-col>
+
+                        <v-col
+                          cols="12"
+                          md="4"
+                        >
+                          <v-icon
+                            color="orange"
+                            class="mr-1"
+                          >
+                            mdi-briefcase-outline
+                          </v-icon>
+                          <span class="text-caption"><strong>Cargo:</strong> {{ cargo || "" }}</span><br>
+                          <v-icon
+                            color="indigo"
+                            class="mr-1"
+                          >
+                            mdi-office-building
+                          </v-icon>
+                          <span class="text-caption"><strong>Unidade:</strong> {{ unidade || "" }}</span>
+                        </v-col>
+                      </v-row>
+
+                      <v-row class="mt-2">
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
+                          <v-icon
+                            color="pink"
+                            class="mr-1"
+                          >
+                            mdi-gender-male-female
+                          </v-icon>
+                          <span class="text-caption"><strong>Sexo:</strong> {{ sexo || "" }}</span>
+                        </v-col>
+
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
+                          <v-icon
+                            color="red"
+                            class="mr-1"
+                          >
+                            mdi-email-outline
+                          </v-icon>
+                          <span
+                            class="text-caption cursor-pointer"
+                            style="text-decoration: underline; color: #1976D2;"
+                            @click="copiarEmail"
+                          >
+                            <strong>E-mail:</strong> {{ email || "" }}
+                          </span>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                </v-card>
+
+
+
+                <v-card
+                  class="pa-4 mb-6"
+                  elevation="2"
+                  rounded="lg"
+                  color="blue-grey-lighten-5"
+                >
+                  <v-card-title
+                    class="text-subtitle-1 font-weight-bold"
+                    style="color:#1976D2;"
+                  >
+                    <v-icon
+                      left
+                      class="mr-2"
+                      color="primary"
+                    >
+                      mdi-account-outline
+                    </v-icon>
+                    Dados Pessoais
+                  </v-card-title>
+
+                  <p class="mb-6">
+                    Formulário de Edição
+                  </p>
+
+                  <!-- Primeira linha -->
+                  <VRow>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="nome"
+                        label="Digite seu nome"
+                        prepend-inner-icon="mdi-account-outline"
+                        prepend-inner-icon-color="primary"
+                        density="comfortable"
+                        variant="outlined"
+                        required
+                      />
+                    </VCol>
+
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="cpf"
+                        label="Digite seu CPF"
+                        prepend-inner-icon="mdi-card-account-details-outline"
+                        prepend-inner-icon-color="indigo"
+                        density="comfortable"
+                        variant="outlined"
+                        maxlength="14"
+                        required
+                      />
+                    </VCol>
+                  </VRow>
+
+                  <!-- Segunda linha -->
+                  <VRow>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="nasc"
+                        label="Data de Nascimento"
+                        prepend-inner-icon="mdi-calendar"
+                        prepend-inner-icon-color="deep-purple"
+                        density="comfortable"
+                        variant="outlined"
+                        type="date"
+                        required
+                      />
+                    </VCol>
+
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="cargo"
+                        label="Digite seu cargo"
+                        prepend-inner-icon="mdi-briefcase-outline"
+                        prepend-inner-icon-color="teal"
+                        density="comfortable"
+                        variant="outlined"
+                        required
+                      />
+                    </VCol>
+                  </VRow>
+
+                  <!-- Terceira linha -->
+                  <VRow>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VSelect
+                        v-model="unidade"
+                        :items="unidadesMap"
+                        item-title="desc"
+                        item-value="enum"
+                        label="Unidade de Trabalho"
+                        prepend-inner-icon="mdi-office-building"
+                        prepend-inner-icon-color="orange"
+                        density="comfortable"
+                        variant="outlined"
+                        required
+                      />
+                    </VCol>
+
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VSelect
+                        v-model="sexo"
+                        :items="['Masculino', 'Feminino']"
+                        label="Sexo"
+                        prepend-inner-icon="mdi-gender-male-female"
+                        prepend-inner-icon-color="pink"
+                        density="comfortable"
+                        variant="outlined"
+                        required
+                      />
+                    </VCol>
+                  </VRow>
+
+                  <!-- Quarta linha -->
+                  <VRow>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="email"
+                        label="Digite seu e-mail"
+                        prepend-inner-icon="mdi-email-outline"
+                        prepend-inner-icon-color="cyan"
+                        density="comfortable"
+                        variant="outlined"
+                        type="email"
+                        required
+                      />
+                    </VCol>
+
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="password"
+                        :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+                        :type="visible ? 'text' : 'password'"
+                        label="Digite sua senha"
+                        prepend-inner-icon="mdi-lock-outline"
+                        prepend-inner-icon-color="red"
+                        density="comfortable"
+                        variant="outlined"
+                        required
+                        @click:append-inner="visible = !visible"
+                      />
+                    </VCol>
+                  </VRow>
+                </v-card>
+
+
+                
                 <h3 class="mb-2">
-                  Cadastro de Usuário
+                  Contas Bancárias
                 </h3>
                 <p class="mb-6">
-                  Preencha as informações abaixo
+                  Informe os dados bancários do colaborador
                 </p>
 
-                <!-- Primeira linha -->
-                <VRow>
-                  <VCol
-                    cols="12"
-                    md="6"
-                  >
-                    <VTextField
-                      v-model="nome"
-                      label="Digite seu nome"
-                      prepend-inner-icon="mdi-account-outline"
-                      prepend-inner-icon-color="primary"
-                      density="comfortable"
-                      variant="outlined"
-                      required
-                    />
-                  </VCol>
+                <VRow
+                  v-for="(conta, index) in contas"
+                  :key="index"
+                  class="mb-4"
+                >
+                  <v-col cols="12">
+                    <v-card
+                      class="pa-4"
+                      elevation="2"
+                      rounded="lg"
+                      color="blue-grey-lighten-5"
+                    >
+                      <v-card-title
+                        class="d-flex justify-space-between align-center text-subtitle-1 font-weight-bold"
+                        style="color:#546E7A;"
+                      >
+                        <div>
+                          <v-icon
+                            left
+                            class="mr-2"
+                            color="blue-grey-darken-1"
+                          >
+                            mdi-bank
+                          </v-icon>
+                          Banco {{ index + 1 }}
+                        </div>
 
-                  <VCol
-                    cols="12"
-                    md="6"
-                  >
-                    <VTextField
-                      v-model="cpf"
-                      label="Digite seu CPF"
-                      prepend-inner-icon="mdi-card-account-details-outline"
-                      prepend-inner-icon-color="indigo"
-                      density="comfortable"
-                      variant="outlined"
-                      maxlength="14"
-                      required
-                    />
-                  </VCol>
+                        <v-btn
+                          v-if="contas.length > 1"
+                          icon
+                          size="small"
+                          color="blue-grey-lighten-3"
+                          @click="removerConta(index)"
+                        >
+                          <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                      </v-card-title>
+
+
+                      <VRow>
+                        <VCol
+                          cols="12"
+                          md="6"
+                        >
+                          <VTextField
+                            v-model="conta.banco"
+                            label="Banco"
+                            prepend-inner-icon="mdi-bank"
+                            prepend-inner-icon-color="indigo"
+                            density="comfortable"
+                            variant="outlined"
+                            required
+                          />
+                        </VCol>
+
+                        <VCol
+                          cols="12"
+                          md="6"
+                        >
+                          <VTextField
+                            v-model="conta.agencia"
+                            label="Agência"
+                            prepend-inner-icon="mdi-office-building"
+                            prepend-inner-icon-color="orange"
+                            density="comfortable"
+                            variant="outlined"
+                            required
+                          />
+                        </VCol>
+
+                        <VCol
+                          cols="12"
+                          md="6"
+                        >
+                          <VTextField
+                            v-model="conta.conta"
+                            label="Número da Conta"
+                            prepend-inner-icon="mdi-card-account-details-outline"
+                            prepend-inner-icon-color="deep-purple"
+                            density="comfortable"
+                            variant="outlined"
+                            required
+                          />
+                        </VCol>
+
+                        <VCol
+                          cols="12"
+                          md="6"
+                        >
+                          <VSelect
+                            v-model="conta.tipo"
+                            :items="['Corrente', 'Poupança']"
+                            label="Tipo de Conta"
+                            prepend-inner-icon="mdi-cash-multiple"
+                            prepend-inner-icon-color="green"
+                            density="comfortable"
+                            variant="outlined"
+                            required
+                          />
+                        </VCol>
+                      </VRow>
+                    </v-card>
+                    <VRow>
+                      <VCol
+                        cols="12"
+                        class="d-flex justify-end"
+                      >
+                        <v-btn
+                          color="blue-grey-lighten-1"
+                          variant="tonal"
+                          @click="adicionarConta"
+                        >
+                          <v-icon
+                            left
+                            color="blue-grey-darken-1"
+                          >
+                            mdi-plus-circle
+                          </v-icon>
+                          ADD Conta
+                        </v-btn>
+                      </VCol>
+                    </VRow>
+                  </v-col>
                 </VRow>
 
-                <!-- Segunda linha -->
-                <VRow>
-                  <VCol
-                    cols="12"
-                    md="6"
-                  >
-                    <VTextField
-                      v-model="nasc"
-                      label="Data de Nascimento"
-                      prepend-inner-icon="mdi-calendar"
-                      prepend-inner-icon-color="deep-purple"
-                      density="comfortable"
-                      variant="outlined"
-                      type="date"
-                      required
-                    />
-                  </VCol>
+                <h3 class="mb-2">
+                  Pix
+                </h3>
+                <p class="mb-6">
+                  Informe os dados da chave Pix do colaborador
+                </p>
 
-                  <VCol
-                    cols="12"
-                    md="6"
-                  >
-                    <VTextField
-                      v-model="cargo"
-                      label="Digite seu cargo"
-                      prepend-inner-icon="mdi-briefcase-outline"
-                      prepend-inner-icon-color="teal"
-                      density="comfortable"
-                      variant="outlined"
-                      required
-                    />
-                  </VCol>
-                </VRow>
+                <VRow
+                  v-for="(pix, index) in pixContas"
+                  :key="index"
+                  class="mb-4"
+                >
+                  <v-col cols="12">
+                    <v-card
+                      class="pa-4"
+                      elevation="2"
+                      rounded="lg"
+                      color="blue-grey-lighten-5"
+                    >
+                      <v-card-title
+                        class="d-flex justify-space-between align-center text-subtitle-1 font-weight-bold"
+                        style="color:#546E7A;"
+                      >
+                        <div>
+                          <v-icon
+                            left
+                            class="mr-2"
+                            color="blue-grey-darken-1"
+                          >
+                            mdi-key
+                          </v-icon>
+                          Chave Pix {{ index + 1 }}
+                        </div>
 
-                <!-- Terceira linha -->
-                <VRow>
-                  <VCol
-                    cols="12"
-                    md="6"
-                  >
-                    <VSelect
-                      v-model="unidade"
-                      :items="unidadesMap"
-                      item-title="desc"
-                      item-value="enum"
-                      label="Unidade de Trabalho"
-                      prepend-inner-icon="mdi-office-building"
-                      prepend-inner-icon-color="orange"
-                      density="comfortable"
-                      variant="outlined"
-                      required
-                    />
-                  </VCol>
+                        <v-btn
+                          v-if="pixContas.length > 1"
+                          icon
+                          size="small"
+                          color="blue-grey-lighten-3"
+                          @click="removerPix(index)"
+                        >
+                          <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                      </v-card-title>
 
-                  <VCol
-                    cols="12"
-                    md="6"
-                  >
-                    <VSelect
-                      v-model="sexo"
-                      :items="['Masculino', 'Feminino']"
-                      label="Sexo"
-                      prepend-inner-icon="mdi-gender-male-female"
-                      prepend-inner-icon-color="pink"
-                      density="comfortable"
-                      variant="outlined"
-                      required
-                    />
-                  </VCol>
-                </VRow>
+                      <VRow>
+                        <VCol
+                          cols="12"
+                          md="6"
+                        >
+                          <VSelect
+                            v-model="pix.tipoChave"
+                            :items="['CPF', 'CNPJ', 'E-mail', 'Telefone', 'Chave Aleatória']"
+                            label="Tipo da Chave"
+                            prepend-inner-icon="mdi-key-outline"
+                            prepend-inner-icon-color="indigo"
+                            density="comfortable"
+                            variant="outlined"
+                            required
+                          />
+                        </VCol>
 
-                <!-- Quarta linha -->
-                <VRow>
-                  <VCol
-                    cols="12"
-                    md="6"
-                  >
-                    <VTextField
-                      v-model="email"
-                      label="Digite seu e-mail"
-                      prepend-inner-icon="mdi-email-outline"
-                      prepend-inner-icon-color="cyan"
-                      density="comfortable"
-                      variant="outlined"
-                      type="email"
-                      required
-                    />
-                  </VCol>
+                        <VCol
+                          cols="12"
+                          md="6"
+                        >
+                          <VTextField
+                            v-model="pix.chave"
+                            label="Valor da Chave Pix"
+                            prepend-inner-icon="mdi-form-textbox"
+                            prepend-inner-icon-color="deep-purple"
+                            density="comfortable"
+                            variant="outlined"
+                            required
+                          />
+                        </VCol>
+                      </VRow>
+                    </v-card>
 
-                  <VCol
-                    cols="12"
-                    md="6"
-                  >
-                    <VTextField
-                      v-model="password"
-                      :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-                      :type="visible ? 'text' : 'password'"
-                      label="Digite sua senha"
-                      prepend-inner-icon="mdi-lock-outline"
-                      prepend-inner-icon-color="red"
-                      density="comfortable"
-                      variant="outlined"
-                      required
-                      @click:append-inner="visible = !visible"
-                    />
-                  </VCol>
+                    <VRow>
+                      <VCol
+                        cols="12"
+                        class="d-flex justify-end"
+                      >
+                        <v-btn
+                          color="blue-grey-lighten-1"
+                          variant="tonal"
+                          @click="adicionarPix"
+                        >
+                          <v-icon
+                            left
+                            color="blue-grey-darken-1"
+                          >
+                            mdi-plus-circle
+                          </v-icon>
+                          ADD Chave Pix
+                        </v-btn>
+                      </VCol>
+                    </VRow>
+                  </v-col>
                 </VRow>
               </VCol>
             </VRow>
@@ -355,9 +787,23 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch, computed } from "vue";
 import colaboradorService from "@/services/colaboradorService";
-import { useToast } from "vue-toastification";
+import UploadStorageService from "@/services/UploadStorageService";
 import cadastroService from "@/services/cadastroService";
+import { useToast } from "vue-toastification";
+import { VFileInput } from 'vuetify/components';
 import Swal from "sweetalert2";
+
+// interface ContaBancaria {
+//   banco: string;
+//   agencia: string;
+//   conta: string;
+//   tipo: string;
+// }
+
+// interface ContaPix {
+//   tipoChave: string;
+//   chave: string;
+// }
 
 
 interface Task {
@@ -396,7 +842,14 @@ const usuariosMap = [
 
 const email = ref("");
 const password = ref("");
-
+const contas = ref([{ banco: "", agencia: "", conta: "", tipo: "" }]);
+const pixContas = ref([{ tipoChave: "", chave: "" }]);
+const idUser = ref("");
+// já tem outros refs como nome, cpf, etc...
+const urlPhoto = ref<any>(null);
+const uploadFoto = ref<InstanceType<typeof VFileInput> | null>(null);
+const progress = ref<number>(0);
+const isUploading = ref(false);
 const headers = ref([
   { title: "Cód", sortable: true, value: "cod" },
   { title: "Nome", sortable: true, value: "nome" },
@@ -423,19 +876,42 @@ const openModal = (typeOfAction: string, data: any | null) => {
     recuverData.value = data;
     typeAction.value = "EDIT";
     const infoData: any = recuverData.value;
+
+    // 🔹 Garantir que urlPhoto sempre receba algo
+    urlPhoto.value = infoData.urlPhoto ?? null;
+    idUser.value = infoData.id;
     nome.value = infoData.nome;
     cpf.value = infoData.cpf;
-    nasc.value = data.nasc;
+    nasc.value = infoData.nasc;
     cargo.value = infoData.cargo;
     unidade.value = infoData.unidade?.[0]?.desc;
     sexo.value = infoData.sexo;
     email.value = infoData.email;
     password.value = infoData.password;
-    
+
+    // 🔹 Carregar contas bancárias
+    contas.value = infoData.contasBancarias?.length
+      ? infoData.contasBancarias.map((c: any) => ({
+          banco: c.banco ?? "",
+          agencia: c.agencia ?? "",
+          conta: c.conta ?? "",
+          tipo: c.tipo ?? ""
+        }))
+      : [{ banco: "", agencia: "", conta: "", tipo: "" }];
+
+    // 🔹 Carregar chaves Pix
+    pixContas.value = infoData.pixContas?.length
+      ? infoData.pixContas.map((p: any) => ({
+          tipoChave: p.tipoChave ?? "",
+          chave: p.chave ?? ""
+        }))
+      : [{ tipoChave: "", chave: "" }];
   } else {
     recuverData.value = null;
     typeAction.value = "CREATE";
 
+    // 🔹 Resetar valores
+    urlPhoto.value = null;
     nome.value = "";
     cpf.value = "";
     nasc.value = "";
@@ -444,9 +920,99 @@ const openModal = (typeOfAction: string, data: any | null) => {
     sexo.value = "";
     email.value = "";
     password.value = "";
+
+    // 🔹 Resetar arrays
+    contas.value = [{ banco: "", agencia: "", conta: "", tipo: "" }];
+    pixContas.value = [{ tipoChave: "", chave: "" }];
   }
 
   dialog.value = true;
+};
+
+
+// const handlePhotoUpload = (event: Event) => {
+//   const target = event.target as HTMLInputElement;
+//   const file = target.files?.[0] || null;
+
+//   if (file) {
+//     console.log("📂 Arquivo selecionado:", file);
+//     console.log("📂 Nome:", file.name);
+//     console.log("📂 Tipo:", file.type);
+//     console.log("📂 Tamanho:", file.size, "bytes");
+
+//     // se quiser já gerar preview:
+//     urlPhoto.value = URL.createObjectURL(file);
+//   } else {
+//     console.log("⚠️ Nenhum arquivo selecionado");
+//   }
+// };
+
+// handler de upload
+const handlePhotoUpload = async (event: Event) => {  
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
+  if (!file) return;
+
+  isUploading.value = true;
+  progress.value = 0;
+
+  try {
+    const downloadURL = await UploadStorageService.uploadPhoto(idUser.value, file, (p) => {
+      progress.value = p;
+    });
+    urlPhoto.value = downloadURL;
+  } catch (err) {
+    console.error("Erro no upload:", err);
+  } finally {
+    isUploading.value = false;
+  }
+};
+
+
+
+const triggerUpload = () => {
+  const inputEl = uploadFoto.value?.$el?.querySelector('input[type="file"]');
+  inputEl?.click();
+};
+
+
+
+
+
+// const contas = ref<ContaBancaria[]>([
+//   { banco: "", agencia: "", conta: "", tipo: "" }
+// ]);
+
+const adicionarConta = () => {
+  contas.value.push({ banco: "", agencia: "", conta: "", tipo: "" });
+};
+
+const removerConta = (index: number) => {
+  contas.value.splice(index, 1);
+};
+
+// const pixContas = ref<ContaPix[]>([
+//   { tipoChave: "", chave: "" }
+// ]);
+
+const adicionarPix = () => {
+  pixContas.value.push({ tipoChave: "", chave: "" });
+};
+
+const removerPix = (index: number) => {
+  pixContas.value.splice(index, 1);
+};
+
+
+const copiarEmail = () => {
+  const email = "tel.machado@cerene.org.br";
+  navigator.clipboard.writeText(email)
+    .then(() => {
+      toast.success("E-mail copiado para a área de transferência!");
+    })
+    .catch(() => {
+      toast.error("Não foi possível copiar o e-mail.");
+    });
 };
 
 const handleSavePerson = async () => {
@@ -475,7 +1041,21 @@ const handleSavePerson = async () => {
           enum: usuarioSelecionado?.enum ?? null,
         },
       ],
+      contasBancarias: contas.value.map((c) => ({
+        banco: c.banco ?? null,
+        agencia: c.agencia ?? null,
+        conta: c.conta ?? null,
+        tipo: c.tipo ?? null,
+      })),
+
+      // 🔹 incluir Pix
+      pixContas: pixContas.value.map((p) => ({
+        tipoChave: p.tipoChave ?? null,
+        chave: p.chave ?? null,
+      })),
     };
+
+
 
     if (typeAction.value === "CREATE") {
       await cadastroService.registrarUsuario(dadosCadastro);
@@ -598,9 +1178,9 @@ const atualizarGrid = async () => {
   const colaboradores = await colaboradorService.findColaboradores();
   colaboradores.sort((a: any, b: any) => a.nome.localeCompare(b.nome));
   completeData.value = colaboradores;
-
   items.value = colaboradores.map((colab: any, index: number) => ({
     cod: index + 1,
+    urlPhoto: colab.urlPhoto,
     id: colab.id,
     nome: colab.nome,
     cpf: colab.cpf,
@@ -611,9 +1191,15 @@ const atualizarGrid = async () => {
     email: colab.email,
     isActive: colab.isActive,
     password: colab.password,
-    actions: "...",
+
+    // 🔹 novos campos
+    contasBancarias: colab.contasBancarias ?? [],
+    pixContas: colab.pixContas ?? [],
+
+    actions: "..."
   }));
 };
+
 
 const toggleActiveStatus = async (item: any) => {
   try {
@@ -805,6 +1391,21 @@ const pagination = ref({
   flex-direction: row; /* padrão: lado a lado */
   align-items: center;
 }
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+
+@media (max-width: 400px) {
+  .custom-dialog {
+    width: 102% !important;
+    max-width: 102% !important;
+  }
+}
+
 
 @media (max-width: 980px) {
   .icon-container {

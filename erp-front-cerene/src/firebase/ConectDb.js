@@ -22,6 +22,7 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getDatabase } from "firebase/database";
 
 // import { createUserWithEmailAndPassword } from "firebase/auth";
 
@@ -41,6 +42,7 @@ const firebaseConfig = {
 // Inicializa Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const dbrt = getDatabase(app); // ✅ precisa ser getDatabase
 const storage = getStorage(app);
 
 // Inicializa Analytics (opcional, só funciona em navegador)
@@ -59,7 +61,7 @@ const auth = getAuth(app);
 // });
 
 
-export { app, auth, db, storage };
+export { app, auth, db, storage, dbrt };
 
 
 // createUserWithEmailAndPassword(auth, "teste@teste.com", "123456")

@@ -40,7 +40,7 @@
             <v-list-item
               class="custum-drop-dal"
               v-bind="props"
-              prepend-icon="mdi-account-circle"
+              prepend-icon="mdi-file-chart"
               title="Relatórios"
             />
           </template>
@@ -57,6 +57,12 @@
             @click="() => handleClick('Inativos')"
           />
         </v-list-group>
+        <v-list-item
+          class="custum-drop-dal"
+          prepend-icon="mdi-cog-outline"
+          title="Configurações"
+          @click="abrirConfiguracoes"
+        />
         <v-list-item
           class="custum-drop-dal"
           prepend-icon="mdi-logout"
@@ -122,11 +128,11 @@
         v-model="menuVisible"
         :close-on-content-click="false"
       >
-        <template #activator="{ tsone }">
+        <template #activator="{ props }">
           <v-btn
             icon
             class="mr-3"
-            v-bind="tsone"
+            v-bind="props"
           >
             <v-badge
               content="3"
@@ -185,9 +191,9 @@
       </v-avatar>
 
       <v-menu>
-        <template #activator="{ tstwo }">
+        <template #activator="{ props }">
           <v-avatar
-            v-bind="tstwo"
+            v-bind="props"
             class="cursor mr-5"
           >
             <v-icon>mdi-dots-vertical</v-icon>
@@ -232,7 +238,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, watch } from "vue";
+import { ref, defineProps, watch, onMounted } from "vue";
 import { computed } from "vue";
 // import StatisticsDash from "./financeiro/StatisticsDash.vue";
 import AppFooter from "@/painel/painel-components/AppFooter.vue";
@@ -250,7 +256,8 @@ const props = defineProps({
   }
 });
 
-
+const ip = ref("");
+const locationData = ref(null);
 const toast = useToast();
 const isDrawerOpen = ref(false);
 const usersGroupOpen = ref(false);
@@ -320,9 +327,39 @@ const handleClick = (event) => {
   }
 };
 
-// onMounted(() => {
-//   validateToken();
-// });
+onMounted(() => {
+  fetchUserIpAndLocation();
+  // validateToken();
+});
+
+// COMO OBTER INFORMAÇÕES DE GEOLOCALIZAÇÃO ABAIXO:
+const fetchUserIpAndLocation = async () => {
+  try {
+    // 1. Obter IP público
+    const res = await fetch("https://api.ipify.org?format=json")
+    const data = await res.json()
+    ip.value = data.ip
+
+    // 2. Obter localização via ipwho.is
+    const locRes = await fetch(`https://ipwho.is/${ip.value}`)
+    const locData = await locRes.json()
+    locationData.value = locData
+
+    // 3. Imprimir no console
+    console.log("IP do usuário:", ip.value)
+    console.log("Localização aproximada:", {
+      cidade: locData.city ?? "N/D",
+      estado: locData.region ?? "N/D",
+      país: locData.country ?? "N/D",
+      latitude: locData.latitude ?? "N/D",
+      longitude: locData.longitude ?? "N/D",
+      provedor: locData.connection?.isp ?? "N/D"
+    })
+  } catch (err) {
+    console.error("Erro ao obter IP/localização:", err)
+  }
+}
+
 
 const logout = async () => {
   const token = localStorage.getItem("token");
@@ -340,6 +377,10 @@ const logout = async () => {
   } catch (error) {
     console.error("Erro ao realizar logout:", error);
   }
+};
+
+const abrirConfiguracoes = () => {
+  console.log("Caiu em meu Perfil");
 };
 
 const myProfile = () => {

@@ -285,7 +285,7 @@
               <div class="icon-container">
                 <button
                   class="text-green-500"
-                  @click="goToCalendar"
+                  @click="goToCalendar(props.item)"
                 >
                   <v-icon color="green">
                     mdi-calendar
@@ -310,8 +310,9 @@ import { ref, onMounted, watch, computed } from "vue";
 import JornadaColabAdmService from "@/services/JornadaColabAdmService";
 import { useToast } from "vue-toastification";
 import cadastroService from "@/services/cadastroService";
-// import Swal from "sweetalert2";
 import { useRouter } from "vue-router";
+import { eventBus } from "@/eventBus";
+// import Swal from "sweetalert2";
 
 interface Task {
   id: string;
@@ -320,6 +321,30 @@ interface Task {
   priority: string;
   dueDate: string;
   category: { id: number; title: string };
+}
+
+
+interface Unidade {
+  desc?: string;   // opcional, pois você usou "?."
+  enum?: string;   // opcional também
+}
+
+interface Usuario {
+  login: string;
+  password: string;
+  role?: string;   // opcional, pois você usou "?."
+  enum?: string;   // opcional também
+}
+
+interface Colab {
+  nome: string;
+  cpf: string;
+  dataNascimento: string; // pode ser Date se você quiser tipar melhor
+  cargo: string;
+  email: string;
+  unidade: Unidade[];
+  sexo: string;
+  usuario: Usuario[];
 }
 
 const router = useRouter();
@@ -370,37 +395,38 @@ const filters = ref({
 const dialog = ref(false);
 const visible = ref(false);
 const items = ref<any[]>([]);
+// const ip = ref<string>("");
 
-const openModal = (typeOfAction: string, data: any | null) => {
-  if (typeOfAction === "EDIT") {
-    recuverData.value = data;
-    typeAction.value = "EDIT";
-    const infoData: any = recuverData.value;
-    nome.value = infoData.nome;
-    cpf.value = infoData.cpf;
-    nasc.value = data.nasc;
-    cargo.value = infoData.cargo;
-    unidade.value = infoData.unidade?.[0]?.desc;
-    sexo.value = infoData.sexo;
-    email.value = infoData.email;
-    password.value = infoData.password;
+// const openModal = (typeOfAction: string, data: any | null) => {
+//   if (typeOfAction === "EDIT") {
+//     recuverData.value = data;
+//     typeAction.value = "EDIT";
+//     const infoData: any = recuverData.value;
+//     nome.value = infoData.nome;
+//     cpf.value = infoData.cpf;
+//     nasc.value = data.nasc;
+//     cargo.value = infoData.cargo;
+//     unidade.value = infoData.unidade?.[0]?.desc;
+//     sexo.value = infoData.sexo;
+//     email.value = infoData.email;
+//     password.value = infoData.password;
     
-  } else {
-    recuverData.value = null;
-    typeAction.value = "CREATE";
+//   } else {
+//     recuverData.value = null;
+//     typeAction.value = "CREATE";
 
-    nome.value = "";
-    cpf.value = "";
-    nasc.value = "";
-    cargo.value = "";
-    unidade.value = "";
-    sexo.value = "";
-    email.value = "";
-    password.value = "";
-  }
+//     nome.value = "";
+//     cpf.value = "";
+//     nasc.value = "";
+//     cargo.value = "";
+//     unidade.value = "";
+//     sexo.value = "";
+//     email.value = "";
+//     password.value = "";
+//   }
 
-  dialog.value = true;
-};
+//   dialog.value = true;
+// };
 
 const handleSavePerson = async () => {
   try {
@@ -467,11 +493,12 @@ const filteredItems = computed(() => {
   });
 });
 
-const goToCalendar = () => {
-  // aqui você define a rota desejada
-  console.log('CAIU NO GO TO CALENDAR');
-  router.push("/dashboard/minha-jornada"); 
+const goToCalendar = (colab: Colab) => {
+  console.log("CAIU NO GO TO CALENDAR COM OS DADOS =>", colab);
+  eventBus.colab = colab; // agora funciona
+  router.push("/dashboard/minha-jornada");
 };
+
 
 const validateForm = () => {
   const rawCpf = cpf.value;
@@ -518,6 +545,7 @@ const atualizarGrid = async () => {
 
   items.value = colaboradores.map((colab: any, index: number) => ({
     cod: index + 1,
+    urlPhoto: colab.urlPhoto,
     id: colab.id,
     nome: colab.nome,
     cpf: colab.cpf,
@@ -553,6 +581,7 @@ const pagination = ref({
   page: 1,
   rowsPerPage: 15,
 });
+
 </script>
 
 <style lang="scss" scoped>

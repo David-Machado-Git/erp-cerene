@@ -1,9 +1,23 @@
 import { collection, query, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
-import { db } from "@/firebase/ConectDb";
+import { ref, set, get } from "firebase/database";
+import { db, dbrt } from "@/firebase/ConectDb";
 import { useToast } from "vue-toastification";
 
 
 const toast = useToast();
+
+export interface RegistroPonto {
+  id?: string;
+  date: string;
+  workSchedule: string;
+  checkIn: string;
+  breakStart: string;
+  breakEnd: string;
+  checkOut: string;
+  totalWorked: string;
+  timeBank: string;
+}
+
 
 class JornadaColabAdmService {
     async findColaboradores() {
@@ -50,6 +64,35 @@ class JornadaColabAdmService {
         throw error;
       }
     };
+
+    salvarRegistro = async (idUser: string, registro: RegistroPonto) => {
+      // console.log("Chegou aqui no service com os dados +>+> ", idUser, registro);
+
+      // usa o id do registro como chave
+      const registroRef = ref(dbrt, `controlePonto/${idUser}/registros/${registro.id}`);
+      await set(registroRef, registro);
+
+    };
+
+    buscarRegistros = async (idUser: string): Promise<RegistroPonto[]> => {
+      const registrosRef = ref(dbrt, `controlePonto/${idUser}/registros`);
+      const snapshot = await get(registrosRef);
+      console.log('Buscando registro com o IDUSER => ', idUser);
+      
+      if (!snapshot.exists()) return [];
+
+      const data = snapshot.val();
+
+      // transforma objeto em array
+      return Object.entries(data).map(([id, registro]: any) => ({
+        ...registro,
+        id // garante que o id esteja presente
+      }));
+    };
+
+
+
+
 
 
 

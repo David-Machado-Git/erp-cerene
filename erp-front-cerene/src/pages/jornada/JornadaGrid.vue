@@ -23,282 +23,412 @@
       </v-col>
     </v-row>
 
-    <v-dialog
-      v-model="dialog"
-      max-width="600px"
+    <v-card
+      class="pa-4 mb-6"
+      elevation="6"
+      rounded="xl"
+      color="blue-grey-lighten-6"
     >
-      <v-card>
-        <v-card-title
-          class="d-flex align-center"
-          style="background-color: #1976D2; color: white;"
+      <v-row class="align-center">
+        <!-- Foto redonda com borda -->
+        <v-col
+          cols="12"
+          md="2"
+          class="d-flex justify-center"
         >
-          <v-icon
-            left
-            class="mr-2"
+          <v-avatar
+            size="120"
+            class="elevation-3 mb-2"
+            color="primary"
           >
-            mdi-plus-circle
-          </v-icon>
-          Novo Colaborador
-        </v-card-title>
+            <v-img
+              :src="colab?.urlPhoto || 'https://randomuser.me/api/portraits/men/75.jpg'"
+              alt="Foto do colaborador"
+              class="rounded-circle"
+            />
+          </v-avatar>
+        </v-col>
 
-        <v-card-text class="scrollable-content">
-          <v-card
-            class="mx-auto pa-6"
-            elevation="8"
-            max-width="448"
-            rounded="lg"
-            color=""
-          >
-            <h2 
-              class="text-center pb-4 text-black" 
-              style="opacity: .70; color: white;"
+        <!-- Dados compactados -->
+        <v-col
+          cols="12"
+          md="10"
+        >
+          <v-row>
+            <v-col
+              cols="12"
+              md="4"
             >
-              {{ nome }}
-            </h2>
-            <v-text-field
-              v-model="nome"
-              density="compact"
-              label="Digite seu nome"
-              prepend-inner-icon="mdi-account-outline"
-              variant="outlined" 
-              type="text"
-              autocomplete="name"
-              required
-            >
-              <template #label>
-                <span>Digite seu nome <span style="color: red">*</span></span>
-              </template>
-            </v-text-field>
-    
-            <v-text-field
-              v-model="cpf"
-              density="compact"
-              label="Digite seu CPF"
-              prepend-inner-icon="mdi-card-account-details-outline"
-              variant="outlined"
-              type="text"
-              autocomplete="off"
-              maxlength="14"
-              required
-            >
-              <template #label>
-                <span>Digite seu CPF <span style="color: red">*</span></span>
-              </template>
-            </v-text-field>
+              <div
+                class="text-subtitle-1 font-weight-bold"
+                style="color:#1976D2;"
+              >
+                {{ colab?.nome || "" }}
+              </div>
+              <div class="text-caption text-grey-darken-1">
+                {{ colab?.cargo || "" }}
+              </div>
+            </v-col>
 
-            <v-text-field
-              v-model="nasc"
-              density="compact"
-              label="Data de Nascimento"
-              prepend-inner-icon="mdi-calendar"
-              variant="outlined"
-              type="date"
-              autocomplete="bday"
+            <v-col
+              cols="12"
+              md="4"
             >
-              <template #label>
-                <span>Data de Nascimento <span style="color: red">*</span></span>
-              </template>
-            </v-text-field>
+              <v-icon
+                color="deep-purple"
+                class="mr-1"
+              >
+                mdi-card-account-details-outline
+              </v-icon>
+              <span class="text-caption"><strong>CPF:</strong> {{ colab?.cpf || "" }}</span><br>
+              <v-icon
+                color="green"
+                class="mr-1"
+              >
+                mdi-calendar
+              </v-icon>
+              <span class="text-caption"><strong>Nascimento:</strong> {{ colab?.nasc || "" }}</span>
+            </v-col>
 
-            <v-text-field
-              v-model="cargo"
-              density="compact"
-              label="Digite seu cargo"
-              prepend-inner-icon="mdi-briefcase-outline"
-              variant="outlined"
-              type="text"
-              autocomplete="organization-title"
+            <v-col
+              cols="12"
+              md="4"
             >
-              <template #label>
-                <span>Digite seu cargo <span style="color: red">*</span></span>
-              </template>
-            </v-text-field>
+              <v-icon
+                color="orange"
+                class="mr-1"
+              >
+                mdi-briefcase-outline
+              </v-icon>
+              <span class="text-caption"><strong>Cargo:</strong> {{ colab?.cargo || "" }}</span><br>
+              <v-icon
+                color="indigo"
+                class="mr-1"
+              >
+                mdi-office-building
+              </v-icon>
+              <span class="text-caption"><strong>Unidade:</strong> {{ colab?.unidade?.[0]?.desc || "" }}</span>
+            </v-col>
+          </v-row>
 
-
-            <v-select
-              v-model="unidade"
-              :items="unidadesMap"
-              item-title="desc"
-              item-value="enum"
-              density="compact"
-              label="Unidade de Trabalho"
-              prepend-inner-icon="mdi-office-building"
-              variant="outlined"
-              autocomplete="organization"
+          <v-row class="mt-2">
+            <v-col
+              cols="12"
+              md="6"
             >
-              <template #label>
-                <span>Unidade de Trabalho <span style="color: red">*</span></span>
-              </template>
-            </v-select>
+              <v-icon
+                color="pink"
+                class="mr-1"
+              >
+                mdi-gender-male-female
+              </v-icon>
+              <span class="text-caption"><strong>Sexo:</strong> {{ colab?.sexo || "" }}</span>
+            </v-col>
 
-            <v-select 
-              v-model="sexo" 
-              :items="['Masculino', 'Feminino']" 
-              label="Sexo" 
-              density="compact" 
-              variant="outlined" 
-              prepend-inner-icon="mdi-gender-male-female"
+            <v-col
+              cols="12"
+              md="6"
             >
-              <template #label>
-                <span>Sexo <span style="color: red">*</span></span>
-              </template>
-            </v-select>
+              <v-icon
+                color="red"
+                class="mr-1"
+              >
+                mdi-email-outline
+              </v-icon>
+              <span
+                class="text-caption cursor-pointer"
+                style="text-decoration: underline; color: #1976D2;"
+                @click="copiarEmail"
+              >
+                <strong>E-mail:</strong> {{ colab?.email || "" }}
+              </span>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-card>
 
-            <v-text-field
-              v-model="email"
-              density="compact"
-              label="Digite seu e-mail"
-              prepend-inner-icon="mdi-email-outline"
-              variant="outlined"
-              type="e-mail"
-              autocomplete="email"
-            >
-              <template #label>
-                <span>Digite seu e-mail <span style="color: red">*</span></span>
-              </template>
-            </v-text-field>
-
-            <v-text-field
-              v-model="password"
-              :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-              :type="visible ? 'text' : 'password'"
-              density="compact"
-              label="Digite sua senha"
-              prepend-inner-icon="mdi-lock-outline"
-              variant="outlined"
-              @click:append-inner="visible = !visible"
-            >
-              <template #label>
-                <span>Digite sua senha <span style="color: red">*</span></span>
-              </template>
-            </v-text-field>
-
-            <v-btn
-              class="mb-3"
-              size="large"
-              variant="tonal"
-              block
-              @click="validateForm"
-            >
-              SALVAR
-            </v-btn>
-          </v-card>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn
-            color="blue"
-            @click="dialog = false"
-          >
-            Fechar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
 
     <v-row
       class="align-center justify-center"
       no-gutters
     >
+      <!-- De -->
       <v-col
         cols="12"
-        md="4"
-        no-gutters
-        class="d-flex justify-center mb-4 mb-md-0"
+        md="3"
+        class="d-flex justify-center mb-4 mb-md-0 mr-7"
       >
-        <v-select
-          v-model="filters.unidade"
-          label="Filtrar por unidade"
-          :items="['Administração Central', 'Cerene de Blumenau', 'Cerene Gaspar - NVR', 'Cerene Joinville', 'Cerene São Bento do Sul', 'Cerene Lapa', 'Cerene Ituporanga', 'Cerene Palhoça']"
-          prepend-icon="mdi-filter"
-          class="ml-3"
-          clearable
-        />
+        <v-menu
+          v-model="menuDe"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+        >
+          <template #activator="{ props }">
+            <v-text-field
+              v-model="filters.dataDe"
+              label="De"
+              prepend-icon="mdi-calendar-start"
+              readonly
+              clearable
+              class="ml-3"
+              v-bind="props"
+            />
+          </template>
+          <v-date-picker
+            v-model="filters.dataDe"
+            :allowed-dates="datasDisponiveis"
+            locale="pt-BR"
+          />
+        </v-menu>
       </v-col>
+
+      <!-- Até -->
       <v-col
         cols="12"
-        md="4"
-        no-gutters
-        class="d-flex justify-center mb-4 mb-md-0"
+        md="3"
+        class="d-flex justify-center mb-4 mb-md-0 mr-7"
       >
-        <v-select
-          v-model="filters.sexo"
-          label="Filtrar por Sexo"
-          :items="['Masculino', 'Feminino']"
-          prepend-icon="mdi-filter"
-          class="ml-3"
-          clearable
-        />
+        <v-menu
+          v-model="menuAte"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+        >
+          <template #activator="{ props }">
+            <v-text-field
+              v-model="filters.dataAte"
+              label="Até"
+              prepend-icon="mdi-calendar-end"
+              readonly
+              clearable
+              class="ml-3"
+              v-bind="props"
+            />
+          </template>
+          <v-date-picker
+            v-model="filters.dataAte"
+            :allowed-dates="datasDisponiveis"
+            locale="pt-BR"
+          />
+        </v-menu>
       </v-col>
+
+      <!-- Palavra-chave -->
       <v-col
         cols="12"
-        md="4"
-        no-gutters
-        class="d-flex justify-center mb-4 mb-md-0"
+        md="3"
+        class="d-flex justify-center mb-4 mb-md-0 mr-7"
       >
         <v-text-field
           v-model="filters.keyword"
-          label="Palavras chave"
-          class="w-full ml-3"
-          outlined
+          label="Palavra-chave"
           prepend-icon="mdi-magnify"
+          class="w-full ml-3"
           clearable
         />
       </v-col>
     </v-row>
+
     <main>
+      <v-row class="mb-4">
+        <!-- Total de Horas Trabalhadas -->
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <v-card
+            outlined
+            class="pa-4 d-flex align-center"
+          >
+            <v-icon
+              color="primary"
+              size="36"
+              class="mr-3"
+            >
+              mdi-clock-check-outline
+            </v-icon>
+            <div>
+              <div class="text-subtitle-1 font-weight-medium">
+                Total de Horas Trabalhadas
+              </div>
+              <div class="text-h5 font-weight-bold text-primary">
+                {{ totalHorasTrabalhadasFormatado }}
+              </div>
+              <small class="text-caption text-grey">
+                {{ totalHorasTrabalhadas }} min
+              </small>
+            </div>
+          </v-card>
+        </v-col>
+
+        <!-- Banco de Horas Total -->
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <v-card
+            outlined
+            class="pa-4 d-flex align-center"
+          >
+            <v-icon
+              :color="bancoHorasTotal.startsWith('+') ? 'success' : 'error'"
+              size="36"
+              class="mr-3"
+            >
+              mdi-timer-sand
+            </v-icon>
+            <div>
+              <div class="text-subtitle-1 font-weight-medium">
+                Banco de Horas Total
+              </div>
+              <div
+                class="text-h5 font-weight-bold"
+                :class="{
+                  'text-success': bancoHorasTotal.startsWith('+'),
+                  'text-error': bancoHorasTotal.startsWith('-')
+                }"
+              >
+                {{ bancoHorasTotal }}
+              </div>
+              <small class="text-caption text-grey">
+                Saldo acumulado
+              </small>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+
       <v-data-table
         :headers="headers"
-        :items="items"
+        :items="filteredItems"
         item-key="id"
-        class="elevation-1 mg-pers"
-        :items-per-page-options="[5, 10, 15]"
+        class="elevation-1"
       >
         <template #item="{ item }">
-          <tr
-            :key="item.id"
-            class="hover-row"
-          >
-            <td class="py-3 px-4">
-              {{ item.date }}
-            </td>
-            <td class="py-3 px-4">
-              {{ item.workSchedule }}
+          <tr>
+            <td>{{ item.date }}</td>
+            <td>{{ item.workSchedule }}</td>
+
+            <!-- Entrada -->
+            <td :class="getClass(item.checkIn, '08:00', '<=')">
+              <span v-if="item.checkIn">{{ item.checkIn }}</span>
+              <v-btn
+                v-else-if="isDiaAtual(item) && !isDiaAtualFinalizado(item)"
+                :color="getColor(horaAtual(), '08:00')"
+                class="btn-clock"
+                @click="registrarHorario(item, 'checkIn')"
+              >
+                <span class="clock-time">{{ horaAtualTexto }}</span>
+                <span class="rg-tx d-flex align-center justify-center">
+                  <v-icon
+                    size="12"
+                    class="mr-1 ic-c"
+                  >mdi-clock-outline</v-icon>
+                  registrar
+                </span>
+              </v-btn>
             </td>
 
-            <!-- Entrada com cor dinâmica -->
+            <!-- Início Intervalo -->
+            <td :class="getClass(item.breakStart, '12:00', '>=')">
+              <span v-if="item.breakStart">{{ item.breakStart }}</span>
+              <v-btn
+                v-else-if="isDiaAtual(item) && item.checkIn && !isDiaAtualFinalizado(item)"
+                :color="getColor(horaAtual(), '12:00')"
+                class="btn-clock"
+                @click="registrarHorario(item, 'breakStart')"
+              >
+                <span class="clock-time">{{ horaAtualTexto }}</span>
+                <span class="rg-tx d-flex align-center justify-center">
+                  <v-icon
+                    size="12"
+                    class="mr-1 ic-c"
+                  >mdi-clock-outline</v-icon>
+                  registrar
+                </span>
+              </v-btn>
+            </td>
+
+            <!-- Fim Intervalo -->
+            <td :class="getClass(item.breakEnd, '13:00', '<=')">
+              <span v-if="item.breakEnd">{{ item.breakEnd }}</span>
+              <v-btn
+                v-else-if="isDiaAtual(item) && item.breakStart && !isDiaAtualFinalizado(item)"
+                :color="getColor(horaAtual(), '13:00')"
+                class="btn-clock"
+                @click="registrarHorario(item, 'breakEnd')"
+              >
+                <span class="clock-time">{{ horaAtualTexto }}</span>
+                <span class="rg-tx d-flex align-center justify-center">
+                  <v-icon
+                    size="12"
+                    class="mr-1 ic-c"
+                  >mdi-clock-outline</v-icon>
+                  registrar
+                </span>
+              </v-btn>
+            </td>
+
+            <!-- Saída -->
+            <td :class="getClass(item.checkOut, '18:00', '>=')">
+              <span v-if="item.checkOut">{{ item.checkOut }}</span>
+              <v-btn
+                v-else-if="isDiaAtual(item) && item.breakEnd && !isDiaAtualFinalizado(item)"
+                :color="getColor(horaAtual(), '18:00')"
+                class="btn-clock"
+                @click="registrarHorario(item, 'checkOut')"
+              >
+                <span class="clock-time">{{ horaAtualTexto }}</span>
+                <span class="rg-tx d-flex align-center justify-center">
+                  <v-icon
+                    size="12"
+                    class="mr-1 ic-c"
+                  >mdi-clock-outline</v-icon>
+                  registrar
+                </span>
+              </v-btn>
+            </td>
+
+            <!-- Somatória -->
             <td
-              class="py-3 px-4"
               :class="{
-                'bg-green-100': item.checkIn <= '08:00',
-                'bg-orange-100': item.checkIn > '08:00' && item.checkIn <= '08:30',
-                'bg-red-100': item.checkIn > '08:30'
+                'bg-green-100': item.totalWorked && item.totalWorked >= '08:00',
+                'bg-red-100': item.totalWorked && item.totalWorked < '08:00'
               }"
             >
-              {{ item.checkIn }}
-            </td>
-
-            <td class="py-3 px-4">
-              {{ item.breakStart }}
-            </td>
-            <td class="py-3 px-4">
-              {{ item.breakEnd }}
-            </td>
-            <td class="py-3 px-4">
-              {{ item.checkOut }}
-            </td>
-            <td class="py-3 px-4">
               {{ item.totalWorked }}
             </td>
-            <td class="py-3 px-4">
-              {{ item.timeBank }}
+
+            <!-- Banco de Horas -->
+            <td
+              :class="{
+                'bg-green-100 text-success d-flex align-center': item.timeBank?.startsWith('+'),
+                'bg-red-100 text-error d-flex align-center': item.timeBank?.startsWith('-')
+              }"
+            >
+              <v-icon
+                v-if="item.timeBank"
+                size="16"
+                class="mr-1"
+                :color="item.timeBank.startsWith('+') ? 'success' : 'error'"
+              >
+                {{ item.timeBank.startsWith('+') ? 'mdi-arrow-up-bold-circle' : 'mdi-arrow-down-bold-circle' }}
+              </v-icon>
+
+              <span v-if="item.timeBank">{{ item.timeBank }}</span>
+
+              <v-icon
+                size="18"
+                class="cursor-pointer just-p"
+                title="Inserir justificativa"
+                @click="abrirJustificativa(item.id)"
+              >
+                mdi-comment-edit-outline
+              </v-icon>
             </td>
           </tr>
-        </template>
-
-        <template #no-data>
-          <div class="text-center py-4">
-            <span>Sem dados disponíveis</span>
-          </div>
         </template>
       </v-data-table>
     </main>
@@ -306,50 +436,34 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, onUnmounted, watch, computed } from "vue";
 import JornadaColabAdmService from "@/services/JornadaColabAdmService";
 import { useToast } from "vue-toastification";
-import cadastroService from "@/services/cadastroService";
-// import Swal from "sweetalert2";
 import { useRouter } from "vue-router";
+import { eventBus } from "@/eventBus";
 
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  priority: string;
-  dueDate: string;
-  category: { id: number; title: string };
+
+const colab = eventBus.colab;
+const router = useRouter();
+console.log("TESTANDOO => ", colab?.urlPhoto);
+const horaAtualTexto = ref("");
+// const urlPhoto = ref<any>(colab?.urlPhoto || null);
+if (!colab) {
+  router.push("/dashboard/jornada-colaborador");
+} else {
+  console.log("Recebi o colaborador via eventBus:", colab);
+  console.log("Aqui recebemos o id para fazer a requisição e obter os dados. O ID É => :", colab.id);
 }
 
-const router = useRouter();
+let audio;
+const hoje = new Date();
+const inicioSemana = new Date(hoje);inicioSemana.setDate(hoje.getDate() - hoje.getDay() + 1) // segunda-feira
+// const qtdDias = hoje.getDate() - inicioSemana.getDate() + 1
+
+
+// const router = useRouter();
 const toast = useToast();
-const nome = ref("");
 const cpf = ref("");
-const unidade = ref("");
-const nasc = ref("");
-const cargo = ref("");
-const completeData: any = ref("");
-const unidadesMap = [
-  { desc: "Administração Central", enum: 1 },
-  { desc: "Cerene Blumenau", enum: 2 },
-  { desc: "Cerene Gaspar - NVR", enum: 3 },
-  { desc: "Cerene Joinville", enum: 4 },
-  { desc: "Cerene São Bento do Sul", enum: 5 },
-  { desc: "Cerene Lapa", enum: 6 },
-  { desc: "Cerene Ituporanga", enum: 7 },
-  { desc: "Cerene Palhoça", enum: 8 },
-];
-const sexo = ref("");
-
-const usuariosMap = [
-  { desc: "Administrador", role: "ADMIN", enum: 1 },
-  { desc: "Gerente", role: "MANAGER", enum: 2 },
-  { desc: "Usuário", role: "USER", enum: 3 },
-];
-
-const email = ref("");
-const password = ref("");
 
 const headers = ref([
   { title: "Data", sortable: true, value: "date" },
@@ -358,142 +472,196 @@ const headers = ref([
   { title: "Início Intervalo", sortable: true, value: "breakStart" },
   { title: "Fim Intervalo", sortable: true, value: "breakEnd" },
   { title: "Saída", sortable: false, value: "checkOut" },
-  { title: "Somatória", sortable: false, value: "totalWorked" },
-  { title: "Banco Horas", sortable: false, value: "timeBank" },
+  { title: "Hrs TB do Dia", sortable: false, value: "totalWorked" },
+  { title: "BC Hrs do Dia", sortable: false, value: "timeBank" },
 ]);
 
-const recuverData = ref<Task | null>(null);
-const typeAction = ref("CREATE");
+
 const filters = ref({
-  unidade: null,
-  sexo: null,
-  keyword: "",
+  dataDe: null,
+  dataAte: null,
+  keyword: ""
 });
-const dialog = ref(false);
-const visible = ref(false);
+const menuDe = ref(false);
+const menuAte = ref(false);
 
 
-// const items = ref<any[]>([]);
-
-const openModal = (typeOfAction: string, data: any | null) => {
-  if (typeOfAction === "EDIT") {
-    recuverData.value = data;
-    typeAction.value = "EDIT";
-    const infoData: any = recuverData.value;
-    nome.value = infoData.nome;
-    cpf.value = infoData.cpf;
-    nasc.value = data.nasc;
-    cargo.value = infoData.cargo;
-    unidade.value = infoData.unidade?.[0]?.desc;
-    sexo.value = infoData.sexo;
-    email.value = infoData.email;
-    password.value = infoData.password;
-    
-  } else {
-    recuverData.value = null;
-    typeAction.value = "CREATE";
-
-    nome.value = "";
-    cpf.value = "";
-    nasc.value = "";
-    cargo.value = "";
-    unidade.value = "";
-    sexo.value = "";
-    email.value = "";
-    password.value = "";
-  }
-
-  dialog.value = true;
+const copiarEmail = () => {
+  const email = "tel.machado@cerene.org.br";
+  navigator.clipboard.writeText(email)
+    .then(() => {
+      toast.success("E-mail copiado para a área de transferência!");
+      tocarSom();
+    })
+    .catch(() => {
+      toast.error("Não foi possível copiar o e-mail.");
+    });
 };
 
-const handleSavePerson = async () => {
-  try {
-    const unidadeSelecionada = unidadesMap.find((u) => u.enum === Number(unidade.value));
-    const usuarioSelecionado = usuariosMap.find((u) => u.role === "USER");
+const tocarSom = () => {
+  if (audio) {
+    audio.currentTime = 0; // garante que começa do início
+    audio.play().catch(err => console.error("Erro ao tocar som:", err));
+  }
+};
 
-    const dadosCadastro = {
-      nome: nome.value ?? null,
-      cpf: cpf.value ?? null,
-      dataNascimento: nasc.value ?? null,
-      cargo: cargo.value ?? null,
-      email: email.value ?? null,
-      unidade: [
-        {
-          desc: unidadeSelecionada?.desc ?? null,
-          enum: unidadeSelecionada?.enum ?? null,
-        },
-      ],
-      sexo: sexo.value ?? null,
-      usuario: [
-        {
-          login: email.value ?? null,
-          password: password.value ?? null,
-          role: usuarioSelecionado?.role ?? null,
-          enum: usuarioSelecionado?.enum ?? null,
-        },
-      ],
-    };
+const isDiaAtual = (item) => getRegistroId(item) === getLocalDateId();
 
-    if (typeAction.value === "CREATE") {
-      await cadastroService.registrarUsuario(dadosCadastro);
-      toast.success("Cadastro realizado com sucesso!");
-    } else if (typeAction.value === "EDIT" && recuverData.value?.id) {
-      await JornadaColabAdmService.atualizarColaborador(recuverData.value.id, dadosCadastro);
-      toast.success("Colaborador atualizado com sucesso!");
+const datasDisponiveis = (date: Date) => {
+  const dia = String(date.getDate()).padStart(2, "0")
+  const mes = String(date.getMonth() + 1).padStart(2, "0")
+  const ano = date.getFullYear()
+  const dataFormatada = `${ano}-${mes}-${dia}`
+
+  const datas = items.value.map(i =>
+    i.date.split(" ")[1].split("/").reverse().join("-")
+  )
+
+  return datas.includes(dataFormatada)
+};
+
+// Normaliza texto para busca
+const normalizar = (texto) => {
+  return texto?.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") || ""
+};
+
+const isDiaAtualFinalizado = (item) => {
+  if (!item.date) return false;
+
+  // Normaliza a data do item para formato YYYY-MM-DD
+  const dataItem = new Date(item.date).toISOString().slice(0, 10);
+
+  // Pega a data atual no mesmo formato
+  const hoje = new Date().toISOString().slice(0, 10);
+
+  const apontamentosFeitos = item.checkIn && item.breakStart && item.breakEnd && item.checkOut;
+
+  return dataItem === hoje && apontamentosFeitos;
+};
+
+
+const getClass = (hora, referencia, operador) => {
+  if (!hora) return '';
+  const [h, m] = hora.split(':').map(Number);
+  const minutos = h * 60 + m;
+
+  const [rh, rm] = referencia.split(':').map(Number);
+  const refMin = rh * 60 + rm;
+
+  if (operador === '<=') return minutos <= refMin ? 'bg-green-100' : 'bg-red-100';
+  if (operador === '>=') return minutos >= refMin ? 'bg-green-100' : 'bg-red-100';
+  return '';
+};
+
+
+
+
+// Função para pegar hora atual formatada
+const horaAtual = () => {
+  const now = new Date();
+  return now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+};
+
+// const diffMinutes = (horaAtual: string, horaEsperada: string) => {
+//   const [hA, mA] = horaAtual.split(":").map(Number);
+//   const [hE, mE] = horaEsperada.split(":").map(Number);
+//   return (hA * 60 + mA) - (hE * 60 + mE);
+// };
+
+const getColor = (horaAtual, horaLimite) => {
+  return horaAtual > horaLimite ? 'error' : 'success';
+};
+
+
+
+const registrarHorario = async (item, campo) => {
+  const idUser = colab.id;
+  item[campo] = horaAtual();
+  item.idUser = idUser;
+
+  calcularSomatoria(item); // sempre tenta calcular
+
+  // console.log(`>>> Inserção realizada no campo: ${campo}`);
+  // console.log("Item atualizado:", JSON.stringify(item, null, 2));
+
+  await JornadaColabAdmService.salvarRegistro(idUser, item);
+};
+
+// Computed para filtrar
+const filteredItems = computed(() => {
+  return items.value.filter((item) => {
+    const keyword = normalizar(filters.value.keyword)
+    const dataDe = filters.value.dataDe
+    const dataAte = filters.value.dataAte
+
+    // Junta todas as colunas para busca por palavra-chave
+    const textoCompleto = [
+      item.date,
+      item.workSchedule,
+      item.checkIn,
+      item.breakStart,
+      item.breakEnd,
+      item.checkOut,
+      item.totalWorked,
+      item.timeBank
+    ].map(normalizar).join(" ")
+
+    const passaKeyword = !keyword || textoCompleto.includes(keyword)
+
+    // Converte a data do item para objeto Date
+    const [dia, mes, ano] = item.date.split(" ")[1].split("/")
+    const dataItem = new Date(Number(ano), Number(mes) - 1, Number(dia))
+
+    // Converte filtros para timestamp (se existirem)
+    const passaData =
+      (!dataDe || dataItem.getTime() >= new Date(dataDe).getTime()) &&
+      (!dataAte || dataItem.getTime() <= new Date(dataAte).getTime())
+
+    return passaKeyword && passaData
+  })
+});
+
+const totalHorasTrabalhadas = computed(() => {
+  return filteredItems.value.reduce((acc, item) => {
+    if (item.totalWorked) {
+      const [h, m] = item.totalWorked.split(':').map(Number);
+      return acc + h * 60 + m;
     }
+    return acc;
+  }, 0);
+});
 
-    dialog.value = false;
-    // await atualizarGrid();
-  } catch (error) {
-    toast.error("Erro ao salvar colaborador!");
-    console.error(error);
-  }
+const bancoHorasTotal = computed(() => {
+  let totalMin = 0;
+  filteredItems.value.forEach(item => {
+    if (item.timeBank) {
+      const sinal = item.timeBank.startsWith('-') ? -1 : 1;
+      const [h, m] = item.timeBank.replace('+', '').replace('-', '').split(':').map(Number);
+      totalMin += sinal * (h * 60 + m);
+    }
+  });
+  const sinal = totalMin >= 0 ? '+' : '-';
+  const absMin = Math.abs(totalMin);
+  const h = Math.floor(absMin / 60);
+  const m = absMin % 60;
+  return `${sinal}${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+});
+
+
+const totalHorasTrabalhadasFormatado = computed(() => {
+  const totalMin = totalHorasTrabalhadas.value;
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+});
+
+const abrirJustificativa = (id) => {
+  // Exemplo: abrir modal ou drawer
+  console.log('Abrir justificativa para registro:', id);
+  // modalJustificativa.value = true;
+  // registroSelecionado.value = id;
 };
 
-// const filteredItems = computed(() => {
-//   return items.value.filter((item) => {
-//     const itemUnidade = item.unidade?.[0]?.desc?.toLowerCase?.() || "";
-//     const filtroUnidade = filters.value.unidade?.toLowerCase?.() || "";
-
-//     const matchUnidade =
-//       !filters.value.unidade || itemUnidade === filtroUnidade;
-
-//     const matchSexo =
-//       !filters.value.sexo || item.sexo === filters.value.sexo;
-
-//     const matchKeyword =
-//       !filters.value.keyword ||
-//       item.nome.toLowerCase().includes(filters.value.keyword.toLowerCase()) ||
-//       item.cpf.toLowerCase().includes(filters.value.keyword.toLowerCase()) ||
-//       itemUnidade.includes(filters.value.keyword.toLowerCase()); // ✅ agora também busca por unidade
-
-//     return matchUnidade && matchSexo && matchKeyword;
-//   });
-// });
-
-const goToCalendar = () => {
-  // aqui você define a rota desejada
-  console.log('CAIU NO GO TO CALENDAR');
-  router.push("/dashboard/minha-jornada"); 
-};
-
-const validateForm = () => {
-  const rawCpf = cpf.value;
-
-  const digitsOnly = rawCpf.replace(/\D/g, "");
-
-  if (!/^\d+$/.test(digitsOnly)) {
-    toast.error("No campo CPF Somente números são permitidos!");
-    return;
-  }
-
-  if (digitsOnly.length !== 11) {
-    toast.error("CPF deve ter exatamente 11 dígitos!");
-    return;
-  }
-
-  handleSavePerson();
-};
 
 const formatCpf = (value) => {
   let digits = value.replace(/\D/g, "").substring(0, 11);
@@ -510,88 +678,167 @@ const formatCpf = (value) => {
 
 
 watch(filters, () => {}, { deep: true });
-
 watch(cpf, (newVal) => {
   cpf.value = formatCpf(newVal);
 });
 
-const gerarSemana = (baseDate: Date, qtdDias: number) => {
-  const diasSemana = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
-  const diasGerados: any[] = []
 
-  const horarios = ["07:50", "08:00", "08:10", "08:20", "08:30", "08:45", "09:00"]
-
-  for (let i = 0; i < qtdDias; i++) {
-    const data = new Date(baseDate)
-    data.setDate(baseDate.getDate() + i)
-
-    const diaSemana = diasSemana[data.getDay()]
-    const dataFormatada = `${diaSemana} ${data.toLocaleDateString("pt-BR")}`
-
-    const checkIn = horarios[i % horarios.length]
-
-    diasGerados.push({
-      id: i + 1,
-      date: dataFormatada,
-      workSchedule: "Escritório 08h às 18h",
-      checkIn,
-      breakStart: "12:00",
-      breakEnd: "13:00",
-      checkOut: "18:00",
-      totalWorked: "09:00",
-      timeBank: "+00:30"
-    })
-  }
-
-  return diasGerados
-}
-
-
-const items = ref(gerarSemana(new Date(2025, 11, 29), 7));
-
-
-// const atualizarGrid = async () => {
-//   const colaboradores = await JornadaColabAdmService.findColaboradores();
-//   colaboradores.sort((a: any, b: any) => a.nome.localeCompare(b.nome));
-//   completeData.value = colaboradores;
-
-//   items.value = colaboradores.map((colab: any, index: number) => ({
-//     cod: index + 1,
-//     id: colab.id,
-//     nome: colab.nome,
-//     cpf: colab.cpf,
-//     nasc: colab.dataNascimento,
-//     cargo: colab.cargo,
-//     unidade: colab.unidade,
-//     sexo: colab.sexo,
-//     email: colab.email,
-//     isActive: colab.isActive,
-//     password: colab.password,
-//     actions: "...",
-//   }));
-// };
-
-
+const items = ref<any[]>([]);
 
 onMounted(async () => {
-//   await atualizarGrid();
+  audio = new Audio("/sound_click.mp3");
+  audio.volume = 0.5;
+  audio.load();
+
+  const updateHora = () => {
+    const agora = new Date();
+    horaAtualTexto.value = agora.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    });
+  };
+
+  updateHora();
+  const interval = setInterval(updateHora, 1000);
+
+  onUnmounted(() => clearInterval(interval));
+
+
+  if (!colab || !colab.id) {
+    items.value = gerarDiaAtual("sem-id");
+    return;
+  }
+
+  const registros = (await JornadaColabAdmService.buscarRegistros(colab.id)) || [];
+
+  const hojeId = getLocalDateId(); // data local, não UTC
+  const jaTemHoje = registros.some((r) => getRegistroId(r) === hojeId);
+
+  // Apenas gera o dia atual se NÃO existir nenhum registro com esse ID
+  if (!jaTemHoje) {
+    registros.push(...gerarDiaAtual(colab.id));
+  }
+
+  // Opcional: garantir registros únicos por ID
+  const porId = new Map<string, any>();
+  for (const r of registros) {
+    const rid = getRegistroId(r);
+    if (!porId.has(rid)) porId.set(rid, r);
+  }
+
+  items.value = Array.from(porId.values());
 });
 
-const getPriorityColor = (sexo: string) => {
-  switch (sexo) {
-    case "Feminino":
-      return "orange";
-    case "Masculino":
-      return "green";
-    default:
-      return "grey";
+
+// Gera YYYY-MM-DD em horário local
+const getLocalDateId = (d = new Date()) => {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+// Tenta extrair um ID normalizado do registro
+const getRegistroId = (r: any) => {
+  // se já vier no formato esperado
+  if (typeof r.id === "string" && /^\d{4}-\d{2}-\d{2}$/.test(r.id)) return r.id;
+
+  // se vier a data como string tipo "Sex 09/01/2026"
+  if (typeof r.date === "string") {
+    const partes = r.date.match(/(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (partes) {
+      const [, dia, mes, ano] = partes;
+      return `${ano}-${mes}-${dia}`;
+    }
+  }
+
+  // se vier um campo dateISO ou timestamp
+  if (r.dateISO) {
+    const d = new Date(r.dateISO);
+    return getLocalDateId(d);
+  }
+  if (r.timestamp) {
+    const d = new Date(r.timestamp);
+    return getLocalDateId(d);
+  }
+
+  // fallback: retorna o próprio id (pode falhar comparação)
+  return r.id;
+};
+
+
+const gerarDiaAtual = (idUser: string) => {
+  const hoje = new Date();
+  const diasSemana = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+  return [{
+    id: hoje.toISOString().split("T")[0], // ex: "2026-01-07"
+    date: `${diasSemana[hoje.getDay()]} ${hoje.toLocaleDateString("pt-BR")}`,
+    workSchedule: "Escritório 08h às 18h",
+    checkIn: "",
+    breakStart: "",
+    breakEnd: "",
+    checkOut: "",
+    totalWorked: "",
+    timeBank: "",
+    idUser
+  }];
+};
+
+
+
+
+// Função para calcular horas trabalhadas
+const calcularSomatoria = (item) => {
+  const toMinutes = (h) => {
+    if (!h || !/^\d{2}:\d{2}$/.test(h)) return null;
+    const [hh, mm] = h.split(":").map(Number);
+    return hh * 60 + mm;
+  };
+
+  // Caso 1: jornada completa com intervalo ? prioridade
+  if (item.checkIn && item.breakStart && item.breakEnd && item.checkOut) {
+    // console.log("B - AGORA ENTROU NA FUNÇÃO DE CÁLCULO (completo).");
+    const workedMorning = toMinutes(item.breakStart) - toMinutes(item.checkIn);
+    const workedAfternoon = toMinutes(item.checkOut) - toMinutes(item.breakEnd);
+    const totalMinutes = workedMorning + workedAfternoon;
+
+    const horas = Math.floor(totalMinutes / 60);
+    const minutos = totalMinutes % 60;
+    item.totalWorked = `${String(horas).padStart(2, "0")}:${String(minutos).padStart(2, "0")}`;
+
+    const diff = totalMinutes - 480;
+    const sign = diff >= 0 ? "+" : "-";
+    const diffAbs = Math.abs(diff);
+    const diffHoras = Math.floor(diffAbs / 60);
+    const diffMin = diffAbs % 60;
+    item.timeBank = `${sign}${String(diffHoras).padStart(2, "0")}:${String(diffMin).padStart(2, "0")}`;
+    return;
+  }
+
+  // Caso 2: parcial manhã (até intervalo)
+  if (item.checkIn && item.breakStart) {
+    // console.log("A - AGORA ENTROU NA FUNÇÃO DE CÁLCULO (parcial manhã).");
+    const totalMinutes = toMinutes(item.breakStart) - toMinutes(item.checkIn);
+
+    const horas = Math.floor(totalMinutes / 60);
+    const minutos = totalMinutes % 60;
+    item.totalWorked = `${String(horas).padStart(2, "0")}:${String(minutos).padStart(2, "0")}`;
+
+    const diff = totalMinutes - 480;
+    const sign = diff >= 0 ? "+" : "-";
+    const diffAbs = Math.abs(diff);
+    const diffHoras = Math.floor(diffAbs / 60);
+    const diffMin = diffAbs % 60;
+    item.timeBank = `${sign}${String(diffHoras).padStart(2, "0")}:${String(diffMin).padStart(2, "0")}`;
+    return;
   }
 };
 
-const pagination = ref({
-  page: 1,
-  rowsPerPage: 15,
-});
+
+
+
 </script>
 
 <style lang="scss" scoped>
@@ -605,13 +852,14 @@ const pagination = ref({
   padding-left: 60px;
 }
 
-.hover-row:hover {
-  background-color: #e4f1fb; /* cor de destaque */
-  cursor: pointer;          /* opcional: mostra que é interativo */
-}
 
 .mg-pers {
   margin-bottom: 50px;
+}
+
+.just-p {
+  position: relative;
+  left: 20px;
 }
 
 .icon-pers {
@@ -644,6 +892,62 @@ const pagination = ref({
 .bg-red-100 {
   background-color: #f8d7da;
 }
+
+.per-btn {
+  margin: 20px;
+  position: relative;
+  top: -10px;
+}
+
+  .btn-clock {
+  position: relative;
+  width: 94px;
+  height: 64px;
+  padding: 0;
+  transition: background-color 0.3s;
+}
+
+.btn-clock:hover {
+  opacity: 0.85;
+}
+
+.btn-clock .clock-time {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 700;
+  font-size: 14px;
+  text-align: center;
+  line-height: 1;
+  transition: color 0.3s;
+}
+
+.btn-clock .rg-tx {
+  position: absolute;
+  top: 72%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  color: #c0bfbf;
+  text-align: center;
+  line-height: 1;
+  transition: color 0.3s;
+}
+
+.btn-clock:hover .clock-time {
+  color: #fff; /* hora muda para branco no hover */
+}
+
+.ic-c {
+  color: #fff; /* hora muda para branco no hover */
+}
+
+.btn-clock:hover .rg-tx {
+  color: #f5f5f5; /* "registrar" fica mais visível no hover */
+}
+
+
 
 
 @media (max-width: 980px) {
