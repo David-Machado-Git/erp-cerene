@@ -23,6 +23,231 @@
       </v-col>
     </v-row>
 
+    <!-- INÍCIO MODAL -->
+
+    <v-dialog
+      v-model="dialog"
+      max-width="900px"
+      class="custom-dialog"
+    >
+      <v-card>
+        <!-- Cabeçalho -->
+        <v-card-title
+          class="d-flex align-center justify-space-between flex-wrap"
+          style="background-color: #528ad0; color: white;"
+        >
+          <!-- Título -->
+          <div class="d-flex align-center">
+            <v-icon
+              left
+              class="mr-2"
+            >
+              mdi-file-document-edit
+            </v-icon>
+            Justificativa / Anexo
+          </div>
+
+          <!-- Status (select + chip ao lado) -->
+          <div
+            class="d-flex align-center"
+            style="gap: 12px;"
+          >
+            <!-- Admin: seletor simples de strings -->
+            <v-select
+              v-if="typeUser === 'admin'"
+              v-model="statusJustificativa"
+              :items="['Aguardando Aprovação', 'Aprovada', 'Reprovada']"
+              density="compact"
+              hide-details
+              style="max-width: 240px;"
+              label="Status"
+            />
+
+            <!-- Visualização (sempre mostra) -->
+            <v-chip
+              :color="getStatusColor(statusJustificativa)"
+              text-color="white"
+              class="font-weight-bold"
+            >
+              <v-icon left>
+                {{ getStatusIcon(statusJustificativa) }}
+              </v-icon>
+              {{ statusJustificativa || 'Aguardando Aprovação' }}
+            </v-chip>
+          </div>
+        </v-card-title>
+
+
+
+
+
+
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12">
+                <!-- Card 1: Justificativa -->
+                <v-card
+                  class="pa-4 mb-6"
+                  elevation="4"
+                  rounded="lg"
+                  color="blue-grey-lighten-5"
+                >
+                  <v-card-title
+                    class="text-subtitle-1 font-weight-bold"
+                    style="color:#1976D2;"
+                  >
+                    <v-icon
+                      left
+                      class="mr-2"
+                      color="primary"
+                    >
+                      mdi-pencil
+                    </v-icon>
+                    Escreva sua justificativa
+                  </v-card-title>
+
+                  <p class="mb-4">
+                    Digite manualmente o motivo ou justificativa.
+                  </p>
+
+                  <v-textarea
+                    v-model="justificativa"
+                    label="Digite aqui..."
+                    auto-grow
+                    rows="5"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-text-box-edit-outline"
+                  />
+                  <div
+                    v-if="arquivoExistente"
+                    class="mt-4"
+                  >
+                    <v-alert
+                      type="info"
+                      border="start"
+                      color="blue-lighten-4"
+                    >
+                      <v-icon
+                        left
+                        class="mr-2"
+                      >
+                        mdi-file
+                      </v-icon>
+                      Arquivo já anexado:
+                      <strong>{{ arquivoExistente.nome }}</strong>
+                      <v-btn
+                        variant="tonal"
+                        color="primary"
+                        class="ml-4"
+                        :href="arquivoExistente.url"
+                        target="_blank"
+                        download
+                      >
+                        <v-icon
+                          left
+                          class="mr-2"
+                        >
+                          mdi-download
+                        </v-icon>
+                        Download
+                      </v-btn>
+                    </v-alert>
+                  </div>
+                </v-card>
+
+                <!-- Card 2: Anexo -->
+                <v-card
+                  class="pa-4 mb-6"
+                  elevation="4"
+                  rounded="lg"
+                  color="grey-lighten-4"
+                >
+                  <v-card-title
+                    class="text-subtitle-1 font-weight-bold"
+                    style="color:#424242;"
+                  >
+                    <v-icon
+                      left
+                      class="mr-2"
+                      color="indigo"
+                    >
+                      mdi-paperclip
+                    </v-icon>
+                    Anexar Arquivo
+                  </v-card-title>
+
+                  <p class="mb-4">
+                    Se necessário, anexe um arquivo (PDF, DOC ou imagem).
+                  </p>
+
+                  <v-file-input
+                    v-model="arquivo"
+                    label="Selecione um arquivo"
+                    prepend-inner-icon="mdi-upload"
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                    variant="outlined"
+                  />
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+
+        <!-- Ações -->
+        <v-card-actions>
+          <div
+            class="d-flex justify-center mx-auto"
+            style="width: 320px;"
+          >
+            <v-btn
+              class="mb-3"
+              variant="tonal"
+              color="green-darken-4"
+              block
+              :loading="loading"
+              :disabled="loading"
+              @click="saveJustific"
+            >
+              SALVAR
+            </v-btn>
+          </div>
+          <v-btn
+            color="blue"
+            :disabled="loading"
+            @click="dialog = false"
+          >
+            Fechar
+          </v-btn>
+        </v-card-actions>
+        <v-overlay
+          v-model="loading"
+          contained
+          absolute
+          class="preloader-overlay"
+        >
+          <v-sheet
+            elevation="6"
+            rounded="lg"
+            class="pa-6 d-flex flex-column align-center"
+            style="background-color: white; min-width: 280px;"
+          >
+            <v-progress-circular
+              indeterminate
+              size="48"
+              color="primary"
+            />
+            <div class="mt-3 font-weight-bold">
+              Salvando justificativa...
+            </div>
+          </v-sheet>
+        </v-overlay>
+      </v-card>
+    </v-dialog>
+
+
+    <!-- FIM MODAL -->
+
     <v-card
       class="pa-4 mb-6"
       elevation="6"
@@ -37,15 +262,21 @@
           class="d-flex justify-center"
         >
           <v-avatar
-            size="120"
-            class="elevation-3 mb-2"
-            color="primary"
+            size="100"
+            class="mb-2"
+            color="#528ad0"
           >
             <v-img
-              :src="colab?.urlPhoto || 'https://randomuser.me/api/portraits/men/75.jpg'"
+              :src="colab?.urlPhoto || 'https://cdn-icons-png.flaticon.com/512/3541/3541871.png'"
               alt="Foto do colaborador"
-              class="rounded-circle"
-            />
+              cover
+            >
+              <template #placeholder>
+                <div class="loading-blink">
+                  Carregando...
+                </div>
+              </template>
+            </v-img>
           </v-avatar>
         </v-col>
 
@@ -138,15 +369,36 @@
               <span
                 class="text-caption cursor-pointer"
                 style="text-decoration: underline; color: #1976D2;"
-                @click="copiarEmail"
+                @click="copiarEmail(colab?.email)"
               >
                 <strong>E-mail:</strong> {{ colab?.email || "" }}
+              </span>
+            </v-col>
+
+            <!-- Novo campo: ID -->
+            <v-col
+              cols="12"
+              md="6"
+            >
+              <v-icon
+                color="blue"
+                class="mr-1"
+              >
+                mdi-identifier
+              </v-icon>
+              <span
+                class="text-caption cursor-pointer"
+                style="text-decoration: underline; color: #1976D2;"
+                @click="copiarId"
+              >
+                <strong>ID:</strong> {{ colab?.id || "" }}
               </span>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
     </v-card>
+
 
 
     <v-row
@@ -179,7 +431,7 @@
           <v-date-picker
             v-model="filters.dataDe"
             :allowed-dates="datasDisponiveis"
-            locale="pt-BR"
+            locale="pt"
           />
         </v-menu>
       </v-col>
@@ -210,7 +462,7 @@
           <v-date-picker
             v-model="filters.dataAte"
             :allowed-dates="datasDisponiveis"
-            locale="pt-BR"
+            locale="pt"
           />
         </v-menu>
       </v-col>
@@ -304,16 +556,36 @@
         :headers="headers"
         :items="filteredItems"
         item-key="id"
-        class="elevation-1"
+        class="elevation-1 mg-pers"
+        :items-per-page-options="[5, 10, 15]"
       >
         <template #item="{ item }">
-          <tr>
+          <tr
+            :style="
+              item.status === 'faltou'
+                ? 'background-color: #B71C1C; color: white;'
+                : ''
+            "
+          >
             <td>{{ item.date }}</td>
             <td>{{ item.workSchedule }}</td>
 
             <!-- Entrada -->
             <td :class="getClass(item.checkIn, '08:00', '<=')">
-              <span v-if="item.checkIn">{{ item.checkIn }}</span>
+              <v-text-field
+                v-if="typeUser === 'admin' && editingField?.id === item.id && editingField?.field === 'checkIn'"
+                v-model="item.checkIn"
+                dense
+                hide-details
+                @blur="salvarEdicao(item, 'checkIn')"
+              />
+              <span
+                v-else-if="item.checkIn"
+                style="cursor: pointer;"
+                @click="typeUser === 'admin' ? editarCampo(item, 'checkIn') : null"
+              >
+                {{ item.checkIn }}
+              </span>
               <v-btn
                 v-else-if="isDiaAtual(item) && !isDiaAtualFinalizado(item)"
                 :color="getColor(horaAtual(), '08:00')"
@@ -329,11 +601,31 @@
                   registrar
                 </span>
               </v-btn>
+              <span
+                v-else
+                style="cursor: pointer;"
+                @click="typeUser === 'admin' ? editarCampo(item, 'checkIn') : null"
+              >
+                —
+              </span>
             </td>
 
             <!-- Início Intervalo -->
             <td :class="getClass(item.breakStart, '12:00', '>=')">
-              <span v-if="item.breakStart">{{ item.breakStart }}</span>
+              <v-text-field
+                v-if="typeUser === 'admin' && editingField?.id === item.id && editingField?.field === 'breakStart'"
+                v-model="item.breakStart"
+                dense
+                hide-details
+                @blur="salvarEdicao(item, 'breakStart')"
+              />
+              <span
+                v-else-if="item.breakStart"
+                style="cursor: pointer;"
+                @click="typeUser === 'admin' ? editarCampo(item, 'breakStart') : null"
+              >
+                {{ item.breakStart }}
+              </span>
               <v-btn
                 v-else-if="isDiaAtual(item) && item.checkIn && !isDiaAtualFinalizado(item)"
                 :color="getColor(horaAtual(), '12:00')"
@@ -349,11 +641,31 @@
                   registrar
                 </span>
               </v-btn>
+              <span
+                v-else
+                style="cursor: pointer;"
+                @click="typeUser === 'admin' ? editarCampo(item, 'breakStart') : null"
+              >
+                —
+              </span>
             </td>
 
             <!-- Fim Intervalo -->
             <td :class="getClass(item.breakEnd, '13:00', '<=')">
-              <span v-if="item.breakEnd">{{ item.breakEnd }}</span>
+              <v-text-field
+                v-if="typeUser === 'admin' && editingField?.id === item.id && editingField?.field === 'breakEnd'"
+                v-model="item.breakEnd"
+                dense
+                hide-details
+                @blur="salvarEdicao(item, 'breakEnd')"
+              />
+              <span
+                v-else-if="item.breakEnd"
+                style="cursor: pointer;"
+                @click="typeUser === 'admin' ? editarCampo(item, 'breakEnd') : null"
+              >
+                {{ item.breakEnd }}
+              </span>
               <v-btn
                 v-else-if="isDiaAtual(item) && item.breakStart && !isDiaAtualFinalizado(item)"
                 :color="getColor(horaAtual(), '13:00')"
@@ -369,11 +681,31 @@
                   registrar
                 </span>
               </v-btn>
+              <span
+                v-else
+                style="cursor: pointer;"
+                @click="typeUser === 'admin' ? editarCampo(item, 'breakEnd') : null"
+              >
+                —
+              </span>
             </td>
 
             <!-- Saída -->
             <td :class="getClass(item.checkOut, '18:00', '>=')">
-              <span v-if="item.checkOut">{{ item.checkOut }}</span>
+              <v-text-field
+                v-if="typeUser === 'admin' && editingField?.id === item.id && editingField?.field === 'checkOut'"
+                v-model="item.checkOut"
+                dense
+                hide-details
+                @blur="salvarEdicao(item, 'checkOut')"
+              />
+              <span
+                v-else-if="item.checkOut"
+                style="cursor: pointer;"
+                @click="typeUser === 'admin' ? editarCampo(item, 'checkOut') : null"
+              >
+                {{ item.checkOut }}
+              </span>
               <v-btn
                 v-else-if="isDiaAtual(item) && item.breakEnd && !isDiaAtualFinalizado(item)"
                 :color="getColor(horaAtual(), '18:00')"
@@ -389,6 +721,13 @@
                   registrar
                 </span>
               </v-btn>
+              <span
+                v-else
+                style="cursor: pointer;"
+                @click="typeUser === 'admin' ? editarCampo(item, 'checkOut') : null"
+              >
+                —
+              </span>
             </td>
 
             <!-- Somatória -->
@@ -398,7 +737,7 @@
                 'bg-red-100': item.totalWorked && item.totalWorked < '08:00'
               }"
             >
-              {{ item.totalWorked }}
+              {{ item.totalWorked || '—' }}
             </td>
 
             <!-- Banco de Horas -->
@@ -416,16 +755,21 @@
               >
                 {{ item.timeBank.startsWith('+') ? 'mdi-arrow-up-bold-circle' : 'mdi-arrow-down-bold-circle' }}
               </v-icon>
+              <span>{{ item.timeBank || '—' }}</span>
+            </td>
 
-              <span v-if="item.timeBank">{{ item.timeBank }}</span>
-
+            <!-- Justificativa -->
+            <td>
+              {{ item.justific || '—' }}
               <v-icon
-                size="18"
+                size="22"
                 class="cursor-pointer just-p"
-                title="Inserir justificativa"
-                @click="abrirJustificativa(item.id)"
+                :class="item.hasJustificativa ? 'icon-alert-pulse' : ''"
+                :title="item.hasJustificativa ? 'Baixar justificativa' : 'Inserir justificativa'"
+                :color="item.hasJustificativa ? 'orange' : ''"
+                @click="abrirJustificativa(item)"
               >
-                mdi-comment-edit-outline
+                {{ item.hasJustificativa ? 'mdi-alert-outline' : 'mdi-comment-edit-outline' }}
               </v-icon>
             </td>
           </tr>
@@ -438,15 +782,24 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted, watch, computed } from "vue";
 import JornadaColabAdmService from "@/services/JornadaColabAdmService";
+import UploadStorageService from "@/services/UploadStorageService";
 import { useToast } from "vue-toastification";
+import Swal from "sweetalert2";
 import { useRouter } from "vue-router";
 import { eventBus } from "@/eventBus";
 
-
+const loading = ref(false)
+const statusJustificativa = ref("Aguardando Aprovação");
+const typeUser = ref("admin") // variável de controle pra poder editar os registros
 const colab = eventBus.colab;
+const dataJustificInsert = ref<any>();
 const router = useRouter();
-console.log("TESTANDOO => ", colab?.urlPhoto);
+// console.log("TESTANDOO => ", colab?.urlPhoto);
 const horaAtualTexto = ref("");
+const dialog = ref(false);
+const justificativa = ref("");
+const arquivo = ref(null);
+const arquivoExistente = ref(null)
 // const urlPhoto = ref<any>(colab?.urlPhoto || null);
 if (!colab) {
   router.push("/dashboard/jornada-colaborador");
@@ -474,6 +827,7 @@ const headers = ref([
   { title: "Saída", sortable: false, value: "checkOut" },
   { title: "Hrs TB do Dia", sortable: false, value: "totalWorked" },
   { title: "BC Hrs do Dia", sortable: false, value: "timeBank" },
+  { title: "Justificativas", sortable: false, value: "justific" },
 ]);
 
 
@@ -486,8 +840,20 @@ const menuDe = ref(false);
 const menuAte = ref(false);
 
 
-const copiarEmail = () => {
-  const email = "tel.machado@cerene.org.br";
+const copiarId = async () => {
+  try {
+    await navigator.clipboard.writeText(colab?.id || "");
+    toast.success("ID copiado para a área de transferência!");
+    tocarSom(); // se quiser o som de confirmação
+  } catch (err) {
+    console.error("Erro ao copiar ID:", err);
+    toast.error("Não foi possível copiar o ID.");
+  }
+};
+
+
+const copiarEmail = (data) => {
+  const email = data;
   navigator.clipboard.writeText(email)
     .then(() => {
       toast.success("E-mail copiado para a área de transferência!");
@@ -506,6 +872,46 @@ const tocarSom = () => {
 };
 
 const isDiaAtual = (item) => getRegistroId(item) === getLocalDateId();
+
+const editingField = ref(null)
+
+// mapeamento de cor/ícone
+const getStatusColor = (status?: string) => {
+  const s = status || 'Aguardando Aprovação'
+  return s === 'Aprovada' ? 'green' : s === 'Reprovada' ? 'red' : 'orange'
+}
+const getStatusIcon = (status?: string) => {
+  const s = status || 'Aguardando Aprovação'
+  return s === 'Aprovada' ? 'mdi-check-circle' : s === 'Reprovada' ? 'mdi-close-circle' : 'mdi-clock-outline'
+}
+
+
+const editarCampo = (item, field) => {
+  console.log(">>> [editarCampo] Chamado")
+  console.log(">>> Item recebido:", JSON.stringify(item, null, 2))
+  console.log(">>> Campo a editar:", field)
+
+  editingField.value = { id: item.id, field }
+  console.log(">>> Estado editingField atualizado:", editingField.value)
+}
+
+const salvarEdicao = async (item, field) => {
+  console.log(">>> [salvarEdicao] Chamado")
+  console.log(">>> Item recebido:", JSON.stringify(item, null, 2))
+  console.log(">>> Campo editado:", field)
+
+  editingField.value = null
+  console.log(">>> Estado editingField resetado:", editingField.value)
+
+  try {
+    await JornadaColabAdmService.salvarRegistro(item.idUser, item)
+    console.log(">>> Registro salvo com sucesso para usuário:", item.idUser)
+  } catch (error) {
+    console.error(">>> Erro ao salvar registro:", error)
+  }
+}
+
+
 
 const datasDisponiveis = (date: Date) => {
   const dia = String(date.getDate()).padStart(2, "0")
@@ -526,18 +932,29 @@ const normalizar = (texto) => {
 };
 
 const isDiaAtualFinalizado = (item) => {
-  if (!item.date) return false;
+  if (!item?.date) return false;
 
-  // Normaliza a data do item para formato YYYY-MM-DD
-  const dataItem = new Date(item.date).toISOString().slice(0, 10);
+  try {
+    const partes = item.date.split(" ")[1]?.split("/");
+    if (!partes || partes.length < 3) return false;
 
-  // Pega a data atual no mesmo formato
-  const hoje = new Date().toISOString().slice(0, 10);
+    const dia = Number(partes[0]);
+    const mes = Number(partes[1]) - 1;
+    const ano = Number(partes[2]);
 
-  const apontamentosFeitos = item.checkIn && item.breakStart && item.breakEnd && item.checkOut;
+    const dataItem = new Date(ano, mes, dia);
 
-  return dataItem === hoje && apontamentosFeitos;
+    // Se a data for inválida, retorna false
+    if (isNaN(dataItem.getTime())) return false;
+
+    // Aqui você aplica sua lógica de "finalizado"
+    // Exemplo: se já tem checkOut preenchido
+    return !!item.checkOut;
+  } catch {
+    return false;
+  }
 };
+
 
 
 const getClass = (hora, referencia, operador) => {
@@ -588,13 +1005,46 @@ const registrarHorario = async (item, campo) => {
 };
 
 // Computed para filtrar
-const filteredItems = computed(() => {
-  return items.value.filter((item) => {
-    const keyword = normalizar(filters.value.keyword)
-    const dataDe = filters.value.dataDe
-    const dataAte = filters.value.dataAte
+// const filteredItems = computed(() => {
+  
+//   return items.value.filter((item) => {
+//     const keyword = normalizar(filters.value.keyword)
+//     const dataDe = filters.value.dataDe
+//     const dataAte = filters.value.dataAte
 
-    // Junta todas as colunas para busca por palavra-chave
+//     // Junta todas as colunas para busca por palavra-chave
+//     const textoCompleto = [
+//       item.date,
+//       item.workSchedule,
+//       item.checkIn,
+//       item.breakStart,
+//       item.breakEnd,
+//       item.checkOut,
+//       item.totalWorked,
+//       item.timeBank
+//     ].map(normalizar).join(" ")
+
+//     const passaKeyword = !keyword || textoCompleto.includes(keyword)
+
+//     // Converte a data do item para objeto Date
+//     const [dia, mes, ano] = item.date.split(" ")[1].split("/")
+//     const dataItem = new Date(Number(ano), Number(mes) - 1, Number(dia))
+
+//     // Converte filtros para timestamp (se existirem)
+//     const passaData =
+//       (!dataDe || dataItem.getTime() >= new Date(dataDe).getTime()) &&
+//       (!dataAte || dataItem.getTime() <= new Date(dataAte).getTime())
+
+//     return passaKeyword && passaData
+//   })
+// });
+
+const filteredItems = computed(() => {
+  const resultado = items.value.filter((item) => {
+    const keyword = normalizar(filters.value.keyword);
+    const dataDe = filters.value.dataDe;
+    const dataAte = filters.value.dataAte;
+
     const textoCompleto = [
       item.date,
       item.workSchedule,
@@ -604,22 +1054,24 @@ const filteredItems = computed(() => {
       item.checkOut,
       item.totalWorked,
       item.timeBank
-    ].map(normalizar).join(" ")
+    ].map(normalizar).join(" ");
 
-    const passaKeyword = !keyword || textoCompleto.includes(keyword)
+    const passaKeyword = !keyword || textoCompleto.includes(keyword);
 
-    // Converte a data do item para objeto Date
-    const [dia, mes, ano] = item.date.split(" ")[1].split("/")
-    const dataItem = new Date(Number(ano), Number(mes) - 1, Number(dia))
+    const [dia, mes, ano] = item.date.split(" ")[1].split("/");
+    const dataItem = new Date(Number(ano), Number(mes) - 1, Number(dia));
 
-    // Converte filtros para timestamp (se existirem)
     const passaData =
       (!dataDe || dataItem.getTime() >= new Date(dataDe).getTime()) &&
-      (!dataAte || dataItem.getTime() <= new Date(dataAte).getTime())
+      (!dataAte || dataItem.getTime() <= new Date(dataAte).getTime());
 
-    return passaKeyword && passaData
-  })
+    return passaKeyword && passaData;
+  });
+
+  console.log(">>> Resultado do filteredItems:", resultado);
+  return resultado;
 });
+
 
 const totalHorasTrabalhadas = computed(() => {
   return filteredItems.value.reduce((acc, item) => {
@@ -655,12 +1107,74 @@ const totalHorasTrabalhadasFormatado = computed(() => {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 });
 
-const abrirJustificativa = (id) => {
-  // Exemplo: abrir modal ou drawer
-  console.log('Abrir justificativa para registro:', id);
-  // modalJustificativa.value = true;
-  // registroSelecionado.value = id;
+const abrirJustificativa = (data) => {
+  statusJustificativa.value = data.statusJustificativa || "Aguardando Aprovação"
+  console.log("Abrir justificativa para registro:", data);
+
+  dataJustificInsert.value = data;
+  justificativa.value = data.justificativa || "";
+  arquivo.value = null; // limpa input
+
+  // se já existir arquivo salvo no registro
+  if (data.fileUrl) {
+    const partes = data.fileUrl.split("/");
+    const nomeArquivo = partes[partes.length - 1].split("?")[0];
+
+    arquivoExistente.value = {
+      nome: nomeArquivo || "Arquivo disponível",
+      url: data.fileUrl,
+    };
+  } else {
+    arquivoExistente.value = null;
+  }
+
+  dialog.value = true;
 };
+
+
+
+
+const saveJustific = async () => {
+  try {
+    loading.value = true
+    await UploadStorageService.saveJustificativa(
+      dataJustificInsert.value.idUser,
+      dataJustificInsert.value.id,
+      justificativa.value,
+      arquivo.value,
+      statusJustificativa.value
+    )
+
+    Swal.fire({
+      toast: true,
+      position: "top-end",
+      icon: "success",
+      title: "Justificativa salva com sucesso!",
+      showConfirmButton: false,
+      timer: 3000,
+    })
+
+    justificativa.value = null
+    arquivo.value = null
+    dialog.value = false
+  } catch (error) {
+    console.error("Erro ao salvar justificativa:", error)
+    Swal.fire({
+      icon: "error",
+      title: "Erro!",
+      text: "Não foi possível salvar a justificativa. Tente novamente.",
+      confirmButtonColor: "#d33",
+    })
+  } finally {
+    loading.value = false
+  }
+}
+
+
+
+
+
+
 
 
 const formatCpf = (value) => {
@@ -711,7 +1225,8 @@ onMounted(async () => {
   }
 
   const registros = (await JornadaColabAdmService.buscarRegistros(colab.id)) || [];
-
+  console.log('REGISTROS =>> ', registros);
+  
   const hojeId = getLocalDateId(); // data local, não UTC
   const jaTemHoje = registros.some((r) => getRegistroId(r) === hojeId);
 
@@ -847,14 +1362,19 @@ const calcularSomatoria = (item) => {
   overflow-y: auto;
 }
 
+.tr-justificativa {
+  background-color: #FF9800 !important;
+  color: white !important;
+}
+
+
 .position-component {
   padding-top: 80px;
   padding-left: 60px;
 }
 
-
 .mg-pers {
-  margin-bottom: 50px;
+  margin-bottom: 70px;
 }
 
 .just-p {
@@ -868,6 +1388,17 @@ const calcularSomatoria = (item) => {
   top: 2px !important;
   font-size: 20px;
 }
+
+.icon-alert-pulse {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.6; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 
 .icon-pers-p {
   // display: none;
@@ -947,6 +1478,47 @@ const calcularSomatoria = (item) => {
   color: #f5f5f5; /* "registrar" fica mais visível no hover */
 }
 
+
+.preloader-overlay {
+  /* cobre todo o card */
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10; /* acima do conteúdo interno */
+  border-radius: 12px; /* acompanha o card arredondado, se houver */
+}
+
+.preloader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.preloader-text {
+  color: #1f2937; /* cinza escuro legível */
+  font-weight: 600;
+}
+
+.loading-blink {
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  animation: blink 1s infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
 
 
 

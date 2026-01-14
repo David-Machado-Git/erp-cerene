@@ -1,7 +1,10 @@
+// src/plugins/vuetify.ts
+
 import "@mdi/font/css/materialdesignicons.css"; // Ícones
 import "vuetify/styles"; // Estilos principais do Vuetify
 
 import { createVuetify } from "vuetify";
+import { pt } from "vuetify/locale"; // Importa o idioma português
 
 export default createVuetify({
   theme: {
@@ -23,6 +26,10 @@ export default createVuetify({
     },
   },
   icons: {
-    iconfont: "mdi", // Fontes de ícones: MDI (Material Design Icons)
+    iconfont: "mdi", // Usa Material Design Icons
+  },
+  locale: {
+    locale: "pt",     // Define português como idioma padrão
+    messages: { pt }, // Carrega mensagens traduzidas
   },
 });

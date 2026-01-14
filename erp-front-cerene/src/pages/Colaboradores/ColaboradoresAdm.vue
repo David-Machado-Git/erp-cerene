@@ -71,13 +71,21 @@
                       <v-avatar
                         size="100"
                         class="mb-2"
+                        color="#528ad0"
                       >
                         <v-img
-                          :src="urlPhoto || 'https://randomuser.me/api/portraits/men/75.jpg'"
+                          :src="urlPhoto || 'https://cdn-icons-png.flaticon.com/512/3541/3541871.png'"
                           alt="Foto do colaborador"
                           cover
-                        />
+                        >
+                          <template #placeholder>
+                            <div class="loading-blink">
+                              Carregando...
+                            </div>
+                          </template>
+                        </v-img>
                       </v-avatar>
+
 
 
                       <!-- 🔹 Input de upload compacto -->
@@ -218,9 +226,27 @@
                           <span
                             class="text-caption cursor-pointer"
                             style="text-decoration: underline; color: #1976D2;"
-                            @click="copiarEmail"
+                            @click="copiarEmail(email)"
                           >
                             <strong>E-mail:</strong> {{ email || "" }}
+                          </span>
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
+                          <v-icon
+                            color="blue"
+                            class="mr-1"
+                          >
+                            mdi-identifier
+                          </v-icon>
+                          <span
+                            class="text-caption cursor-pointer"
+                            style="text-decoration: underline; color: #1976D2;"
+                            @click="copiarId"
+                          >
+                            <strong>ID:</strong> {{ id || "" }}
                           </span>
                         </v-col>
                       </v-row>
@@ -634,19 +660,23 @@
                 </VRow>
               </VCol>
             </VRow>
-
+          </v-card>
+        </v-card-text>
+        <v-card-actions>
+          <div
+            class="d-flex justify-center mx-auto"
+            style="width: 320px;"
+          >
             <v-btn
               class="mb-3"
-              size="large"
               variant="tonal"
+              color="green-darken-4"
               block
               @click="validateForm"
             >
               SALVAR
             </v-btn>
-          </v-card>
-        </v-card-text>
-        <v-card-actions>
+          </div>
           <v-btn
             color="blue"
             @click="dialog = false"
@@ -841,6 +871,7 @@ const usuariosMap = [
 ];
 
 const email = ref("");
+const id = ref("");
 const password = ref("");
 const contas = ref([{ banco: "", agencia: "", conta: "", tipo: "" }]);
 const pixContas = ref([{ tipoChave: "", chave: "" }]);
@@ -887,6 +918,7 @@ const openModal = (typeOfAction: string, data: any | null) => {
     unidade.value = infoData.unidade?.[0]?.desc;
     sexo.value = infoData.sexo;
     email.value = infoData.email;
+    id.value = infoData.id;
     password.value = infoData.password;
 
     // 🔹 Carregar contas bancárias
@@ -919,6 +951,7 @@ const openModal = (typeOfAction: string, data: any | null) => {
     unidade.value = "";
     sexo.value = "";
     email.value = "";
+    id.value = "";
     password.value = "";
 
     // 🔹 Resetar arrays
@@ -1003,9 +1036,21 @@ const removerPix = (index: number) => {
   pixContas.value.splice(index, 1);
 };
 
+const copiarId = async () => {
+  try {
+    await navigator.clipboard.writeText(id.value || "");
+    toast.success("ID copiado para a área de transferência!");
+  } catch (err) {
+    console.error("Erro ao copiar ID:", err);
+    toast.error("Não foi possível copiar o ID.");
+  }
+};
 
-const copiarEmail = () => {
-  const email = "tel.machado@cerene.org.br";
+
+
+
+const copiarEmail = (data) => {
+  const email = data;
   navigator.clipboard.writeText(email)
     .then(() => {
       toast.success("E-mail copiado para a área de transferência!");
@@ -1073,10 +1118,21 @@ const handleSavePerson = async () => {
   }
 };
 
+function normalizeCpf(cpf = "") {
+  return String(cpf).replace(/\D/g, ""); // remove tudo que não for número
+}
+
+function normalizeText(text = "") {
+  return String(text)
+    .toLowerCase()
+    .normalize("NFD")               // separa acentos
+    .replace(/[\u0300-\u036f]/g, ""); // remove acentos
+}
+
 const filteredItems = computed(() => {
   return items.value.filter((item) => {
-    const itemUnidade = item.unidade?.[0]?.desc?.toLowerCase?.() || "";
-    const filtroUnidade = filters.value.unidade?.toLowerCase?.() || "";
+    const itemUnidade = normalizeText(item.unidade?.[0]?.desc ?? "");
+    const filtroUnidade = normalizeText(filters.value.unidade ?? "");
 
     const matchUnidade =
       !filters.value.unidade || itemUnidade === filtroUnidade;
@@ -1084,15 +1140,43 @@ const filteredItems = computed(() => {
     const matchSexo =
       !filters.value.sexo || item.sexo === filters.value.sexo;
 
-    const matchKeyword =
-      !filters.value.keyword ||
-      item.nome.toLowerCase().includes(filters.value.keyword.toLowerCase()) ||
-      item.cpf.toLowerCase().includes(filters.value.keyword.toLowerCase()) ||
-      itemUnidade.includes(filters.value.keyword.toLowerCase()); // ✅ agora também busca por unidade
+    // keyword
+    const keywordRaw = (filters.value.keyword ?? "").trim();
+    const keywordNorm = normalizeText(keywordRaw);
+    const keywordLower = keywordRaw.toLowerCase();
 
-    return matchUnidade && matchSexo && matchKeyword;
+    // campos normalizados
+    const nomeNorm = normalizeText(item.nome ?? "");
+    const unidadeNorm = itemUnidade;
+    const sexoNorm = normalizeText(item.sexo ?? "");
+
+    // e-mail (mantém caracteres especiais)
+    const emailRaw = String(item.email ?? "").toLowerCase();
+
+    // cpf
+    const cpfRaw = String(item.cpf ?? "").toLowerCase();
+    const cpfPlain = normalizeCpf(item.cpf ?? "");
+    const keywordCpfPlain = normalizeCpf(keywordRaw);
+
+    // id
+    const idRaw = String(item.id ?? "").toLowerCase();
+
+    const matchesKeyword =
+      !keywordRaw ||
+      nomeNorm.includes(keywordNorm) ||
+      unidadeNorm.includes(keywordNorm) ||
+      sexoNorm.includes(keywordNorm) ||
+      emailRaw.includes(keywordLower) || // busca por e-mail
+      cpfRaw.includes(keywordNorm) ||
+      (keywordCpfPlain && cpfPlain.includes(keywordCpfPlain)) ||
+      idRaw.includes(keywordLower); // 👈 busca por id
+
+    return matchUnidade && matchSexo && matchesKeyword;
   });
 });
+
+
+
 
 
 const validateForm = () => {
@@ -1368,7 +1452,7 @@ const pagination = ref({
 }
 
 .mg-pers {
-  margin-bottom: 50px;
+  margin-bottom: 70px;
 }
 
 .icon-pers {
@@ -1397,6 +1481,24 @@ const pagination = ref({
   50% { opacity: 0.4; }
   100% { opacity: 1; }
 }
+
+.loading-blink {
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  animation: blink 1s infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
 
 
 @media (max-width: 400px) {

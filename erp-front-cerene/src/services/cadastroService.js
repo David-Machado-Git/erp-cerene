@@ -49,13 +49,37 @@ async sendBoasVindas(email) {
     await addDoc(collection(db, "mail"), {
       to: email,
       message: {
-        subject: "Bem-vindo ao Cerene!",
+        subject: "Bem-vindo à nova era do Cerene!",
         html: `
-          <h1>Bem-vindo ao Cerene!</h1>
-          <p>Estamos felizes em tê-lo conosco.</p>
-          <hr>
-          <p>Atenciosamente,<br>Cerene</p>
-          <img src="https://firebasestorage.googleapis.com/v0/b/cerene---controle-ponto.firebasestorage.app/o/assinatura_boas_vindas.png?alt=media&token=3321a5c0-09d7-45b9-aadf-28e50744f591" alt="Assinatura Cerene"/>
+          <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+            <h1 style="color: #2c3e50;">Bem-vindo ao Cerene!</h1>
+            
+            <p>É com alegria que informamos que você <strong>acabou de realizar seu cadastro</strong> em nossa nova 
+            <strong>Plataforma de Gestão de Ponto</strong>.</p>
+            
+            <p>Este passo representa mais do que um avanço tecnológico: é um sinal de <strong>crescimento</strong>, 
+            <strong>organização</strong> e <strong>cuidado</strong> com cada pessoa que faz parte da nossa missão.</p>
+            
+            <p>O <strong>Cerene</strong> é, antes de tudo, uma unidade terapêutica dedicada à transformação de vidas. 
+            Agora, com esta ferramenta, buscamos também transformar a forma como acompanhamos e valorizamos a jornada 
+            de nossos colaboradores.</p>
+            
+            <p>Se você já caminha conosco há muitos anos, este momento simboliza uma nova etapa dessa história. 
+            Se você está chegando agora, é o início de uma nova trajetória onde queremos que seja marcada por 
+            <strong>acolhimento</strong>, <strong>evolução</strong> e <strong>propósito</strong>.</p>
+            
+            <p style="font-size: 1.1em; color: #27ae60;"><strong>E você faz parte de tudo isso 🌱</strong></p>
+            
+            <p>Estamos muito felizes em ter você aqui. Juntos, seguimos construindo um Cerene cada vez mais 
+            <strong>humano</strong>, <strong>transparente</strong> e <strong>preparado para o futuro</strong>.</p>
+            
+            <hr style="margin: 20px 0;">
+            
+            <p><strong>Atenciosamente,</strong><br>Equipe Cerene</p>
+            
+            <img src="https://firebasestorage.googleapis.com/v0/b/cerene---controle-ponto.firebasestorage.app/o/assinatura_boas_vindas.png?alt=media&token=3321a5c0-09d7-45b9-aadf-28e50744f591" 
+                 alt="Assinatura Cerene" style="margin-top: 15px; max-width: 650px;"/>
+          </div>
         `
       }
     });
@@ -63,8 +87,8 @@ async sendBoasVindas(email) {
   } catch (error) {
     console.error("Erro ao enviar e-mail:", error);
   }
-
 }
+
 
 capitalizeFirst(str) {
   if (!str) return "";

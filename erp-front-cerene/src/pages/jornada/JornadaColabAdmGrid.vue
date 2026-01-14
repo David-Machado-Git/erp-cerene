@@ -287,7 +287,10 @@
                   class="text-green-500"
                   @click="goToCalendar(props.item)"
                 >
-                  <v-icon color="green">
+                  <v-icon
+                    color="green"
+                    class="s-i"
+                  >
                     mdi-calendar
                   </v-icon>
                 </button>
@@ -472,10 +475,21 @@ const handleSavePerson = async () => {
   }
 };
 
+function normalizeCpf(cpf = "") {
+  return String(cpf).replace(/\D/g, ""); // remove tudo que não for número
+}
+
+function normalizeText(text = "") {
+  return String(text)
+    .toLowerCase()
+    .normalize("NFD")               // separa acentos
+    .replace(/[\u0300-\u036f]/g, ""); // remove acentos
+}
+
 const filteredItems = computed(() => {
   return items.value.filter((item) => {
-    const itemUnidade = item.unidade?.[0]?.desc?.toLowerCase?.() || "";
-    const filtroUnidade = filters.value.unidade?.toLowerCase?.() || "";
+    const itemUnidade = normalizeText(item.unidade?.[0]?.desc ?? "");
+    const filtroUnidade = normalizeText(filters.value.unidade ?? "");
 
     const matchUnidade =
       !filters.value.unidade || itemUnidade === filtroUnidade;
@@ -483,15 +497,43 @@ const filteredItems = computed(() => {
     const matchSexo =
       !filters.value.sexo || item.sexo === filters.value.sexo;
 
-    const matchKeyword =
-      !filters.value.keyword ||
-      item.nome.toLowerCase().includes(filters.value.keyword.toLowerCase()) ||
-      item.cpf.toLowerCase().includes(filters.value.keyword.toLowerCase()) ||
-      itemUnidade.includes(filters.value.keyword.toLowerCase()); // ✅ agora também busca por unidade
+    // keyword
+    const keywordRaw = (filters.value.keyword ?? "").trim();
+    const keywordNorm = normalizeText(keywordRaw);
+    const keywordLower = keywordRaw.toLowerCase();
 
-    return matchUnidade && matchSexo && matchKeyword;
+    // campos normalizados
+    const nomeNorm = normalizeText(item.nome ?? "");
+    const unidadeNorm = itemUnidade;
+    const sexoNorm = normalizeText(item.sexo ?? "");
+
+    // e-mail (mantém caracteres especiais)
+    const emailRaw = String(item.email ?? "").toLowerCase();
+
+    // cpf
+    const cpfRaw = String(item.cpf ?? "").toLowerCase();
+    const cpfPlain = normalizeCpf(item.cpf ?? "");
+    const keywordCpfPlain = normalizeCpf(keywordRaw);
+
+    // id
+    const idRaw = String(item.id ?? "").toLowerCase();
+
+    const matchesKeyword =
+      !keywordRaw ||
+      nomeNorm.includes(keywordNorm) ||
+      unidadeNorm.includes(keywordNorm) ||
+      sexoNorm.includes(keywordNorm) ||
+      emailRaw.includes(keywordLower) || // busca por e-mail
+      cpfRaw.includes(keywordNorm) ||
+      (keywordCpfPlain && cpfPlain.includes(keywordCpfPlain)) ||
+      idRaw.includes(keywordLower); // 👈 busca por id
+
+    return matchUnidade && matchSexo && matchesKeyword;
   });
 });
+
+
+
 
 const goToCalendar = (colab: Colab) => {
   console.log("CAIU NO GO TO CALENDAR COM OS DADOS =>", colab);
@@ -601,7 +643,7 @@ const pagination = ref({
 }
 
 .mg-pers {
-  margin-bottom: 50px;
+  margin-bottom: 70px;
 }
 
 .icon-pers {
@@ -609,6 +651,10 @@ const pagination = ref({
   position: relative;
   top: 2px !important;
   font-size: 20px;
+}
+
+.s-i {
+  font-size: 30px !important;
 }
 
 .icon-pers-p {

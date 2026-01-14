@@ -24,6 +24,12 @@
         />
         <v-list-item
           class="custum-drop-dal"
+          prepend-icon="mdi-domain"
+          title="Unidades Cerene"
+          @click="() => handleClick('Unidades')"
+        />
+        <v-list-item
+          class="custum-drop-dal"
           prepend-icon="mdi-account-circle"
           title="Colaboradores Cerene"
           @click="() => handleClick('Colaboradores-cerene')"
@@ -34,7 +40,6 @@
           title="Jornada de Trabalho"
           @click="() => handleClick('Colabradores-jornada')"
         />
-
         <v-list-group v-model="usersGroupOpen">
           <template #activator="{ props }">
             <v-list-item
@@ -71,6 +76,7 @@
         />
       </v-list>
     </v-navigation-drawer>
+
     <v-app-bar
       flat
       class="border-b"
