@@ -26,7 +26,7 @@
           class="custum-drop-dal"
           prepend-icon="mdi-domain"
           title="Unidades Cerene"
-          @click="() => handleClick('Unidades')"
+          @click="() => handleClick('unidades')"
         />
         <v-list-item
           class="custum-drop-dal"
@@ -327,6 +327,9 @@ const handleClick = (event) => {
       break;
     case "Colabradores-jornada":
       router.push("/dashboard/jornada-colaborador");
+      break;
+    case "unidades":
+      router.push("/dashboard/unidades-cerene");
       break;
     default:
       break;

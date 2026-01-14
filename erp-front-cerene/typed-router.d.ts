@@ -34,5 +34,6 @@ declare module 'vue-router/auto-routes' {
     '/jornada/JornadaGrid': RouteRecordInfo<'/jornada/JornadaGrid', '/jornada/JornadaGrid', Record<never, never>, Record<never, never>>,
     '/Login': RouteRecordInfo<'/Login', '/Login', Record<never, never>, Record<never, never>>,
     '/Tabela': RouteRecordInfo<'/Tabela', '/Tabela', Record<never, never>, Record<never, never>>,
+    '/unidades/UnidadesList': RouteRecordInfo<'/unidades/UnidadesList', '/unidades/UnidadesList', Record<never, never>, Record<never, never>>,
   }
 }

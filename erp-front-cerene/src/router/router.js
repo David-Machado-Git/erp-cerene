@@ -7,6 +7,7 @@ import StatisticsDash from "@/pages/financeiro/StatisticsDash.vue";
 import ColaboradoresAdm from "@/pages/Colaboradores/ColaboradoresAdm.vue";
 import JornadaColabAdmGrid from "@/pages/jornada/JornadaColabAdmGrid.vue";
 import JornadaGrid from "@/pages/jornada/JornadaGrid.vue";
+import UnidadesList from "@/pages/unidades/UnidadesList.vue";
 // import Importacao from "@/pages/Importacao.vue"; // Adiciona manualmente o componente
 // import ColaboradoresAdm from "@/pages/Colaboradores/ColaboradoresAdm.vue";
 
@@ -53,6 +54,12 @@ const routes = [
         name: "MinhaJornada",
         component: JornadaGrid,
         meta: { title: "Minha Jornada" },
+      },
+      {
+        path: "unidades-cerene",
+        name: "Unidades",
+        component: UnidadesList,
+        meta: { title: "Unidades Cerene" },
       },
     ],
   },
