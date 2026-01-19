@@ -582,7 +582,7 @@ watch(cpf, (newVal) => {
 
 const atualizarGrid = async () => {
   const colaboradores = await JornadaColabAdmService.findColaboradores();
-  colaboradores.sort((a: any, b: any) => a.nome.localeCompare(b.nome));
+  colaboradores.sort((a: any, b: any) => String(a.nome).localeCompare(b.nome));
   completeData.value = colaboradores;
 
   items.value = colaboradores.map((colab: any, index: number) => ({

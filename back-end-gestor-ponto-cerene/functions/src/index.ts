@@ -9,9 +9,13 @@ export const marcarFaltasAgendada = functions.pubsub
   .schedule("0 23 * * 1-5") // Segunda a sexta às 23h00
   .timeZone("America/Sao_Paulo")
   .onRun(async (context) => {
-    const hoje = new Date();
+    const agora = new Date();
 
-    // Gera YYYY-MM-DD em horário local (sem UTC)
+    // Pega o dia anterior
+    const ontem = new Date(agora);
+    ontem.setDate(agora.getDate() - 1);
+
+    // Gera YYYY-MM-DD em horário local
     const formatLocalDate = (d: Date) => {
       const year = d.getFullYear();
       const month = String(d.getMonth() + 1).padStart(2, "0");
@@ -19,15 +23,15 @@ export const marcarFaltasAgendada = functions.pubsub
       return `${year}-${month}-${day}`;
     };
 
-    const idDia = formatLocalDate(hoje); // Ex: "2026-01-13"
-    const diaSemana = hoje.getDay(); // 0 = domingo, 6 = sábado (local)
+    const idDia = formatLocalDate(ontem); // ✅ agora é o dia 12
+    const diaSemana = ontem.getDay(); // 0 = domingo, 6 = sábado
 
     if (diaSemana === 0 || diaSemana === 6) {
-      console.log("Hoje é fim de semana, nenhuma falta será marcada.");
+      console.log("Ontem foi fim de semana, nenhuma falta será marcada.");
       return null;
     }
 
-    const dateDisplay = hoje.toLocaleDateString("pt-BR", {
+    const dateDisplay = ontem.toLocaleDateString("pt-BR", {
       weekday: "short",
       day: "2-digit",
       month: "2-digit",
@@ -48,8 +52,7 @@ export const marcarFaltasAgendada = functions.pubsub
         const registroSnap = await registroRef.once("value");
 
         if (registroSnap.exists()) {
-          // Já tem registro para o dia, ignora
-          continue;
+          continue; // já tem registro para o dia
         }
 
         const userRef = db.ref(`controlePonto/${idUser}`);
@@ -72,7 +75,6 @@ export const marcarFaltasAgendada = functions.pubsub
           hasJustificativa: false,
         };
 
-        // Se o nó do usuário não existe, cria também
         if (!userSnap.exists()) {
           updates[`controlePonto/${idUser}/idUser`] = idUser;
         }
@@ -88,4 +90,5 @@ export const marcarFaltasAgendada = functions.pubsub
       return null;
     }
   });
+
 

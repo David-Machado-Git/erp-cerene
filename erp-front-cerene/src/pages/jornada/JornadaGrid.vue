@@ -261,23 +261,25 @@
           md="2"
           class="d-flex justify-center"
         >
-          <v-avatar
-            size="100"
-            class="mb-2"
-            color="#528ad0"
-          >
-            <v-img
-              :src="colab?.urlPhoto || 'https://cdn-icons-png.flaticon.com/512/3541/3541871.png'"
-              alt="Foto do colaborador"
-              cover
+          <div class="avatar-container">
+            <v-avatar
+              size="180"
+              class="mb-2"
+              color="#528ad0"
             >
-              <template #placeholder>
-                <div class="loading-blink">
-                  Carregando...
-                </div>
-              </template>
-            </v-img>
-          </v-avatar>
+              <v-img
+                :src="colab?.urlPhoto || 'https://cdn-icons-png.flaticon.com/512/3541/3541871.png'"
+                alt="Foto do colaborador"
+                cover
+              >
+                <template #placeholder>
+                  <div class="loading-blink">
+                    Carregando...
+                  </div>
+                </template>
+              </v-img>
+            </v-avatar>
+          </div>
         </v-col>
 
         <!-- Dados compactados -->
@@ -1512,6 +1514,40 @@ const calcularSomatoria = (item) => {
   align-items: center;
   justify-content: center;
   height: 100%;
+}
+
+.avatar-container {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar-container::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: calc(100% + 12px);
+  height: calc(100% + 12px);
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    #f3f5fc,
+    #e7fbfc,
+    #5b7f8f,
+    #3481df,
+    #f3f2f2
+  );
+  animation: spin 3s linear infinite;
+  z-index: -1;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes blink {

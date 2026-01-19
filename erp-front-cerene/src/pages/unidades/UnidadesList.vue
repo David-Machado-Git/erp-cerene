@@ -30,6 +30,7 @@
       class="custom-dialog"
     >
       <v-card>
+        <!-- Título -->
         <v-card-title
           class="d-flex align-center"
           style="background-color: #528ad0; color: white;"
@@ -38,23 +39,22 @@
             left
             class="mr-2"
           >
-            mdi-account-box
+            mdi-office-building
           </v-icon>
-          Cadastro
+          Cadastro de Unidade
         </v-card-title>
 
-
-
+        <!-- Conteúdo -->
         <v-card-text class="scrollable-content">
           <v-card
             class="mx-auto pa-6"
             elevation="8"
             max-width="1200"
             rounded="lg"
-            color=""
           >
             <VRow>
               <VCol>
+                <!-- Card: Foto + Dados principais -->
                 <v-card
                   class="pa-4 mb-6"
                   elevation="6"
@@ -62,34 +62,32 @@
                   color="blue-grey-lighten-6"
                 >
                   <v-row class="align-center">
-                    <!-- Foto redonda com borda + input de upload -->
+                    <!-- Foto da unidade -->
                     <v-col
                       cols="12"
                       md="2"
                       class="d-flex flex-column align-center"
                     >
-                      <v-avatar
-                        size="100"
-                        class="mb-2"
-                        color="#528ad0"
-                      >
-                        <v-img
-                          :src="urlPhoto || 'https://cdn-icons-png.flaticon.com/512/3541/3541871.png'"
-                          alt="Foto do colaborador"
-                          cover
+                      <div class="avatar-container">
+                        <v-avatar
+                          size="180"
+                          class="mb-2"
+                          color="#528ad0"
                         >
-                          <template #placeholder>
-                            <div class="loading-blink">
-                              Carregando...
-                            </div>
-                          </template>
-                        </v-img>
-                      </v-avatar>
+                          <v-img
+                            :src="urlPhoto || 'https://cdn-icons-png.flaticon.com/512/3541/3541871.png'"
+                            alt="Foto do colaborador"
+                            cover
+                          >
+                            <template #placeholder>
+                              <div class="loading-blink">
+                                Carregando...
+                              </div>
+                            </template>
+                          </v-img>
+                        </v-avatar>
+                      </div>
 
-
-
-                      <!-- 🔹 Input de upload compacto -->
-                      <!-- Botão com ícone -->
                       <v-btn
                         icon
                         size="32"
@@ -101,16 +99,6 @@
                         </v-icon>
                       </v-btn>
 
-
-                      <v-file-input
-                        ref="uploadFoto"
-                        accept="image/*"
-                        style="display: none"
-                        @change="handlePhotoUpload"
-                      />
-
-
-                      <!-- Input invisível -->
                       <v-file-input
                         ref="uploadFoto"
                         accept="image/*"
@@ -137,7 +125,7 @@
                       </div>
                     </v-col>
 
-                    <!-- Dados compactados -->
+                    <!-- Campos principais -->
                     <v-col
                       cols="12"
                       md="10"
@@ -145,117 +133,206 @@
                       <v-row>
                         <v-col
                           cols="12"
-                          md="4"
-                        >
-                          <div
-                            class="text-subtitle-1 font-weight-bold"
-                            style="color:#1976D2;"
-                          >
-                            {{ nome || "" }}
-                          </div>
-                          <div class="text-caption text-grey-darken-1">
-                            {{ cargo || "" }}
-                          </div>
-                        </v-col>
-
-                        <v-col
-                          cols="12"
-                          md="4"
-                        >
-                          <v-icon
-                            color="deep-purple"
-                            class="mr-1"
-                          >
-                            mdi-card-account-details-outline
-                          </v-icon>
-                          <span class="text-caption"><strong>CPF:</strong> {{ cpf || "" }}</span><br>
-                          <v-icon
-                            color="green"
-                            class="mr-1"
-                          >
-                            mdi-calendar
-                          </v-icon>
-                          <span class="text-caption"><strong>Nascimento:</strong> {{ nasc || "" }}</span>
-                        </v-col>
-
-                        <v-col
-                          cols="12"
-                          md="4"
-                        >
-                          <v-icon
-                            color="orange"
-                            class="mr-1"
-                          >
-                            mdi-briefcase-outline
-                          </v-icon>
-                          <span class="text-caption"><strong>Cargo:</strong> {{ cargo || "" }}</span><br>
-                          <v-icon
-                            color="indigo"
-                            class="mr-1"
-                          >
-                            mdi-office-building
-                          </v-icon>
-                          <span class="text-caption"><strong>Unidade:</strong> {{ unidade || "" }}</span>
-                        </v-col>
-                      </v-row>
-
-                      <v-row class="mt-2">
-                        <v-col
-                          cols="12"
                           md="6"
                         >
-                          <v-icon
-                            color="pink"
-                            class="mr-1"
-                          >
-                            mdi-gender-male-female
-                          </v-icon>
-                          <span class="text-caption"><strong>Sexo:</strong> {{ sexo || "" }}</span>
-                        </v-col>
-
-                        <v-col
-                          cols="12"
-                          md="6"
-                        >
-                          <v-icon
-                            color="red"
-                            class="mr-1"
-                          >
-                            mdi-email-outline
-                          </v-icon>
-                          <span
-                            class="text-caption cursor-pointer"
-                            style="text-decoration: underline; color: #1976D2;"
-                            @click="copiarEmail(email)"
-                          >
-                            <strong>E-mail:</strong> {{ email || "" }}
-                          </span>
+                          <VTextField
+                            v-model="dadosEmpresa.razaoSocial"
+                            label="Razão Social"
+                            prepend-inner-icon="mdi-domain"
+                            variant="outlined"
+                            required
+                          />
                         </v-col>
                         <v-col
                           cols="12"
                           md="6"
                         >
-                          <v-icon
-                            color="blue"
-                            class="mr-1"
-                          >
-                            mdi-identifier
-                          </v-icon>
-                          <span
-                            class="text-caption cursor-pointer"
-                            style="text-decoration: underline; color: #1976D2;"
-                            @click="copiarId"
-                          >
-                            <strong>ID:</strong> {{ id || "" }}
-                          </span>
+                          <VTextField
+                            v-model="dadosEmpresa.nomeFantasia"
+                            label="Nome Fantasia"
+                            prepend-inner-icon="mdi-store"
+                            variant="outlined"
+                            required
+                          />
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
+                          <VTextField
+                            v-model="dadosEmpresa.cnpj"
+                            label="CNPJ"
+                            prepend-inner-icon="mdi-card-account-details-outline"
+                            variant="outlined"
+                            required
+                          />
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
+                          <VTextField
+                            v-model="dadosEmpresa.ie"
+                            label="Inscrição Estadual"
+                            prepend-inner-icon="mdi-identifier"
+                            variant="outlined"
+                          />
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
+                          <VTextField
+                            v-model="dadosEmpresa.im"
+                            label="Inscrição Municipal"
+                            prepend-inner-icon="mdi-identifier"
+                            variant="outlined"
+                          />
                         </v-col>
                       </v-row>
                     </v-col>
                   </v-row>
                 </v-card>
 
+                <!-- Card: Endereço -->
+                <v-card
+                  class="pa-4 mb-6"
+                  elevation="2"
+                  rounded="lg"
+                  color="blue-grey-lighten-5"
+                >
+                  <v-card-title
+                    class="text-subtitle-1 font-weight-bold"
+                    style="color:#1976D2;"
+                  >
+                    <v-icon
+                      left
+                      class="mr-2"
+                      color="primary"
+                    >
+                      mdi-map-marker
+                    </v-icon>
+                    Endereço
+                  </v-card-title>
+                  <VRow>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="dadosEmpresa.endereco.logradouro"
+                        label="Logradouro"
+                        variant="outlined"
+                      />
+                    </VCol>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="dadosEmpresa.endereco.numero"
+                        label="Número"
+                        variant="outlined"
+                      />
+                    </VCol>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="dadosEmpresa.endereco.bairro"
+                        label="Bairro"
+                        variant="outlined"
+                      />
+                    </VCol>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="dadosEmpresa.endereco.cidade"
+                        label="Cidade"
+                        variant="outlined"
+                      />
+                    </VCol>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="dadosEmpresa.endereco.estado"
+                        label="Estado"
+                        variant="outlined"
+                      />
+                    </VCol>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="dadosEmpresa.endereco.cep"
+                        label="CEP"
+                        variant="outlined"
+                      />
+                    </VCol>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="dadosEmpresa.endereco.pais"
+                        label="País"
+                        variant="outlined"
+                      />
+                    </VCol>
+                  </VRow>
+                </v-card>
 
+                <!-- Card: Contato -->
+                <v-card
+                  class="pa-4 mb-6"
+                  elevation="2"
+                  rounded="lg"
+                  color="blue-grey-lighten-5"
+                >
+                  <v-card-title
+                    class="text-subtitle-1 font-weight-bold"
+                    style="color:#1976D2;"
+                  >
+                    <v-icon
+                      left
+                      class="mr-2"
+                      color="red"
+                    >
+                      mdi-email-outline
+                    </v-icon>
+                    Contato
+                  </v-card-title>
+                  <VRow>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="dadosEmpresa.contato.telefone"
+                        label="Telefone"
+                        variant="outlined"
+                      />
+                    </VCol>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="dadosEmpresa.contato.email"
+                        label="E-mail"
+                        variant="outlined"
+                      />
+                    </VCol>
+                  </VRow>
+                </v-card>
 
+                <!-- Card: Responsável -->
                 <v-card
                   class="pa-4 mb-6"
                   elevation="2"
@@ -273,395 +350,47 @@
                     >
                       mdi-account-outline
                     </v-icon>
-                    Dados Pessoais
+                    Responsável
                   </v-card-title>
-
-                  <p class="mb-6">
-                    Formulário de Edição
-                  </p>
-
-                  <!-- Primeira linha -->
                   <VRow>
                     <VCol
                       cols="12"
                       md="6"
                     >
                       <VTextField
-                        v-model="nome"
-                        label="Digite seu nome"
-                        prepend-inner-icon="mdi-account-outline"
-                        prepend-inner-icon-color="primary"
-                        density="comfortable"
+                        v-model="dadosEmpresa.responsavel.nome"
+                        label="Nome do Responsável"
                         variant="outlined"
-                        required
                       />
                     </VCol>
-
                     <VCol
                       cols="12"
                       md="6"
                     >
                       <VTextField
-                        v-model="cpf"
-                        label="Digite seu CPF"
-                        prepend-inner-icon="mdi-card-account-details-outline"
-                        prepend-inner-icon-color="indigo"
-                        density="comfortable"
+                        v-model="dadosEmpresa.responsavel.cpf"
+                        label="CPF do Responsável"
                         variant="outlined"
-                        maxlength="14"
-                        required
                       />
                     </VCol>
-                  </VRow>
-
-                  <!-- Segunda linha -->
-                  <VRow>
                     <VCol
                       cols="12"
                       md="6"
                     >
                       <VTextField
-                        v-model="nasc"
-                        label="Data de Nascimento"
-                        prepend-inner-icon="mdi-calendar"
-                        prepend-inner-icon-color="deep-purple"
-                        density="comfortable"
+                        v-model="dadosEmpresa.responsavel.email"
+                        label="E-mail do Responsável"
                         variant="outlined"
-                        type="date"
-                        required
-                      />
-                    </VCol>
-
-                    <VCol
-                      cols="12"
-                      md="6"
-                    >
-                      <VTextField
-                        v-model="cargo"
-                        label="Digite seu cargo"
-                        prepend-inner-icon="mdi-briefcase-outline"
-                        prepend-inner-icon-color="teal"
-                        density="comfortable"
-                        variant="outlined"
-                        required
-                      />
-                    </VCol>
-                  </VRow>
-
-                  <!-- Terceira linha -->
-                  <VRow>
-                    <VCol
-                      cols="12"
-                      md="6"
-                    >
-                      <VSelect
-                        v-model="unidade"
-                        :items="unidadesMap"
-                        item-title="desc"
-                        item-value="enum"
-                        label="Unidade de Trabalho"
-                        prepend-inner-icon="mdi-office-building"
-                        prepend-inner-icon-color="orange"
-                        density="comfortable"
-                        variant="outlined"
-                        required
-                      />
-                    </VCol>
-
-                    <VCol
-                      cols="12"
-                      md="6"
-                    >
-                      <VSelect
-                        v-model="sexo"
-                        :items="['Masculino', 'Feminino']"
-                        label="Sexo"
-                        prepend-inner-icon="mdi-gender-male-female"
-                        prepend-inner-icon-color="pink"
-                        density="comfortable"
-                        variant="outlined"
-                        required
-                      />
-                    </VCol>
-                  </VRow>
-
-                  <!-- Quarta linha -->
-                  <VRow>
-                    <VCol
-                      cols="12"
-                      md="6"
-                    >
-                      <VTextField
-                        v-model="email"
-                        label="Digite seu e-mail"
-                        prepend-inner-icon="mdi-email-outline"
-                        prepend-inner-icon-color="cyan"
-                        density="comfortable"
-                        variant="outlined"
-                        type="email"
-                        required
-                      />
-                    </VCol>
-
-                    <VCol
-                      cols="12"
-                      md="6"
-                    >
-                      <VTextField
-                        v-model="password"
-                        :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-                        :type="visible ? 'text' : 'password'"
-                        label="Digite sua senha"
-                        prepend-inner-icon="mdi-lock-outline"
-                        prepend-inner-icon-color="red"
-                        density="comfortable"
-                        variant="outlined"
-                        required
-                        @click:append-inner="visible = !visible"
                       />
                     </VCol>
                   </VRow>
                 </v-card>
-
-
-                
-                <h3 class="mb-2">
-                  Contas Bancárias
-                </h3>
-                <p class="mb-6">
-                  Informe os dados bancários do colaborador
-                </p>
-
-                <VRow
-                  v-for="(conta, index) in contas"
-                  :key="index"
-                  class="mb-4"
-                >
-                  <v-col cols="12">
-                    <v-card
-                      class="pa-4"
-                      elevation="2"
-                      rounded="lg"
-                      color="blue-grey-lighten-5"
-                    >
-                      <v-card-title
-                        class="d-flex justify-space-between align-center text-subtitle-1 font-weight-bold"
-                        style="color:#546E7A;"
-                      >
-                        <div>
-                          <v-icon
-                            left
-                            class="mr-2"
-                            color="blue-grey-darken-1"
-                          >
-                            mdi-bank
-                          </v-icon>
-                          Banco {{ index + 1 }}
-                        </div>
-
-                        <v-btn
-                          v-if="contas.length > 1"
-                          icon
-                          size="small"
-                          color="blue-grey-lighten-3"
-                          @click="removerConta(index)"
-                        >
-                          <v-icon>mdi-close</v-icon>
-                        </v-btn>
-                      </v-card-title>
-
-
-                      <VRow>
-                        <VCol
-                          cols="12"
-                          md="6"
-                        >
-                          <VTextField
-                            v-model="conta.banco"
-                            label="Banco"
-                            prepend-inner-icon="mdi-bank"
-                            prepend-inner-icon-color="indigo"
-                            density="comfortable"
-                            variant="outlined"
-                            required
-                          />
-                        </VCol>
-
-                        <VCol
-                          cols="12"
-                          md="6"
-                        >
-                          <VTextField
-                            v-model="conta.agencia"
-                            label="Agência"
-                            prepend-inner-icon="mdi-office-building"
-                            prepend-inner-icon-color="orange"
-                            density="comfortable"
-                            variant="outlined"
-                            required
-                          />
-                        </VCol>
-
-                        <VCol
-                          cols="12"
-                          md="6"
-                        >
-                          <VTextField
-                            v-model="conta.conta"
-                            label="Número da Conta"
-                            prepend-inner-icon="mdi-card-account-details-outline"
-                            prepend-inner-icon-color="deep-purple"
-                            density="comfortable"
-                            variant="outlined"
-                            required
-                          />
-                        </VCol>
-
-                        <VCol
-                          cols="12"
-                          md="6"
-                        >
-                          <VSelect
-                            v-model="conta.tipo"
-                            :items="['Corrente', 'Poupança']"
-                            label="Tipo de Conta"
-                            prepend-inner-icon="mdi-cash-multiple"
-                            prepend-inner-icon-color="green"
-                            density="comfortable"
-                            variant="outlined"
-                            required
-                          />
-                        </VCol>
-                      </VRow>
-                    </v-card>
-                    <VRow>
-                      <VCol
-                        cols="12"
-                        class="d-flex justify-end"
-                      >
-                        <v-btn
-                          color="blue-grey-lighten-1"
-                          variant="tonal"
-                          @click="adicionarConta"
-                        >
-                          <v-icon
-                            left
-                            color="blue-grey-darken-1"
-                          >
-                            mdi-plus-circle
-                          </v-icon>
-                          ADD Conta
-                        </v-btn>
-                      </VCol>
-                    </VRow>
-                  </v-col>
-                </VRow>
-
-                <h3 class="mb-2">
-                  Pix
-                </h3>
-                <p class="mb-6">
-                  Informe os dados da chave Pix do colaborador
-                </p>
-
-                <VRow
-                  v-for="(pix, index) in pixContas"
-                  :key="index"
-                  class="mb-4"
-                >
-                  <v-col cols="12">
-                    <v-card
-                      class="pa-4"
-                      elevation="2"
-                      rounded="lg"
-                      color="blue-grey-lighten-5"
-                    >
-                      <v-card-title
-                        class="d-flex justify-space-between align-center text-subtitle-1 font-weight-bold"
-                        style="color:#546E7A;"
-                      >
-                        <div>
-                          <v-icon
-                            left
-                            class="mr-2"
-                            color="blue-grey-darken-1"
-                          >
-                            mdi-key
-                          </v-icon>
-                          Chave Pix {{ index + 1 }}
-                        </div>
-
-                        <v-btn
-                          v-if="pixContas.length > 1"
-                          icon
-                          size="small"
-                          color="blue-grey-lighten-3"
-                          @click="removerPix(index)"
-                        >
-                          <v-icon>mdi-close</v-icon>
-                        </v-btn>
-                      </v-card-title>
-
-                      <VRow>
-                        <VCol
-                          cols="12"
-                          md="6"
-                        >
-                          <VSelect
-                            v-model="pix.tipoChave"
-                            :items="['CPF', 'CNPJ', 'E-mail', 'Telefone', 'Chave Aleatória']"
-                            label="Tipo da Chave"
-                            prepend-inner-icon="mdi-key-outline"
-                            prepend-inner-icon-color="indigo"
-                            density="comfortable"
-                            variant="outlined"
-                            required
-                          />
-                        </VCol>
-
-                        <VCol
-                          cols="12"
-                          md="6"
-                        >
-                          <VTextField
-                            v-model="pix.chave"
-                            label="Valor da Chave Pix"
-                            prepend-inner-icon="mdi-form-textbox"
-                            prepend-inner-icon-color="deep-purple"
-                            density="comfortable"
-                            variant="outlined"
-                            required
-                          />
-                        </VCol>
-                      </VRow>
-                    </v-card>
-
-                    <VRow>
-                      <VCol
-                        cols="12"
-                        class="d-flex justify-end"
-                      >
-                        <v-btn
-                          color="blue-grey-lighten-1"
-                          variant="tonal"
-                          @click="adicionarPix"
-                        >
-                          <v-icon
-                            left
-                            color="blue-grey-darken-1"
-                          >
-                            mdi-plus-circle
-                          </v-icon>
-                          ADD Chave Pix
-                        </v-btn>
-                      </VCol>
-                    </VRow>
-                  </v-col>
-                </VRow>
               </VCol>
             </VRow>
           </v-card>
         </v-card-text>
+
+        <!-- Ações -->
         <v-card-actions>
           <div
             class="d-flex justify-center mx-auto"
@@ -672,7 +401,7 @@
               variant="tonal"
               color="green-darken-4"
               block
-              @click="validateForm"
+              @click="handleSaveUnidade"
             >
               SALVAR
             </v-btn>
@@ -686,6 +415,8 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+
 
     <v-row
       class="align-center justify-center"
@@ -741,7 +472,7 @@
       <v-data-table
         v-model:pagination="pagination"
         :headers="headers"
-        :items="items"
+        :items="filteredItems"
         item-key="id"
         class="elevation-1 mg-pers"
         :items-per-page-options="[5, 10, 15]"
@@ -749,7 +480,7 @@
       >
         <template #item="props">
           <tr
-            :key="props.item.cod"
+            :key="props.item.id"
             class="hover-row"
           >
             <!-- Código -->
@@ -757,9 +488,14 @@
               {{ props.item.cod }}
             </td>
 
-            <!-- Unidade (Nome Fantasia) -->
+            <!-- Razão Social -->
             <td class="py-3 px-4">
-              {{ props.item.nomeFantasia.length > 20 ? props.item.nomeFantasia.slice(0, 20) + '...' : props.item.nomeFantasia }}
+              {{ props.item.razaoSocial }}
+            </td>
+
+            <!-- Nome Fantasia -->
+            <td class="py-3 px-4">
+              {{ props.item.nomeFantasia }}
             </td>
 
             <!-- CNPJ -->
@@ -775,6 +511,22 @@
             <!-- IM -->
             <td class="py-3 px-4">
               {{ props.item.im }}
+            </td>
+
+            <!-- Contato -->
+            <td class="py-3 px-4">
+              <div>
+                <span>{{ props.item.contato?.telefone }}</span><br>
+                <span>{{ props.item.contato?.email }}</span>
+              </div>
+            </td>
+
+            <!-- Responsável -->
+            <td class="py-3 px-4">
+              <div>
+                <span>{{ props.item.responsavel?.nome }}</span><br>
+                <span>{{ props.item.responsavel?.email }}</span>
+              </div>
             </td>
 
             <!-- Ações -->
@@ -801,8 +553,8 @@
                   class="ml-2"
                   @click="toggleActiveStatus(props.item)"
                 >
-                  <v-icon :color="props.item.isActive ? 'green' : 'red'">
-                    {{ props.item.isActive ? 'mdi-lock-open' : 'mdi-lock' }}
+                  <v-icon :color="props.item.configuracoes?.ativo ? 'green' : 'red'">
+                    {{ props.item.configuracoes?.ativo ? 'mdi-lock-open' : 'mdi-lock' }}
                   </v-icon>
                 </button>
               </div>
@@ -824,12 +576,12 @@
 import { ref, onMounted, watch, computed } from "vue";
 import colaboradorService from "@/services/colaboradorService";
 import UploadStorageService from "@/services/UploadStorageService";
-import cadastroService from "@/services/cadastroService";
 import unidadeService from "./UnidadeService";
 import { useToast } from "vue-toastification";
 import { VFileInput } from 'vuetify/components';
 import Swal from "sweetalert2";
 import { reactive } from 'vue'
+// import { unidadeEvenBus } from "@/eventBus";
 
 // interface ContaBancaria {
 //   banco: string;
@@ -843,6 +595,40 @@ import { reactive } from 'vue'
 //   chave: string;
 // }
 
+interface Unidade {
+    id: string;
+    razaoSocial: string;
+    nomeFantasia: string;
+    cnpj: string;
+    ie?: string;
+    im?: string;
+    urlPhoto: string;
+    endereco: {
+        logradouro: string;
+        numero: string;
+        bairro: string;
+        cidade: string;
+        estado: string;
+        cep: string;
+        pais: string;
+    };
+    contato: {
+        telefone: string;
+        email: string;
+    };
+    responsavel: {
+        nome: string;
+        cpf: string;
+        email: string;
+    };
+    configuracoes: {
+        ativo: boolean;
+        dataCadastro: string;
+        ultimaAtualizacao: string;
+    };
+}
+
+
 
 interface Task {
   id: string;
@@ -852,107 +638,72 @@ interface Task {
   dueDate: string;
   category: { id: number; title: string };
 }
-
-const dadosEmpresa = reactive({
-  razaoSocial: '',
-  nomeFantasia: '',
-  cnpj: '',
-  endereco: {
-    logradouro: '',
-    numero: '',
-    bairro: '',
-    cidade: '',
-    estado: '',
-    cep: '',
-    pais: ''
-  },
-  contato: {
-    telefone: '',
-    email: ''
-  },
-  responsavel: {
-    nome: '',
-    cpf: '',
-    email: ''
-  },
-  configuracoes: {
-    ativo: true,
-    dataCadastro: '',
-    ultimaAtualizacao: ''
-  },
-  usuario: [
-    {
-      login: '',
-      password: '',
-      role: '',
-      enum: ''
+// const unidadeEventBus = unidadeEvenBus.unidade;
+const dadosEmpresa = reactive<Unidade>({
+    id: '',
+    razaoSocial: '',
+    nomeFantasia: '',
+    cnpj: '',
+    ie: '',
+    im: '',
+    urlPhoto: '',
+    endereco: {
+        logradouro: '',
+        numero: '',
+        bairro: '',
+        cidade: '',
+        estado: '',
+        cep: '',
+        pais: ''
+    },
+    contato: {
+        telefone: '',
+        email: ''
+    },
+    responsavel: {
+        nome: '',
+        cpf: '',
+        email: ''
+    },
+    configuracoes: {
+        ativo: true,
+        dataCadastro: '',
+        ultimaAtualizacao: ''
     }
-  ]
 });
 
-// const dadosEmpresa = reactive({
-//   razaoSocial: '',
-//   nomeFantasia: '',
-//   cnpj: '',
-//   endereco: {
-//     logradouro: '',
-//     numero: '',
-//     bairro: '',
-//     cidade: '',
-//     estado: '',
-//     cep: '',
-//     pais: 'Brasil'
-//   },
-//   contato: {
-//     telefone: '',
-//     email: ''
-//   },
-//   responsavel: {
-//     nome: '',
-//     cpf: '',
-//     email: ''
-//   },
-//   configuracoes: {
-//     ativo: true,
-//     dataCadastro: new Date().toISOString(),
-//     ultimaAtualizacao: new Date().toISOString()
-//   }
-// });
-
-
 const toast = useToast();
-const nome = ref("");
+// const nome = ref("");
 const cpf = ref("");
-const unidade = ref("");
-const nasc = ref("");
-const cargo = ref("");
-const completeData: any = ref("");
-const unidadesMap = [
-  { desc: "Administração Central", enum: 1 },
-  { desc: "Cerene Blumenau", enum: 2 },
-  { desc: "Cerene Gaspar - NVR", enum: 3 },
-  { desc: "Cerene Joinville", enum: 4 },
-  { desc: "Cerene São Bento do Sul", enum: 5 },
-  { desc: "Cerene Lapa", enum: 6 },
-  { desc: "Cerene Ituporanga", enum: 7 },
-  { desc: "Cerene Palhoça", enum: 8 },
-];
-const sexo = ref("");
+// const unidade = ref("");
+// const nasc = ref("");
+// const cargo = ref("");
+// const unidadesMap = [
+//   { desc: "Administração Central", enum: 1 },
+//   { desc: "Cerene Blumenau", enum: 2 },
+//   { desc: "Cerene Gaspar - NVR", enum: 3 },
+//   { desc: "Cerene Joinville", enum: 4 },
+//   { desc: "Cerene São Bento do Sul", enum: 5 },
+//   { desc: "Cerene Lapa", enum: 6 },
+//   { desc: "Cerene Ituporanga", enum: 7 },
+//   { desc: "Cerene Palhoça", enum: 8 },
+// ];
+// const sexo = ref("");
 
-const usuariosMap = [
-  { desc: "Administrador", role: "ADMIN", enum: 1 },
-  { desc: "Gerente", role: "MANAGER", enum: 2 },
-  { desc: "Usuário", role: "USER", enum: 3 },
-];
+// const usuariosMap = [
+//   { desc: "Administrador", role: "ADMIN", enum: 1 },
+//   { desc: "Gerente", role: "MANAGER", enum: 2 },
+//   { desc: "Usuário", role: "USER", enum: 3 },
+// ];
 
-const email = ref("");
-const id = ref("");
-const password = ref("");
-const contas = ref([{ banco: "", agencia: "", conta: "", tipo: "" }]);
-const pixContas = ref([{ tipoChave: "", chave: "" }]);
-const idUser = ref("");
+// const email = ref("");
+// const id = ref("");
+// const password = ref("");
+// const contas = ref([{ banco: "", agencia: "", conta: "", tipo: "" }]);
+// const pixContas = ref([{ tipoChave: "", chave: "" }]);
+// const idUser = ref("");
 // já tem outros refs como nome, cpf, etc...
-const urlPhoto = ref<any>(null);
+const urlPhoto = ref('')
 const uploadFoto = ref<InstanceType<typeof VFileInput> | null>(null);
 const progress = ref<number>(0);
 const isUploading = ref(false);
@@ -974,68 +725,216 @@ const filters = ref({
   keyword: "",
 });
 const dialog = ref(false);
-const visible = ref(false);
+// const visible = ref(false);
 const items = ref<any[]>([]);
 
-const openModal = (typeOfAction: string, data: any | null) => {
-  if (typeOfAction === "EDIT") {
-    recuverData.value = data;
-    typeAction.value = "EDIT";
-    const infoData: any = recuverData.value;
+const openModal = (action: 'CREATE' | 'EDIT', unidade?: any) => {
+  typeAction.value = action
+  dialog.value = true
 
-    // 🔹 Garantir que urlPhoto sempre receba algo
-    urlPhoto.value = infoData.urlPhoto ?? null;
-    idUser.value = infoData.id;
-    nome.value = infoData.nome;
-    cpf.value = infoData.cpf;
-    nasc.value = infoData.nasc;
-    cargo.value = infoData.cargo;
-    unidade.value = infoData.unidade?.[0]?.desc;
-    sexo.value = infoData.sexo;
-    email.value = infoData.email;
-    id.value = infoData.id;
-    password.value = infoData.password;
+  if (action === 'EDIT' && unidade) {
+    recuverData.value = unidade
+    Object.assign(dadosEmpresa, {
+      id: unidade.id ?? '',
+      razaoSocial: unidade.razaoSocial ?? '',
+      nomeFantasia: unidade.nomeFantasia ?? '',
+      cnpj: unidade.cnpj ?? '',
+      endereco: {
+        logradouro: unidade.endereco?.logradouro ?? '',
+        numero: unidade.endereco?.numero ?? '',
+        bairro: unidade.endereco?.bairro ?? '',
+        cidade: unidade.endereco?.cidade ?? '',
+        estado: unidade.endereco?.estado ?? '',
+        cep: unidade.endereco?.cep ?? '',
+        pais: unidade.endereco?.pais ?? ''
+      },
+      contato: {
+        telefone: unidade.contato?.telefone ?? '',
+        email: unidade.contato?.email ?? ''
+      },
+      responsavel: {
+        nome: unidade.responsavel?.nome ?? '',
+        cpf: unidade.responsavel?.cpf ?? '',
+        email: unidade.responsavel?.email ?? ''
+      },
+      configuracoes: {
+        ativo: unidade.configuracoes?.ativo ?? true,
+        dataCadastro: unidade.configuracoes?.dataCadastro ?? '',
+        ultimaAtualizacao: new Date().toISOString()
+      },
+      ie: unidade.ie ?? '',
+      im: unidade.im ?? '',
+      urlPhoto: unidade.urlPhoto ?? ''
+    })
 
-    // 🔹 Carregar contas bancárias
-    contas.value = infoData.contasBancarias?.length
-      ? infoData.contasBancarias.map((c: any) => ({
-          banco: c.banco ?? "",
-          agencia: c.agencia ?? "",
-          conta: c.conta ?? "",
-          tipo: c.tipo ?? ""
-        }))
-      : [{ banco: "", agencia: "", conta: "", tipo: "" }];
-
-    // 🔹 Carregar chaves Pix
-    pixContas.value = infoData.pixContas?.length
-      ? infoData.pixContas.map((p: any) => ({
-          tipoChave: p.tipoChave ?? "",
-          chave: p.chave ?? ""
-        }))
-      : [{ tipoChave: "", chave: "" }];
+    // ?? reflete a foto no avatar
+    urlPhoto.value = unidade.urlPhoto || ''
   } else {
-    recuverData.value = null;
-    typeAction.value = "CREATE";
-
-    // 🔹 Resetar valores
-    urlPhoto.value = null;
-    nome.value = "";
-    cpf.value = "";
-    nasc.value = "";
-    cargo.value = "";
-    unidade.value = "";
-    sexo.value = "";
-    email.value = "";
-    id.value = "";
-    password.value = "";
-
-    // 🔹 Resetar arrays
-    contas.value = [{ banco: "", agencia: "", conta: "", tipo: "" }];
-    pixContas.value = [{ tipoChave: "", chave: "" }];
+    recuverData.value = null
+    resetForm()
+    urlPhoto.value = '' // limpa apenas no CREATE
   }
-
-  dialog.value = true;
 };
+
+const resetForm = () => {
+  Object.assign(dadosEmpresa, {
+    razaoSocial: '',
+    nomeFantasia: '',
+    cnpj: '',
+    endereco: {
+      logradouro: '',
+      numero: '',
+      bairro: '',
+      cidade: '',
+      estado: '',
+      cep: '',
+      pais: ''
+    },
+    contato: {
+      telefone: '',
+      email: ''
+    },
+    responsavel: {
+      nome: '',
+      cpf: '',
+      email: ''
+    },
+    configuracoes: {
+      ativo: true,
+      dataCadastro: '',
+      ultimaAtualizacao: ''
+    },
+    ie: '',
+    im: ''
+  })
+};
+
+// salvar (create/update) unidade
+const handleSaveUnidade = async () => {
+  try {
+    // validações mínimas
+    if (!dadosEmpresa.nomeFantasia?.trim()) {
+      toast.error('Informe o Nome Fantasia.')
+      return
+    }
+    if (!dadosEmpresa.cnpj?.trim()) {
+      toast.error('Informe o CNPJ.')
+      return
+    }
+
+    const payload = {
+      ...dadosEmpresa,
+      configuracoes: {
+        ativo: dadosEmpresa.configuracoes.ativo,
+        dataCadastro:
+          typeAction.value === 'CREATE'
+            ? new Date().toISOString()
+            : dadosEmpresa.configuracoes.dataCadastro || '',
+        ultimaAtualizacao: new Date().toISOString()
+      },
+      // normalizações úteis
+      nomeFantasia: capitalizeWords(dadosEmpresa.nomeFantasia),
+      cnpj: dadosEmpresa.cnpj,
+      contato: {
+        telefone: dadosEmpresa.contato.telefone,
+        email: (dadosEmpresa.contato.email || '').toLowerCase()
+      },
+      ie: dadosEmpresa.ie || '',
+      im: dadosEmpresa.im || ''
+    }
+
+    if (typeAction.value === 'CREATE') {
+      await unidadeService.inserirUnidade(payload)
+      toast.success('Unidade cadastrada com sucesso!')
+    } else if (typeAction.value === 'EDIT' && recuverData.value?.id) {
+      await unidadeService.atualizarUnidade(recuverData.value.id, payload)
+      toast.success('Unidade atualizada com sucesso!')
+    }
+
+    dialog.value = false
+    await atualizarGrid()
+  } catch (error) {
+    toast.error('Erro ao salvar unidade!')
+    console.error(error)
+  }
+};
+
+// excluir unidade
+const handleDeleteUnidade = async (unidade: any) => {
+  try {
+    const result = await Swal.fire({
+      title: 'Confirmação',
+      text: `Deseja mesmo excluir a unidade: ${unidade.nomeFantasia}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#e0a99e',
+      cancelButtonColor: '#a9dfab',
+      confirmButtonText: 'Sim, excluir',
+      cancelButtonText: 'Cancelar'
+    })
+
+    if (result.isConfirmed) {
+      await unidadeService.deleteUnidade(unidade.id)
+      toast.success(`Unidade ${unidade.nomeFantasia} excluída com sucesso!`)
+      await atualizarGrid()
+    } else {
+      toast.info('Exclusão cancelada.')
+    }
+  } catch (error) {
+    toast.error('Erro ao excluir unidade. Tente novamente!')
+    console.error(error)
+  }
+}
+
+// util
+const capitalizeWords = (text: string) =>
+  text
+    .trim()
+    .split(' ')
+    .map(w => (w ? w[0].toUpperCase() + w.slice(1).toLowerCase() : ''))
+    .join(' ')
+
+// atualizar grid (já entregue anteriormente)
+const atualizarGrid = async () => {
+  try {
+    const unidades = await unidadeService.findUnidades()
+
+    // ordena por nomeFantasia
+    unidades.sort((a: any, b: any) => a.nomeFantasia.localeCompare(b.nomeFantasia))
+
+    // mapeia para items.value com todos os campos
+    items.value = unidades.map((unidade: any, index: number) => ({
+      cod: index + 1,
+      id: unidade.id,
+      razaoSocial: unidade.razaoSocial ?? '',
+      nomeFantasia: unidade.nomeFantasia ?? '',
+      cnpj: unidade.cnpj ?? '',
+      ie: unidade.ie ?? '',
+      im: unidade.im ?? '',
+      endereco: unidade.endereco ?? {
+        logradouro: '',
+        numero: '',
+        bairro: '',
+        cidade: '',
+        estado: '',
+        cep: '',
+        pais: ''
+      },
+      contato: unidade.contato ?? { telefone: '', email: '' },
+      responsavel: unidade.responsavel ?? { nome: '', cpf: '', email: '' },
+      configuracoes: unidade.configuracoes ?? {
+        ativo: true,
+        dataCadastro: '',
+        ultimaAtualizacao: ''
+      },
+      urlPhoto: unidade.urlPhoto ?? ''
+    }))
+  } catch (error) {
+    console.error('Erro ao atualizar grid:', error)
+    toast.error('Erro ao carregar unidades.')
+  }
+}
+
 
 
 // const handlePhotoUpload = (event: Event) => {
@@ -1056,25 +955,41 @@ const openModal = (typeOfAction: string, data: any | null) => {
 // };
 
 // handler de upload
-const handlePhotoUpload = async (event: Event) => {  
-  const target = event.target as HTMLInputElement;
-  const file = target.files?.[0];
-  if (!file) return;
+const handlePhotoUpload = async (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (!file) return
 
-  isUploading.value = true;
-  progress.value = 0;
+  isUploading.value = true
+  progress.value = 0
 
   try {
-    const downloadURL = await UploadStorageService.uploadPhoto(idUser.value, file, (p) => {
-      progress.value = p;
-    });
-    urlPhoto.value = downloadURL;
+    const downloadURL = await UploadStorageService.uploadPhotoUnidade(
+      dadosEmpresa.id,
+      file,
+      (p) => (progress.value = p)
+    )
+
+    // ?? Atualiza refs locais
+    urlPhoto.value = downloadURL
+    dadosEmpresa.urlPhoto = downloadURL
+
+    // ?? Atualiza a lista usada na tabela
+    const unidadeIndex = filteredItems.value.findIndex(
+      (u: any) => u.id === dadosEmpresa.id
+    )
+    if (unidadeIndex !== -1) {
+      filteredItems.value[unidadeIndex].urlPhoto = downloadURL
+    }
+
+    console.log(`[handlePhotoUpload] Foto atualizada para unidade ${dadosEmpresa.id}`)
   } catch (err) {
-    console.error("Erro no upload:", err);
+    console.error("Erro no upload:", err)
   } finally {
-    isUploading.value = false;
+    isUploading.value = false
   }
 };
+
 
 
 
@@ -1084,123 +999,114 @@ const triggerUpload = () => {
 };
 
 
-const inserir = async () => {
-  try {
-    await unidadeService.inserirUnidade(dadosEmpresa)
-    toast.success('Cadastro realizado com sucesso!')
-  } catch (error) {
-    console.error('Erro ao cadastrar unidade:', error)
-    toast.error('Erro ao cadastrar unidade')
-  }
-};
+// const inserir = async () => {
+//   try {
+//     await unidadeService.inserirUnidade(dadosEmpresa)
+//     toast.success('Cadastro realizado com sucesso!')
+//   } catch (error) {
+//     console.error('Erro ao cadastrar unidade:', error)
+//     toast.error('Erro ao cadastrar unidade')
+//   }
+// };
 
 
+// const adicionarConta = () => {
+//   contas.value.push({ banco: "", agencia: "", conta: "", tipo: "" });
+// };
 
-// const contas = ref<ContaBancaria[]>([
-//   { banco: "", agencia: "", conta: "", tipo: "" }
-// ]);
+// const removerConta = (index: number) => {
+//   contas.value.splice(index, 1);
+// };
 
-const adicionarConta = () => {
-  contas.value.push({ banco: "", agencia: "", conta: "", tipo: "" });
-};
+// const adicionarPix = () => {
+//   pixContas.value.push({ tipoChave: "", chave: "" });
+// };
 
-const removerConta = (index: number) => {
-  contas.value.splice(index, 1);
-};
+// const removerPix = (index: number) => {
+//   pixContas.value.splice(index, 1);
+// };
 
-// const pixContas = ref<ContaPix[]>([
-//   { tipoChave: "", chave: "" }
-// ]);
-
-const adicionarPix = () => {
-  pixContas.value.push({ tipoChave: "", chave: "" });
-};
-
-const removerPix = (index: number) => {
-  pixContas.value.splice(index, 1);
-};
-
-const copiarId = async () => {
-  try {
-    await navigator.clipboard.writeText(id.value || "");
-    toast.success("ID copiado para a área de transferência!");
-  } catch (err) {
-    console.error("Erro ao copiar ID:", err);
-    toast.error("Não foi possível copiar o ID.");
-  }
-};
+// const copiarId = async () => {
+//   try {
+//     await navigator.clipboard.writeText(id.value || "");
+//     toast.success("ID copiado para a área de transferência!");
+//   } catch (err) {
+//     console.error("Erro ao copiar ID:", err);
+//     toast.error("Não foi possível copiar o ID.");
+//   }
+// };
 
 
 
 
-const copiarEmail = (data) => {
-  const email = data;
-  navigator.clipboard.writeText(email)
-    .then(() => {
-      toast.success("E-mail copiado para a área de transferência!");
-    })
-    .catch(() => {
-      toast.error("Não foi possível copiar o e-mail.");
-    });
-};
+// const copiarEmail = (data) => {
+//   const email = data;
+//   navigator.clipboard.writeText(email)
+//     .then(() => {
+//       toast.success("E-mail copiado para a área de transferência!");
+//     })
+//     .catch(() => {
+//       toast.error("Não foi possível copiar o e-mail.");
+//     });
+// };
 
-const handleSavePerson = async () => {
-  try {
-    const unidadeSelecionada = unidadesMap.find((u) => u.enum === Number(unidade.value));
-    const usuarioSelecionado = usuariosMap.find((u) => u.role === "USER");
+// const handleSavePerson = async () => {
+//   try {
+//     const unidadeSelecionada = unidadesMap.find((u) => u.enum === Number(unidade.value));
+//     const usuarioSelecionado = usuariosMap.find((u) => u.role === "USER");
 
-    const dadosCadastro = {
-      nome: nome.value ?? null,
-      cpf: cpf.value ?? null,
-      dataNascimento: nasc.value ?? null,
-      cargo: cargo.value ?? null,
-      email: email.value ?? null,
-      unidade: [
-        {
-          desc: unidadeSelecionada?.desc ?? null,
-          enum: unidadeSelecionada?.enum ?? null,
-        },
-      ],
-      sexo: sexo.value ?? null,
-      usuario: [
-        {
-          login: email.value ?? null,
-          password: password.value ?? null,
-          role: usuarioSelecionado?.role ?? null,
-          enum: usuarioSelecionado?.enum ?? null,
-        },
-      ],
-      contasBancarias: contas.value.map((c) => ({
-        banco: c.banco ?? null,
-        agencia: c.agencia ?? null,
-        conta: c.conta ?? null,
-        tipo: c.tipo ?? null,
-      })),
+//     const dadosCadastro = {
+//       nome: nome.value ?? null,
+//       cpf: cpf.value ?? null,
+//       dataNascimento: nasc.value ?? null,
+//       cargo: cargo.value ?? null,
+//       email: email.value ?? null,
+//       unidade: [
+//         {
+//           desc: unidadeSelecionada?.desc ?? null,
+//           enum: unidadeSelecionada?.enum ?? null,
+//         },
+//       ],
+//       sexo: sexo.value ?? null,
+//       usuario: [
+//         {
+//           login: email.value ?? null,
+//           password: password.value ?? null,
+//           role: usuarioSelecionado?.role ?? null,
+//           enum: usuarioSelecionado?.enum ?? null,
+//         },
+//       ],
+//       contasBancarias: contas.value.map((c) => ({
+//         banco: c.banco ?? null,
+//         agencia: c.agencia ?? null,
+//         conta: c.conta ?? null,
+//         tipo: c.tipo ?? null,
+//       })),
 
-      // 🔹 incluir Pix
-      pixContas: pixContas.value.map((p) => ({
-        tipoChave: p.tipoChave ?? null,
-        chave: p.chave ?? null,
-      })),
-    };
+//       // 🔹 incluir Pix
+//       pixContas: pixContas.value.map((p) => ({
+//         tipoChave: p.tipoChave ?? null,
+//         chave: p.chave ?? null,
+//       })),
+//     };
 
 
 
-    if (typeAction.value === "CREATE") {
-      await cadastroService.registrarUsuario(dadosCadastro);
-      toast.success("Cadastro realizado com sucesso!");
-    } else if (typeAction.value === "EDIT" && recuverData.value?.id) {
-      await colaboradorService.atualizarColaborador(recuverData.value.id, dadosCadastro);
-      toast.success("Colaborador atualizado com sucesso!");
-    }
+//     if (typeAction.value === "CREATE") {
+//       await cadastroService.registrarUsuario(dadosCadastro);
+//       toast.success("Cadastro realizado com sucesso!");
+//     } else if (typeAction.value === "EDIT" && recuverData.value?.id) {
+//       await colaboradorService.atualizarColaborador(recuverData.value.id, dadosCadastro);
+//       toast.success("Colaborador atualizado com sucesso!");
+//     }
 
-    dialog.value = false;
-    await atualizarGrid();
-  } catch (error) {
-    toast.error("Erro ao salvar colaborador!");
-    console.error(error);
-  }
-};
+//     dialog.value = false;
+//     await atualizarGrid();
+//   } catch (error) {
+//     toast.error("Erro ao salvar colaborador!");
+//     console.error(error);
+//   }
+// };
 
 function normalizeCpf(cpf = "") {
   return String(cpf).replace(/\D/g, ""); // remove tudo que não for número
@@ -1255,6 +1161,11 @@ const filteredItems = computed(() => {
       (keywordCpfPlain && cpfPlain.includes(keywordCpfPlain)) ||
       idRaw.includes(keywordLower); // 👈 busca por id
 
+    // 🔎 LOGS para debug
+    console.log("[filteredItems] Avaliando item:", item);
+    console.log("[filteredItems] Filtros =>", filters.value);
+    console.log("[filteredItems] matchUnidade:", matchUnidade, "matchSexo:", matchSexo, "matchesKeyword:", matchesKeyword);
+
     return matchUnidade && matchSexo && matchesKeyword;
   });
 });
@@ -1263,23 +1174,24 @@ const filteredItems = computed(() => {
 
 
 
-const validateForm = () => {
-  const rawCpf = cpf.value;
 
-  const digitsOnly = rawCpf.replace(/\D/g, "");
+// const validateForm = () => {
+//   const rawCpf = cpf.value;
 
-  if (!/^\d+$/.test(digitsOnly)) {
-    toast.error("No campo CPF Somente números são permitidos!");
-    return;
-  }
+//   const digitsOnly = rawCpf.replace(/\D/g, "");
 
-  if (digitsOnly.length !== 11) {
-    toast.error("CPF deve ter exatamente 11 dígitos!");
-    return;
-  }
+//   if (!/^\d+$/.test(digitsOnly)) {
+//     toast.error("No campo CPF Somente números são permitidos!");
+//     return;
+//   }
 
-  handleSavePerson();
-};
+//   if (digitsOnly.length !== 11) {
+//     toast.error("CPF deve ter exatamente 11 dígitos!");
+//     return;
+//   }
+
+//   handleSavePerson();
+// };
 
 const formatCpf = (value) => {
   let digits = value.replace(/\D/g, "").substring(0, 11);
@@ -1342,27 +1254,27 @@ watch(cpf, (newVal) => {
   cpf.value = formatCpf(newVal);
 });
 
-const atualizarGrid = async () => {
-  try {
-    const unidades = await unidadeService.findUnidades()
+// const atualizarGrid = async () => {
+//   try {
+//     const unidades = await unidadeService.findUnidades()
 
-    // ordena por nome fantasia
-    unidades.sort((a: any, b: any) => a.nomeFantasia.localeCompare(b.nomeFantasia))
+//     // ordena por nome fantasia
+//     unidades.sort((a: any, b: any) => a.nomeFantasia.localeCompare(b.nomeFantasia))
 
-    completeData.value = unidades
-    items.value = unidades.map((unidade: any, index: number) => ({
-      cod: index + 1,
-      id: unidade.id,
-      nomeFantasia: unidade.nomeFantasia,
-      cnpj: unidade.cnpj,
-      ie: unidade.ie ?? '',   // pode vir vazio
-      im: unidade.im ?? '',   // pode vir vazio
-      isActive: unidade.configuracoes?.ativo ?? true,
-    }))
-  } catch (error) {
-    console.error('Erro ao atualizar grid:', error)
-  }
-}
+//     completeData.value = unidades
+//     items.value = unidades.map((unidade: any, index: number) => ({
+//       cod: index + 1,
+//       id: unidade.id,
+//       nomeFantasia: unidade.nomeFantasia,
+//       cnpj: unidade.cnpj,
+//       ie: unidade.ie ?? '',   // pode vir vazio
+//       im: unidade.im ?? '',   // pode vir vazio
+//       isActive: unidade.configuracoes?.ativo ?? true,
+//     }))
+//   } catch (error) {
+//     console.error('Erro ao atualizar grid:', error)
+//   }
+// }
 
 
 
@@ -1472,44 +1384,35 @@ onMounted(async () => {
 // };
 
 
-const handleDeletePerson = async (task) => {
-  try {
-    const result = await Swal.fire({
-      title: "Confirmação",
-      text: `Deseja mesmo excluir: ${task.nome}?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#e0a99e",
-      cancelButtonColor: "#a9dfab",
-      confirmButtonText: "Sim, excluir",
-      cancelButtonText: "Cancelar",
-    });
+// const handleDeletePerson = async (task) => {
+//   try {
+//     const result = await Swal.fire({
+//       title: "Confirmação",
+//       text: `Deseja mesmo excluir: ${task.nome}?`,
+//       icon: "warning",
+//       showCancelButton: true,
+//       confirmButtonColor: "#e0a99e",
+//       cancelButtonColor: "#a9dfab",
+//       confirmButtonText: "Sim, excluir",
+//       cancelButtonText: "Cancelar",
+//     });
 
-    if (result.isConfirmed) {
-      await colaboradorService.deleteColaborador(task.id);
+//     if (result.isConfirmed) {
+//       await colaboradorService.deleteColaborador(task.id);
 
-      toast.success(`Colaborador ${task.nome} excluído com sucesso!`);
+//       toast.success(`Colaborador ${task.nome} excluído com sucesso!`);
 
-      await atualizarGrid();
-    } else {
-      toast.info("Exclusão cancelada.");
-    }
-  } catch (error) {
-    toast.error("Erro ao excluir. Tente novamente!");
-    console.error(error);
-  }
-};
+//       await atualizarGrid();
+//     } else {
+//       toast.info("Exclusão cancelada.");
+//     }
+//   } catch (error) {
+//     toast.error("Erro ao excluir. Tente novamente!");
+//     console.error(error);
+//   }
+// };
 
-const getPriorityColor = (sexo: string) => {
-  switch (sexo) {
-    case "Feminino":
-      return "orange";
-    case "Masculino":
-      return "green";
-    default:
-      return "grey";
-  }
-};
+
 
 const pagination = ref({
   page: 1,
@@ -1556,6 +1459,40 @@ const pagination = ref({
   display: flex;
   flex-direction: row; /* padrão: lado a lado */
   align-items: center;
+}
+
+.avatar-container {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar-container::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: calc(100% + 12px);
+  height: calc(100% + 12px);
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    #f3f5fc,
+    #e7fbfc,
+    #5b7f8f,
+    #3481df,
+    #f3f2f2
+  );
+  animation: spin 3s linear infinite;
+  z-index: -1;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes blink {

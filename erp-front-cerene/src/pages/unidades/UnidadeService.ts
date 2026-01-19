@@ -1,4 +1,4 @@
-import { collection, doc, setDoc, getDocs } from "firebase/firestore";
+import { collection, doc, setDoc, getDocs, deleteDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/ConectDb";
 
 class UnidadeService {
@@ -53,6 +53,48 @@ async inserirUnidade(dados: any) {
       throw error
     }
   }
+
+  // atualizar unidade
+  async atualizarUnidade(id: string, dados: any) {
+    try {
+      const unidadeRef = doc(db, 'unidades', id)
+      const dadosTratados = {
+        ...dados,
+        nomeFantasia: dados.nomeFantasia?.trim() || '',
+        cnpj: dados.cnpj?.trim() || '',
+        contato: {
+          telefone: dados.contato?.telefone || '',
+          email: (dados.contato?.email || '').toLowerCase()
+        },
+        configuracoes: {
+          ativo: dados.configuracoes?.ativo ?? true,
+          dataCadastro: dados.configuracoes?.dataCadastro || '',
+          ultimaAtualizacao: new Date().toISOString()
+        },
+        ie: dados.ie || '',
+        im: dados.im || ''
+      }
+
+      await updateDoc(unidadeRef, dadosTratados)
+      return true
+    } catch (error) {
+      console.error('Erro ao atualizar unidade:', error)
+      throw error
+    }
+  }
+
+  // excluir unidade
+  async deleteUnidade(id: string) {
+    try {
+      const unidadeRef = doc(db, 'unidades', id)
+      await deleteDoc(unidadeRef)
+      return true
+    } catch (error) {
+      console.error('Erro ao excluir unidade:', error)
+      throw error
+    }
+  }
+
 
 
 

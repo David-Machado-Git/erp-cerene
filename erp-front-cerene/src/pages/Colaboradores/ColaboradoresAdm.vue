@@ -68,24 +68,25 @@
                       md="2"
                       class="d-flex flex-column align-center"
                     >
-                      <v-avatar
-                        size="100"
-                        class="mb-2"
-                        color="#528ad0"
-                      >
-                        <v-img
-                          :src="urlPhoto || 'https://cdn-icons-png.flaticon.com/512/3541/3541871.png'"
-                          alt="Foto do colaborador"
-                          cover
+                      <div class="avatar-container">
+                        <v-avatar
+                          size="140"
+                          class="mb-2"
+                          color="#528ad0"
                         >
-                          <template #placeholder>
-                            <div class="loading-blink">
-                              Carregando...
-                            </div>
-                          </template>
-                        </v-img>
-                      </v-avatar>
-
+                          <v-img
+                            :src="urlPhoto || 'https://cdn-icons-png.flaticon.com/512/3541/3541871.png'"
+                            alt="Foto do colaborador"
+                            cover
+                          >
+                            <template #placeholder>
+                              <div class="loading-blink">
+                                Carregando...
+                              </div>
+                            </template>
+                          </v-img>
+                        </v-avatar>
+                      </div>
 
 
                       <!-- 🔹 Input de upload compacto -->
@@ -836,14 +837,14 @@ import Swal from "sweetalert2";
 // }
 
 
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  priority: string;
-  dueDate: string;
-  category: { id: number; title: string };
-}
+// interface Task {
+//   id: string;
+//   title: string;
+//   description: string;
+//   priority: string;
+//   dueDate: string;
+//   category: { id: number; title: string };
+// }
 
 const toast = useToast();
 const nome = ref("");
@@ -890,7 +891,7 @@ const headers = ref([
   { title: "Ações", sortable: false, value: "actions" },
 ]);
 
-const recuverData = ref<Task | null>(null);
+const recuverData = ref(null);
 const typeAction = ref("CREATE");
 
 const filters = ref({
@@ -903,13 +904,14 @@ const visible = ref(false);
 const items = ref<any[]>([]);
 
 const openModal = (typeOfAction: string, data: any | null) => {
-  if (typeOfAction === "EDIT") {
+  if (typeOfAction === "EDIT" && data) {
     recuverData.value = data;
     typeAction.value = "EDIT";
     const infoData: any = recuverData.value;
 
-    // 🔹 Garantir que urlPhoto sempre receba algo
-    urlPhoto.value = infoData.urlPhoto ?? null;
+    // ?? reflete a foto no avatar
+    urlPhoto.value = infoData.urlPhoto || null;
+
     idUser.value = infoData.id;
     nome.value = infoData.nome;
     cpf.value = infoData.cpf;
@@ -921,7 +923,6 @@ const openModal = (typeOfAction: string, data: any | null) => {
     id.value = infoData.id;
     password.value = infoData.password;
 
-    // 🔹 Carregar contas bancárias
     contas.value = infoData.contasBancarias?.length
       ? infoData.contasBancarias.map((c: any) => ({
           banco: c.banco ?? "",
@@ -931,7 +932,6 @@ const openModal = (typeOfAction: string, data: any | null) => {
         }))
       : [{ banco: "", agencia: "", conta: "", tipo: "" }];
 
-    // 🔹 Carregar chaves Pix
     pixContas.value = infoData.pixContas?.length
       ? infoData.pixContas.map((p: any) => ({
           tipoChave: p.tipoChave ?? "",
@@ -942,7 +942,7 @@ const openModal = (typeOfAction: string, data: any | null) => {
     recuverData.value = null;
     typeAction.value = "CREATE";
 
-    // 🔹 Resetar valores
+    // ?? resetar valores
     urlPhoto.value = null;
     nome.value = "";
     cpf.value = "";
@@ -954,13 +954,13 @@ const openModal = (typeOfAction: string, data: any | null) => {
     id.value = "";
     password.value = "";
 
-    // 🔹 Resetar arrays
     contas.value = [{ banco: "", agencia: "", conta: "", tipo: "" }];
     pixContas.value = [{ tipoChave: "", chave: "" }];
   }
 
   dialog.value = true;
 };
+
 
 
 // const handlePhotoUpload = (event: Event) => {
@@ -981,7 +981,7 @@ const openModal = (typeOfAction: string, data: any | null) => {
 // };
 
 // handler de upload
-const handlePhotoUpload = async (event: Event) => {  
+const handlePhotoUpload = async (event: Event) => {
   const target = event.target as HTMLInputElement;
   const file = target.files?.[0];
   if (!file) return;
@@ -990,16 +990,38 @@ const handlePhotoUpload = async (event: Event) => {
   progress.value = 0;
 
   try {
-    const downloadURL = await UploadStorageService.uploadPhoto(idUser.value, file, (p) => {
-      progress.value = p;
-    });
+    const downloadURL = await UploadStorageService.uploadPhoto(
+      idUser.value,
+      file,
+      (p) => {
+        progress.value = p;
+      }
+    );
+
+    // ?? Atualiza a ref da foto (avatar)
     urlPhoto.value = downloadURL;
+
+    // ?? Atualiza também o objeto atual
+    if (recuverData.value) {
+      recuverData.value.urlPhoto = downloadURL;
+    }
+
+    // ?? Atualiza a lista usada na tabela
+    const idx = filteredItems.value.findIndex(
+      (u: any) => u.id === idUser.value
+    );
+    if (idx !== -1) {
+      filteredItems.value[idx].urlPhoto = downloadURL;
+    }
+
+    console.log(`[handlePhotoUpload] Foto atualizada para usuário ${idUser.value}`);
   } catch (err) {
     console.error("Erro no upload:", err);
   } finally {
     isUploading.value = false;
   }
 };
+
 
 
 
@@ -1260,7 +1282,7 @@ watch(cpf, (newVal) => {
 
 const atualizarGrid = async () => {
   const colaboradores = await colaboradorService.findColaboradores();
-  colaboradores.sort((a: any, b: any) => a.nome.localeCompare(b.nome));
+  colaboradores.sort((a: any, b: any) => String(a.nome).localeCompare(b.nome));
   completeData.value = colaboradores;
   items.value = colaboradores.map((colab: any, index: number) => ({
     cod: index + 1,
@@ -1475,6 +1497,42 @@ const pagination = ref({
   flex-direction: row; /* padrão: lado a lado */
   align-items: center;
 }
+
+.avatar-container {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar-container::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: calc(100% + 12px);
+  height: calc(100% + 12px);
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    #f3f5fc,
+    #e7fbfc,
+    #5b7f8f,
+    #3481df,
+    #f3f2f2
+  );
+  animation: spin 3s linear infinite;
+  z-index: -1;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
 
 @keyframes blink {
   0% { opacity: 1; }
