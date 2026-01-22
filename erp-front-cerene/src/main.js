@@ -10,6 +10,9 @@ import { registerPlugins } from "@/plugins";
 import VueApexCharts from "vue3-apexcharts";
 import Toast, { POSITION } from "vue-toastification";
 import "vue-toastification/dist/index.css";
+// Importar estilos do Leaflet
+import 'leaflet/dist/leaflet.css'
+
 
 // Components
 import App from "./App.vue";

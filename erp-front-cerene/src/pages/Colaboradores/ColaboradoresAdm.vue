@@ -1,32 +1,47 @@
 <template>
   <section class="p-4 animate-slideDown position-component">
-    <v-row
-      class="align-center justify-center"
-      no-gutters
-    >
-      <v-col
-        cols="12"
-        md="2"
-        no-gutters
-        class="d-flex justify-center mb-4 mb-md-0 ml-auto"
-      >
-        <v-btn
-          color="green"
-          class="d-flex align-center mb-4 py-2 px-4 text-uppercase font-weight-bold"
-          @click="openModal('CREATE', null)"
+    <v-container>
+      <v-row justify="center">
+        <v-col
+          cols="12"
+          md="11"
         >
-          <v-icon left>
-            mdi-plus-circle
-          </v-icon>
-          INSERIR
-        </v-btn>
-      </v-col>
-    </v-row>
+          <v-card
+            class="pl-7 pt-7 pb-1 mb-4"
+            elevation="2"
+            rounded="lg"
+            color="blue-lighten-5"
+          >
+            <v-card-title
+              class="text-subtitle-1 font-weight-bold"
+              style="color:#1976D2;"
+            >
+              <v-icon
+                style="color:#0A111A;"
+                size="32"
+              >
+                mdi-account-multiple
+              </v-icon>
+
+
+              Colaboradores CERENE
+            </v-card-title>
+
+            <p
+              class="text-body-2 mb-4"
+              style="color:#555;"
+            >
+              <span style="position: relative; left: 52px; top: -16px;">Dados cadastrais abaixo</span>
+            </p>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+    
 
     <v-dialog
       v-model="dialog"
-      max-width="1200px"
-      height="680px"
+      max-width="1600px"
       class="custom-dialog"
     >
       <v-card>
@@ -49,7 +64,7 @@
           <v-card
             class="mx-auto pa-6"
             elevation="8"
-            max-width="1200"
+            max-width="1600"
             rounded="lg"
             color=""
           >
@@ -152,7 +167,7 @@
                             class="text-subtitle-1 font-weight-bold"
                             style="color:#1976D2;"
                           >
-                            {{ nome || "" }}
+                            <h2>{{ nome || "" }}</h2>
                           </div>
                           <div class="text-caption text-grey-darken-1">
                             {{ cargo || "" }}
@@ -423,8 +438,6 @@
                     </VCol>
                   </VRow>
                 </v-card>
-
-
                 
                 <h3 class="mb-2">
                   Contas Bancárias
@@ -659,6 +672,155 @@
                     </VRow>
                   </v-col>
                 </VRow>
+
+                <v-card
+                  class="pa-4 mb-6"
+                  elevation="2"
+                  rounded="lg"
+                  color="blue-grey-lighten-5"
+                >
+                  <v-card-title
+                    class="text-subtitle-1 font-weight-bold"
+                    style="color:#1976D2;"
+                  >
+                    <v-icon
+                      left
+                      class="mr-2"
+                      color="primary"
+                    >
+                      mdi-briefcase-check-outline
+                    </v-icon>
+                    Configurações Trabalhistas
+                  </v-card-title>
+
+                  <p class="mb-6">
+                    Defina as regras individuais de jornada e trabalho
+                  </p>
+
+                  <!-- Primeira linha -->
+                  <VRow>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="cargaHorariaDiaria"
+                        label="Carga Horária Diária (horas)"
+                        prepend-inner-icon="mdi-clock-outline"
+                        prepend-inner-icon-color="blue"
+                        density="comfortable"
+                        variant="outlined"
+                        type="number"
+                        required
+                      />
+                    </VCol>
+
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="cargaHorariaSemanal"
+                        label="Carga Horária Semanal (horas)"
+                        prepend-inner-icon="mdi-calendar-clock"
+                        prepend-inner-icon-color="green"
+                        density="comfortable"
+                        variant="outlined"
+                        type="number"
+                        required
+                      />
+                    </VCol>
+                  </VRow>
+
+                  <!-- Segunda linha -->
+                  <VRow>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VSelect
+                        v-model="diasTrabalho"
+                        :items="['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo']"
+                        label="Dias de Trabalho"
+                        multiple
+                        prepend-inner-icon="mdi-calendar-range"
+                        prepend-inner-icon-color="purple"
+                        density="comfortable"
+                        variant="outlined"
+                        required
+                      />
+                    </VCol>
+
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VSwitch
+                        v-model="trabalhaFeriados"
+                        label="Trabalha em Feriados?"
+                        color="red"
+                      />
+                    </VCol>
+                  </VRow>
+
+                  <!-- Terceira linha -->
+                  <VRow>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VSwitch
+                        v-model="bancoHoras"
+                        label="Participa do Banco de Horas?"
+                        color="indigo"
+                      />
+                    </VCol>
+
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="toleranciaAtrasoMinutos"
+                        label="Tolerância de Atraso (minutos)"
+                        prepend-inner-icon="mdi-timer-sand"
+                        prepend-inner-icon-color="orange"
+                        density="comfortable"
+                        variant="outlined"
+                        type="number"
+                      />
+                    </VCol>
+                  </VRow>
+
+                  <!-- Quarta linha -->
+                  <VRow>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="intervaloMinimo"
+                        label="Intervalo Mínimo (minutos)"
+                        prepend-inner-icon="mdi-coffee-outline"
+                        prepend-inner-icon-color="brown"
+                        density="comfortable"
+                        variant="outlined"
+                        type="number"
+                      />
+                    </VCol>
+
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VSwitch
+                        v-model="permiteHomeOffice"
+                        label="Permite Home Office / Híbrido?"
+                        color="cyan"
+                      />
+                    </VCol>
+                  </VRow>
+                </v-card>
               </VCol>
             </VRow>
           </v-card>
@@ -669,7 +831,7 @@
             style="width: 320px;"
           >
             <v-btn
-              class="mb-3"
+              class="mb-4 mt-5"
               variant="tonal"
               color="green-darken-4"
               block
@@ -680,7 +842,7 @@
           </div>
           <v-btn
             color="blue"
-            @click="dialog = false"
+            @click="openModal('fechar', null)"
           >
             Fechar
           </v-btn>
@@ -694,7 +856,7 @@
     >
       <v-col
         cols="12"
-        md="4"
+        md="3"
         no-gutters
         class="d-flex justify-center mb-4 mb-md-0"
       >
@@ -709,7 +871,7 @@
       </v-col>
       <v-col
         cols="12"
-        md="4"
+        md="3"
         no-gutters
         class="d-flex justify-center mb-4 mb-md-0"
       >
@@ -724,7 +886,7 @@
       </v-col>
       <v-col
         cols="12"
-        md="4"
+        md="3"
         no-gutters
         class="d-flex justify-center mb-4 mb-md-0"
       >
@@ -738,7 +900,29 @@
         />
       </v-col>
     </v-row>
-    <main>
+    <main style="margin-bottom: 90px; width: 98%; margin: auto;">
+      <v-row
+        class="align-center justify-center"
+        no-gutters
+      >
+        <v-col
+          cols="12"
+          md="2"
+          no-gutters
+          class="d-flex justify-center mb-4 mb-md-0 ml-auto"
+        >
+          <v-btn
+            color="green"
+            class="d-flex align-center mb-4 py-2 px-4 text-uppercase font-weight-bold"
+            @click="openModal('CREATE', null)"
+          >
+            <v-icon left>
+              mdi-plus-circle
+            </v-icon>
+            INSERIR COLABORADOR
+          </v-btn>
+        </v-col>
+      </v-row>
       <v-data-table
         v-model:pagination="pagination"
         :headers="headers"
@@ -813,6 +997,16 @@
       </v-data-table>
     </main>
   </section>
+  <div
+    v-show="isLoading"
+    class="loader"
+  >
+    <v-img
+      class="position-custom"
+      max-width="64"
+      src="/_img/loader.gif"
+    />
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -853,6 +1047,7 @@ const unidade = ref("");
 const nasc = ref("");
 const cargo = ref("");
 const completeData: any = ref("");
+const isLoading = ref(true);
 const unidadesMap = [
   { desc: "Administração Central", enum: 1 },
   { desc: "Cerene Blumenau", enum: 2 },
@@ -903,11 +1098,24 @@ const dialog = ref(false);
 const visible = ref(false);
 const items = ref<any[]>([]);
 
+// 🔹 NOVAS PROPRIEDADES — Configurações Trabalhistas
+const cargaHorariaDiaria = ref(null)          // horas por dia
+const cargaHorariaSemanal = ref(null)         // horas por semana
+const diasTrabalho = ref([])                  // lista de dias (ex: ['Segunda','Terça'])
+const trabalhaFeriados = ref(null)            // true/false
+const bancoHoras = ref(null)                  // true/false
+const toleranciaAtrasoMinutos = ref(null)     // minutos de tolerância
+const intervaloMinimo = ref(null)             // intervalo mínimo em minutos
+const permiteHomeOffice = ref(null)           // true/false
+
+
 const openModal = (typeOfAction: string, data: any | null) => {
   if (typeOfAction === "EDIT" && data) {
     recuverData.value = data;
     typeAction.value = "EDIT";
     const infoData: any = recuverData.value;
+ // 🔹 Log para inspecionar os dados recebidos
+    console.log("Dados recebidos no EDIT:", infoData);
 
     // ?? reflete a foto no avatar
     urlPhoto.value = infoData.urlPhoto || null;
@@ -917,7 +1125,7 @@ const openModal = (typeOfAction: string, data: any | null) => {
     cpf.value = infoData.cpf;
     nasc.value = infoData.nasc;
     cargo.value = infoData.cargo;
-    unidade.value = infoData.unidade?.[0]?.desc;
+    unidade.value = infoData.unidade?.[0]?.enum;
     sexo.value = infoData.sexo;
     email.value = infoData.email;
     id.value = infoData.id;
@@ -938,6 +1146,32 @@ const openModal = (typeOfAction: string, data: any | null) => {
           chave: p.chave ?? ""
         }))
       : [{ tipoChave: "", chave: "" }];
+
+    // 🔹 Preencher Configurações Trabalhistas
+    const cfg = infoData.configuracoes ?? {};
+    cargaHorariaDiaria.value = cfg.cargaHorariaDiaria ?? null;
+    cargaHorariaSemanal.value = cfg.cargaHorariaSemanal ?? null;
+    diasTrabalho.value = Array.isArray(cfg.diasTrabalho) ? cfg.diasTrabalho : [];
+    trabalhaFeriados.value = cfg.trabalhaFeriados ?? null;
+    bancoHoras.value = cfg.bancoHoras ?? null;
+    toleranciaAtrasoMinutos.value = cfg.toleranciaAtrasoMinutos ?? null;
+    intervaloMinimo.value = cfg.intervaloMinimo ?? null;
+    permiteHomeOffice.value = cfg.permiteHomeOffice ?? null;
+
+  } else if (typeOfAction === "fechar") {
+    // 🔹 limpar apenas as configurações trabalhistas
+    cargaHorariaDiaria.value = null;
+    cargaHorariaSemanal.value = null;
+    diasTrabalho.value = [];
+    trabalhaFeriados.value = null;
+    bancoHoras.value = null;
+    toleranciaAtrasoMinutos.value = null;
+    intervaloMinimo.value = null;
+    permiteHomeOffice.value = null;
+
+    dialog.value = false; // fecha modal
+    return; // encerra aqui sem abrir novamente
+
   } else {
     recuverData.value = null;
     typeAction.value = "CREATE";
@@ -956,10 +1190,22 @@ const openModal = (typeOfAction: string, data: any | null) => {
 
     contas.value = [{ banco: "", agencia: "", conta: "", tipo: "" }];
     pixContas.value = [{ tipoChave: "", chave: "" }];
+
+    // 🔹 resetar configurações trabalhistas também no CREATE
+    cargaHorariaDiaria.value = null;
+    cargaHorariaSemanal.value = null;
+    diasTrabalho.value = [];
+    trabalhaFeriados.value = null;
+    bancoHoras.value = true;
+    toleranciaAtrasoMinutos.value = null;
+    intervaloMinimo.value = null;
+    permiteHomeOffice.value = null;
   }
 
   dialog.value = true;
 };
+
+
 
 
 
@@ -1115,14 +1361,23 @@ const handleSavePerson = async () => {
         tipo: c.tipo ?? null,
       })),
 
-      // 🔹 incluir Pix
       pixContas: pixContas.value.map((p) => ({
         tipoChave: p.tipoChave ?? null,
         chave: p.chave ?? null,
       })),
+
+      // 🔹 Configurações Trabalhistas
+      configuracoes: {
+        cargaHorariaDiaria: cargaHorariaDiaria.value ?? null,
+        cargaHorariaSemanal: cargaHorariaSemanal.value ?? null,
+        diasTrabalho: diasTrabalho.value ?? [],
+        trabalhaFeriados: trabalhaFeriados.value ?? false,
+        bancoHoras: bancoHoras.value ?? false,
+        toleranciaAtrasoMinutos: toleranciaAtrasoMinutos.value ?? 0,
+        intervaloMinimo: intervaloMinimo.value ?? 0,
+        permiteHomeOffice: permiteHomeOffice.value ?? false,
+      },
     };
-
-
 
     if (typeAction.value === "CREATE") {
       await cadastroService.registrarUsuario(dadosCadastro);
@@ -1139,6 +1394,7 @@ const handleSavePerson = async () => {
     console.error(error);
   }
 };
+
 
 function normalizeCpf(cpf = "") {
   return String(cpf).replace(/\D/g, ""); // remove tudo que não for número
@@ -1281,30 +1537,53 @@ watch(cpf, (newVal) => {
 });
 
 const atualizarGrid = async () => {
-  const colaboradores = await colaboradorService.findColaboradores();
-  colaboradores.sort((a: any, b: any) => String(a.nome).localeCompare(b.nome));
-  completeData.value = colaboradores;
-  items.value = colaboradores.map((colab: any, index: number) => ({
-    cod: index + 1,
-    urlPhoto: colab.urlPhoto,
-    id: colab.id,
-    nome: colab.nome,
-    cpf: colab.cpf,
-    nasc: colab.dataNascimento,
-    cargo: colab.cargo,
-    unidade: colab.unidade,
-    sexo: colab.sexo,
-    email: colab.email,
-    isActive: colab.isActive,
-    password: colab.password,
+  try {
+    // 🔹 Ativa o loader antes de buscar os dados
+    isLoading.value = true;
 
-    // 🔹 novos campos
-    contasBancarias: colab.contasBancarias ?? [],
-    pixContas: colab.pixContas ?? [],
+    const colaboradores = await colaboradorService.findColaboradores();
 
-    actions: "..."
-  }));
+    // 🔹 Ordena por nome
+    colaboradores.sort((a: any, b: any) =>
+      String(a.nome).localeCompare(b.nome)
+    );
+
+    // Mantém os dados completos
+    completeData.value = colaboradores;
+
+    // 🔹 Mapeia para items da grid
+    items.value = colaboradores.map((colab: any, index: number) => ({
+      cod: index + 1,
+      urlPhoto: colab.urlPhoto,
+      id: colab.id,
+      nome: colab.nome,
+      cpf: colab.cpf,
+      nasc: colab.dataNascimento,
+      cargo: colab.cargo,
+      unidade: colab.unidade,
+      sexo: colab.sexo,
+      email: colab.email,
+      isActive: colab.isActive,
+      password: colab.password,
+
+      // 🔹 novos campos
+      contasBancarias: colab.contasBancarias ?? [],
+      pixContas: colab.pixContas ?? [],
+
+      // 🔹 incluir configurações trabalhistas
+      configuracoes: colab.configuracoes ?? {},
+
+      actions: "..."
+    }));
+  } catch (error) {
+    console.error("Erro ao atualizar grid:", error);
+  } finally {
+    // 🔹 Desativa o loader quando terminar (com sucesso ou erro)
+    isLoading.value = false;
+  }
 };
+
+
 
 
 const toggleActiveStatus = async (item: any) => {

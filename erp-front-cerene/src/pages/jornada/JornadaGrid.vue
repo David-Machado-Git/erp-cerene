@@ -285,19 +285,19 @@
         <!-- Dados compactados -->
         <v-col
           cols="12"
-          md="10"
+          md="9"
         >
           <v-row>
             <v-col
               cols="12"
               md="4"
             >
-              <div
-                class="text-subtitle-1 font-weight-bold"
+              <h1
+                class="font-weight-bold"
                 style="color:#1976D2;"
               >
                 {{ colab?.nome || "" }}
-              </div>
+              </h1>
               <div class="text-caption text-grey-darken-1">
                 {{ colab?.cargo || "" }}
               </div>
@@ -398,8 +398,150 @@
             </v-col>
           </v-row>
         </v-col>
+
+        <!-- Botão Voltar à direita -->
+        <v-col
+          cols="12"
+          md="1"
+          class="d-flex justify-end"
+        >
+          <v-btn
+            color="blue-grey-darken-1"
+            variant="tonal"
+            rounded="lg"
+            class="ma-16 btn-voltar"
+            @click="voltar"
+          >
+            <v-icon left>
+              mdi-arrow-left
+            </v-icon>
+            Voltar
+          </v-btn>
+        </v-col>
       </v-row>
     </v-card>
+
+
+    <!-- Painel de apontamentos -->
+    <v-row
+      v-if="!diaAtualCompleto"
+      class="mb-4"
+    >
+      <v-col
+        cols="11"
+        style="margin: auto;"
+      >
+        <!-- 🔹 Cabeçalho moderno com instrução -->
+        <div class="text-center mb-4">
+          <h2
+            class="font-weight-bold"
+            style="color:#2e7d32;"
+          >
+            Registre seus horários
+          </h2>
+          <p
+            class="subtitle-2"
+            style="color:#555;"
+          >
+            Faça seus apontamentos clicando no botão abaixo
+          </p>
+        </div>
+
+        <v-card
+          outlined
+          class="pa-4 d-flex justify-space-around flex-wrap"
+        >
+          <!-- Entrada -->
+          <v-btn
+            v-if="!diaAtual?.checkIn"
+            color="success"
+            class="ma-2 btn-clock"
+            @click="registrarHorarioDiaAtual('checkIn')"
+          >
+            <div class="btn-content">
+              <v-icon size="40">
+                mdi-login
+              </v-icon>
+              <span>Entrada</span>
+              <v-chip
+                small
+                color="white"
+                class="btn-chip"
+              >
+                {{ horaAtualTexto }}
+              </v-chip>
+            </div>
+          </v-btn>
+
+          <!-- Início Intervalo -->
+          <v-btn
+            v-else-if="diaAtual?.checkIn && !diaAtual?.breakStart"
+            color="warning"
+            class="ma-2 btn-clock"
+            @click="registrarHorarioDiaAtual('breakStart')"
+          >
+            <div class="btn-content">
+              <v-icon size="40">
+                mdi-food
+              </v-icon>
+              <span>Início Intervalo</span>
+              <v-chip
+                small
+                color="white"
+                class="btn-chip"
+              >
+                {{ horaAtualTexto }}
+              </v-chip>
+            </div>
+          </v-btn>
+
+          <!-- Fim Intervalo -->
+          <v-btn
+            v-else-if="diaAtual?.breakStart && !diaAtual?.breakEnd"
+            color="success"
+            class="ma-2 btn-clock"
+            @click="registrarHorarioDiaAtual('breakEnd')"
+          >
+            <div class="btn-content">
+              <v-icon size="40">
+                mdi-food-off
+              </v-icon>
+              <span>Fim Intervalo</span>
+              <v-chip
+                small
+                color="white"
+                class="btn-chip"
+              >
+                {{ horaAtualTexto }}
+              </v-chip>
+            </div>
+          </v-btn>
+
+          <!-- Saída -->
+          <v-btn
+            v-else-if="diaAtual?.breakEnd && !diaAtual?.checkOut"
+            color="warning"
+            class="ma-2 btn-clock"
+            @click="registrarHorarioDiaAtual('checkOut')"
+          >
+            <div class="btn-content">
+              <v-icon size="40">
+                mdi-logout
+              </v-icon>
+              <span>Saída</span>
+              <v-chip
+                small
+                color="white"
+                class="btn-chip"
+              >
+                {{ horaAtualTexto }}
+              </v-chip>
+            </div>
+          </v-btn>
+        </v-card>
+      </v-col>
+    </v-row>
+
 
 
 
@@ -477,7 +619,7 @@
       >
         <v-text-field
           v-model="filters.keyword"
-          label="Palavra-chave"
+          label="Palavras chave"
           prepend-icon="mdi-magnify"
           class="w-full ml-3"
           clearable
@@ -485,12 +627,16 @@
       </v-col>
     </v-row>
 
-    <main>
-      <v-row class="mb-4">
+    <main style="margin-bottom: 90px; width: 98%; margin: auto;">
+      <!-- Resumo -->
+      <v-row
+        class="mb-4"
+        style="max-width: 94%; margin: auto"
+      >
         <!-- Total de Horas Trabalhadas -->
         <v-col
           cols="12"
-          md="6"
+          md="5"
         >
           <v-card
             outlined
@@ -520,7 +666,7 @@
         <!-- Banco de Horas Total -->
         <v-col
           cols="12"
-          md="6"
+          md="5"
         >
           <v-card
             outlined
@@ -546,14 +692,16 @@
               >
                 {{ bancoHorasTotal }}
               </div>
-              <small class="text-caption text-grey">
-                Saldo acumulado
-              </small>
+              <small class="text-caption text-grey">Saldo acumulado</small>
             </div>
           </v-card>
         </v-col>
       </v-row>
 
+
+
+
+      <!-- Tabela de registros -->
       <v-data-table
         :headers="headers"
         :items="filteredItems"
@@ -571,168 +719,10 @@
           >
             <td>{{ item.date }}</td>
             <td>{{ item.workSchedule }}</td>
-
-            <!-- Entrada -->
-            <td :class="getClass(item.checkIn, '08:00', '<=')">
-              <v-text-field
-                v-if="typeUser === 'admin' && editingField?.id === item.id && editingField?.field === 'checkIn'"
-                v-model="item.checkIn"
-                dense
-                hide-details
-                @blur="salvarEdicao(item, 'checkIn')"
-              />
-              <span
-                v-else-if="item.checkIn"
-                style="cursor: pointer;"
-                @click="typeUser === 'admin' ? editarCampo(item, 'checkIn') : null"
-              >
-                {{ item.checkIn }}
-              </span>
-              <v-btn
-                v-else-if="isDiaAtual(item) && !isDiaAtualFinalizado(item)"
-                :color="getColor(horaAtual(), '08:00')"
-                class="btn-clock"
-                @click="registrarHorario(item, 'checkIn')"
-              >
-                <span class="clock-time">{{ horaAtualTexto }}</span>
-                <span class="rg-tx d-flex align-center justify-center">
-                  <v-icon
-                    size="12"
-                    class="mr-1 ic-c"
-                  >mdi-clock-outline</v-icon>
-                  registrar
-                </span>
-              </v-btn>
-              <span
-                v-else
-                style="cursor: pointer;"
-                @click="typeUser === 'admin' ? editarCampo(item, 'checkIn') : null"
-              >
-                —
-              </span>
-            </td>
-
-            <!-- Início Intervalo -->
-            <td :class="getClass(item.breakStart, '12:00', '>=')">
-              <v-text-field
-                v-if="typeUser === 'admin' && editingField?.id === item.id && editingField?.field === 'breakStart'"
-                v-model="item.breakStart"
-                dense
-                hide-details
-                @blur="salvarEdicao(item, 'breakStart')"
-              />
-              <span
-                v-else-if="item.breakStart"
-                style="cursor: pointer;"
-                @click="typeUser === 'admin' ? editarCampo(item, 'breakStart') : null"
-              >
-                {{ item.breakStart }}
-              </span>
-              <v-btn
-                v-else-if="isDiaAtual(item) && item.checkIn && !isDiaAtualFinalizado(item)"
-                :color="getColor(horaAtual(), '12:00')"
-                class="btn-clock"
-                @click="registrarHorario(item, 'breakStart')"
-              >
-                <span class="clock-time">{{ horaAtualTexto }}</span>
-                <span class="rg-tx d-flex align-center justify-center">
-                  <v-icon
-                    size="12"
-                    class="mr-1 ic-c"
-                  >mdi-clock-outline</v-icon>
-                  registrar
-                </span>
-              </v-btn>
-              <span
-                v-else
-                style="cursor: pointer;"
-                @click="typeUser === 'admin' ? editarCampo(item, 'breakStart') : null"
-              >
-                —
-              </span>
-            </td>
-
-            <!-- Fim Intervalo -->
-            <td :class="getClass(item.breakEnd, '13:00', '<=')">
-              <v-text-field
-                v-if="typeUser === 'admin' && editingField?.id === item.id && editingField?.field === 'breakEnd'"
-                v-model="item.breakEnd"
-                dense
-                hide-details
-                @blur="salvarEdicao(item, 'breakEnd')"
-              />
-              <span
-                v-else-if="item.breakEnd"
-                style="cursor: pointer;"
-                @click="typeUser === 'admin' ? editarCampo(item, 'breakEnd') : null"
-              >
-                {{ item.breakEnd }}
-              </span>
-              <v-btn
-                v-else-if="isDiaAtual(item) && item.breakStart && !isDiaAtualFinalizado(item)"
-                :color="getColor(horaAtual(), '13:00')"
-                class="btn-clock"
-                @click="registrarHorario(item, 'breakEnd')"
-              >
-                <span class="clock-time">{{ horaAtualTexto }}</span>
-                <span class="rg-tx d-flex align-center justify-center">
-                  <v-icon
-                    size="12"
-                    class="mr-1 ic-c"
-                  >mdi-clock-outline</v-icon>
-                  registrar
-                </span>
-              </v-btn>
-              <span
-                v-else
-                style="cursor: pointer;"
-                @click="typeUser === 'admin' ? editarCampo(item, 'breakEnd') : null"
-              >
-                —
-              </span>
-            </td>
-
-            <!-- Saída -->
-            <td :class="getClass(item.checkOut, '18:00', '>=')">
-              <v-text-field
-                v-if="typeUser === 'admin' && editingField?.id === item.id && editingField?.field === 'checkOut'"
-                v-model="item.checkOut"
-                dense
-                hide-details
-                @blur="salvarEdicao(item, 'checkOut')"
-              />
-              <span
-                v-else-if="item.checkOut"
-                style="cursor: pointer;"
-                @click="typeUser === 'admin' ? editarCampo(item, 'checkOut') : null"
-              >
-                {{ item.checkOut }}
-              </span>
-              <v-btn
-                v-else-if="isDiaAtual(item) && item.breakEnd && !isDiaAtualFinalizado(item)"
-                :color="getColor(horaAtual(), '18:00')"
-                class="btn-clock"
-                @click="registrarHorario(item, 'checkOut')"
-              >
-                <span class="clock-time">{{ horaAtualTexto }}</span>
-                <span class="rg-tx d-flex align-center justify-center">
-                  <v-icon
-                    size="12"
-                    class="mr-1 ic-c"
-                  >mdi-clock-outline</v-icon>
-                  registrar
-                </span>
-              </v-btn>
-              <span
-                v-else
-                style="cursor: pointer;"
-                @click="typeUser === 'admin' ? editarCampo(item, 'checkOut') : null"
-              >
-                —
-              </span>
-            </td>
-
-            <!-- Somatória -->
+            <td>{{ item.checkIn || '—' }}</td>
+            <td>{{ item.breakStart || '—' }}</td>
+            <td>{{ item.breakEnd || '—' }}</td>
+            <td>{{ item.checkOut || '—' }}</td>
             <td
               :class="{
                 'bg-green-100': item.totalWorked && item.totalWorked >= '08:00',
@@ -741,8 +731,6 @@
             >
               {{ item.totalWorked || '—' }}
             </td>
-
-            <!-- Banco de Horas -->
             <td
               :class="{
                 'bg-green-100 text-success d-flex align-center': item.timeBank?.startsWith('+'),
@@ -759,8 +747,6 @@
               </v-icon>
               <span>{{ item.timeBank || '—' }}</span>
             </td>
-
-            <!-- Justificativa -->
             <td>
               {{ item.justific || '—' }}
               <v-icon
@@ -779,6 +765,16 @@
       </v-data-table>
     </main>
   </section>
+  <div
+    v-show="isLoading"
+    class="loader"
+  >
+    <v-img
+      class="position-custom"
+      max-width="64"
+      src="/_img/loader.gif"
+    />
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -802,6 +798,7 @@ const dialog = ref(false);
 const justificativa = ref("");
 const arquivo = ref(null);
 const arquivoExistente = ref(null)
+const isLoading = ref(true);
 // const urlPhoto = ref<any>(colab?.urlPhoto || null);
 if (!colab) {
   router.push("/dashboard/jornada-colaborador");
@@ -833,6 +830,7 @@ const headers = ref([
 ]);
 
 
+
 const filters = ref({
   dataDe: null,
   dataAte: null,
@@ -840,6 +838,37 @@ const filters = ref({
 });
 const menuDe = ref(false);
 const menuAte = ref(false);
+
+const voltar = () => {
+      router.back(); // volta para a rota anterior no histórico
+    };
+
+
+const diaAtualCompleto = computed(() => {
+  const hoje = getLocalDateId();
+  const item = items.value.find(i => getRegistroId(i) === hoje);
+
+  // 🔹 Verifica se há filtro de datas ou palavra-chave ativo
+  const filtroAtivo =
+    !!filters.value.dataDe ||
+    !!filters.value.dataAte ||
+    !!filters.value.keyword; // agora também considera o campo keyword
+
+  // 🔹 Considera completo se:
+  // - todos os apontamentos foram feitos, OU
+  // - existe qualquer filtro ativo (data ou keyword)
+  return filtroAtivo || (
+    item?.checkIn &&
+    item?.breakStart &&
+    item?.breakEnd &&
+    item?.checkOut
+  );
+});
+
+
+
+
+
 
 
 const copiarId = async () => {
@@ -852,6 +881,20 @@ const copiarId = async () => {
     toast.error("Não foi possível copiar o ID.");
   }
 };
+
+const registrarHorarioDiaAtual = async (campo) => {
+  const hoje = getLocalDateId(); // ou use new Date().toISOString().split('T')[0]
+  const item = filteredItems.value.find(i => getRegistroId(i) === hoje);
+  if (!item) return;
+
+  await registrarHorario(item, campo);
+};
+
+const diaAtual = computed(() => {
+  const hoje = getLocalDateId();
+  return filteredItems.value.find(i => getRegistroId(i) === hoje);
+});
+
 
 
 const copiarEmail = (data) => {
@@ -873,9 +916,9 @@ const tocarSom = () => {
   }
 };
 
-const isDiaAtual = (item) => getRegistroId(item) === getLocalDateId();
+// const isDiaAtual = (item) => getRegistroId(item) === getLocalDateId();
 
-const editingField = ref(null)
+// const editingField = ref(null)
 
 // mapeamento de cor/ícone
 const getStatusColor = (status?: string) => {
@@ -888,30 +931,30 @@ const getStatusIcon = (status?: string) => {
 }
 
 
-const editarCampo = (item, field) => {
-  console.log(">>> [editarCampo] Chamado")
-  console.log(">>> Item recebido:", JSON.stringify(item, null, 2))
-  console.log(">>> Campo a editar:", field)
+// const editarCampo = (item, field) => {
+//   console.log(">>> [editarCampo] Chamado")
+//   console.log(">>> Item recebido:", JSON.stringify(item, null, 2))
+//   console.log(">>> Campo a editar:", field)
 
-  editingField.value = { id: item.id, field }
-  console.log(">>> Estado editingField atualizado:", editingField.value)
-}
+//   editingField.value = { id: item.id, field }
+//   console.log(">>> Estado editingField atualizado:", editingField.value)
+// }
 
-const salvarEdicao = async (item, field) => {
-  console.log(">>> [salvarEdicao] Chamado")
-  console.log(">>> Item recebido:", JSON.stringify(item, null, 2))
-  console.log(">>> Campo editado:", field)
+// const salvarEdicao = async (item, field) => {
+//   console.log(">>> [salvarEdicao] Chamado")
+//   console.log(">>> Item recebido:", JSON.stringify(item, null, 2))
+//   console.log(">>> Campo editado:", field)
 
-  editingField.value = null
-  console.log(">>> Estado editingField resetado:", editingField.value)
+//   editingField.value = null
+//   console.log(">>> Estado editingField resetado:", editingField.value)
 
-  try {
-    await JornadaColabAdmService.salvarRegistro(item.idUser, item)
-    console.log(">>> Registro salvo com sucesso para usuário:", item.idUser)
-  } catch (error) {
-    console.error(">>> Erro ao salvar registro:", error)
-  }
-}
+//   try {
+//     await JornadaColabAdmService.salvarRegistro(item.idUser, item)
+//     console.log(">>> Registro salvo com sucesso para usuário:", item.idUser)
+//   } catch (error) {
+//     console.error(">>> Erro ao salvar registro:", error)
+//   }
+// }
 
 
 
@@ -933,44 +976,44 @@ const normalizar = (texto) => {
   return texto?.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") || ""
 };
 
-const isDiaAtualFinalizado = (item) => {
-  if (!item?.date) return false;
+// const isDiaAtualFinalizado = (item) => {
+//   if (!item?.date) return false;
 
-  try {
-    const partes = item.date.split(" ")[1]?.split("/");
-    if (!partes || partes.length < 3) return false;
+//   try {
+//     const partes = item.date.split(" ")[1]?.split("/");
+//     if (!partes || partes.length < 3) return false;
 
-    const dia = Number(partes[0]);
-    const mes = Number(partes[1]) - 1;
-    const ano = Number(partes[2]);
+//     const dia = Number(partes[0]);
+//     const mes = Number(partes[1]) - 1;
+//     const ano = Number(partes[2]);
 
-    const dataItem = new Date(ano, mes, dia);
+//     const dataItem = new Date(ano, mes, dia);
 
-    // Se a data for inválida, retorna false
-    if (isNaN(dataItem.getTime())) return false;
+//     // Se a data for inválida, retorna false
+//     if (isNaN(dataItem.getTime())) return false;
 
-    // Aqui você aplica sua lógica de "finalizado"
-    // Exemplo: se já tem checkOut preenchido
-    return !!item.checkOut;
-  } catch {
-    return false;
-  }
-};
+//     // Aqui você aplica sua lógica de "finalizado"
+//     // Exemplo: se já tem checkOut preenchido
+//     return !!item.checkOut;
+//   } catch {
+//     return false;
+//   }
+// };
 
 
 
-const getClass = (hora, referencia, operador) => {
-  if (!hora) return '';
-  const [h, m] = hora.split(':').map(Number);
-  const minutos = h * 60 + m;
+// const getClass = (hora, referencia, operador) => {
+//   if (!hora) return '';
+//   const [h, m] = hora.split(':').map(Number);
+//   const minutos = h * 60 + m;
 
-  const [rh, rm] = referencia.split(':').map(Number);
-  const refMin = rh * 60 + rm;
+//   const [rh, rm] = referencia.split(':').map(Number);
+//   const refMin = rh * 60 + rm;
 
-  if (operador === '<=') return minutos <= refMin ? 'bg-green-100' : 'bg-red-100';
-  if (operador === '>=') return minutos >= refMin ? 'bg-green-100' : 'bg-red-100';
-  return '';
-};
+//   if (operador === '<=') return minutos <= refMin ? 'bg-green-100' : 'bg-red-100';
+//   if (operador === '>=') return minutos >= refMin ? 'bg-green-100' : 'bg-red-100';
+//   return '';
+// };
 
 
 
@@ -987,9 +1030,9 @@ const horaAtual = () => {
 //   return (hA * 60 + mA) - (hE * 60 + mE);
 // };
 
-const getColor = (horaAtual, horaLimite) => {
-  return horaAtual > horaLimite ? 'error' : 'success';
-};
+// const getColor = (horaAtual, horaLimite) => {
+//   return horaAtual > horaLimite ? 'error' : 'success';
+// };
 
 
 
@@ -997,6 +1040,9 @@ const registrarHorario = async (item, campo) => {
   const idUser = colab.id;
   item[campo] = horaAtual();
   item.idUser = idUser;
+
+  console.log('CHEGOU NA FN REGISTRA HORÁRIO COM AS PROPRIEDADES: => ', item);
+  
 
   calcularSomatoria(item); // sempre tenta calcular
 
@@ -1202,10 +1248,12 @@ watch(cpf, (newVal) => {
 const items = ref<any[]>([]);
 
 onMounted(async () => {
+  // 🔊 Som de clique
   audio = new Audio("/sound_click.mp3");
   audio.volume = 0.5;
   audio.load();
 
+  // 🕒 Atualiza o relógio em tempo real
   const updateHora = () => {
     const agora = new Date();
     horaAtualTexto.value = agora.toLocaleTimeString("pt-BR", {
@@ -1217,35 +1265,43 @@ onMounted(async () => {
 
   updateHora();
   const interval = setInterval(updateHora, 1000);
-
   onUnmounted(() => clearInterval(interval));
 
+  try {
+    // 🚀 Início do carregamento
+    isLoading.value = true;
 
-  if (!colab || !colab.id) {
-    items.value = gerarDiaAtual("sem-id");
-    return;
+    if (!colab || !colab.id) {
+      items.value = gerarDiaAtual("sem-id");
+    } else {
+      const registros = (await JornadaColabAdmService.buscarRegistros(colab.id)) || [];
+      console.log("REGISTROS =>>", registros);
+
+      const hojeId = getLocalDateId(); // data local, não UTC
+      const jaTemHoje = registros.some((r) => getRegistroId(r) === hojeId);
+
+      // Apenas gera o dia atual se NÃO existir nenhum registro com esse ID
+      if (!jaTemHoje) {
+        registros.push(...gerarDiaAtual(colab.id));
+      }
+
+      // Opcional: garantir registros únicos por ID
+      const porId = new Map<string, any>();
+      for (const r of registros) {
+        const rid = getRegistroId(r);
+        if (!porId.has(rid)) porId.set(rid, r);
+      }
+
+      items.value = Array.from(porId.values());
+    }
+  } catch (error) {
+    console.error("❌ Erro ao carregar registros:", error);
+  } finally {
+    // ✅ Finaliza carregamento
+    isLoading.value = false;
   }
-
-  const registros = (await JornadaColabAdmService.buscarRegistros(colab.id)) || [];
-  console.log('REGISTROS =>> ', registros);
-  
-  const hojeId = getLocalDateId(); // data local, não UTC
-  const jaTemHoje = registros.some((r) => getRegistroId(r) === hojeId);
-
-  // Apenas gera o dia atual se NÃO existir nenhum registro com esse ID
-  if (!jaTemHoje) {
-    registros.push(...gerarDiaAtual(colab.id));
-  }
-
-  // Opcional: garantir registros únicos por ID
-  const porId = new Map<string, any>();
-  for (const r of registros) {
-    const rid = getRegistroId(r);
-    if (!porId.has(rid)) porId.set(rid, r);
-  }
-
-  items.value = Array.from(porId.values());
 });
+
 
 
 // Gera YYYY-MM-DD em horário local
@@ -1481,6 +1537,8 @@ const calcularSomatoria = (item) => {
 }
 
 
+
+
 .preloader-overlay {
   /* cobre todo o card */
   inset: 0;
@@ -1555,6 +1613,79 @@ const calcularSomatoria = (item) => {
   50% { opacity: 0.3; }
   100% { opacity: 1; }
 }
+
+.btn-clock {
+  min-width: 280px;
+  max-width: 100%;
+  height: auto;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+  text-align: center;
+}
+
+.btn-clock:hover {
+  transform: scale(1.03);
+}
+
+.btn-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-content span {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.btn-chip {
+  font-size: 14px;
+  font-weight: bold;
+  height: 26px;
+  line-height: 24px;
+  border-radius: 12px;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 📱 Responsivo abaixo de 360px */
+@media (max-width: 360px) {
+  .btn-clock {
+    min-width: 210px;
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .btn-content span {
+    font-size: 14px;
+  }
+
+  .btn-chip {
+    font-size: 12px;
+    height: 22px;
+    line-height: 20px;
+  }
+}
+
+.btn-voltar {
+  background-color: #528AD0 !important; /* cor base */
+  color: #fff !important;              /* texto/ícone branco */
+  transition: all 0.35s ease;          /* transição suave */
+  font-size: 11px;
+}
+
+.btn-voltar:hover {
+  background-color: #a5bedc !important; /* tom mais claro/escuro no hover */
+  // color: #1f2937 !important;            /* cor da fonte no hover */
+  transform: translateX(16px);           /* leve movimento para a direita */
+  // box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25); /* sombra elegante */
+}
+
 
 
 

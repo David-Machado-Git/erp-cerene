@@ -1,5 +1,40 @@
 <template>
   <section class="p-4 animate-slideDown position-component">
+    <v-container>
+      <v-row justify="center">
+        <v-col
+          cols="12"
+          md="11"
+        >
+          <v-card
+            class="pl-7 pt-7 pb-1 mb-4"
+            elevation="2"
+            rounded="lg"
+            color="blue-lighten-5"
+          >
+            <v-card-title
+              class="text-subtitle-1 font-weight-bold"
+              style="color:#1976D2;"
+            >
+              <v-icon
+                style="color:#0A111A;"
+                size="32"
+              >
+                mdi-calendar-clock
+              </v-icon>
+              Jornada CERENE
+            </v-card-title>
+
+            <p
+              class="text-body-2 mb-4"
+              style="color:#555;"
+            >
+              <span style="position: relative; left: 52px; top: -16px;">Jornadas dos colaboradores abaixo</span>
+            </p>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
     <v-row
       class="align-center justify-center"
       no-gutters
@@ -201,7 +236,7 @@
     >
       <v-col
         cols="12"
-        md="4"
+        md="3"
         no-gutters
         class="d-flex justify-center mb-4 mb-md-0"
       >
@@ -216,7 +251,7 @@
       </v-col>
       <v-col
         cols="12"
-        md="4"
+        md="3"
         no-gutters
         class="d-flex justify-center mb-4 mb-md-0"
       >
@@ -231,7 +266,7 @@
       </v-col>
       <v-col
         cols="12"
-        md="4"
+        md="3"
         no-gutters
         class="d-flex justify-center mb-4 mb-md-0"
       >
@@ -245,7 +280,7 @@
         />
       </v-col>
     </v-row>
-    <main>
+    <main style="margin-bottom: 90px; width: 98%; margin: auto;">
       <v-data-table
         v-model:pagination="pagination"
         :headers="headers"
@@ -306,6 +341,16 @@
       </v-data-table>
     </main>
   </section>
+  <div
+    v-show="isLoading"
+    class="loader"
+  >
+    <v-img
+      class="position-custom"
+      max-width="64"
+      src="/_img/loader.gif"
+    />
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -358,6 +403,7 @@ const unidade = ref("");
 const nasc = ref("");
 const cargo = ref("");
 const completeData: any = ref("");
+const isLoading = ref(true);
 const unidadesMap = [
   { desc: "Administração Central", enum: 1 },
   { desc: "Cerene Blumenau", enum: 2 },
@@ -581,26 +627,35 @@ watch(cpf, (newVal) => {
 });
 
 const atualizarGrid = async () => {
-  const colaboradores = await JornadaColabAdmService.findColaboradores();
-  colaboradores.sort((a: any, b: any) => String(a.nome).localeCompare(b.nome));
-  completeData.value = colaboradores;
+  try {
+    isLoading.value = true; // ⏳ Inicia o carregamento
 
-  items.value = colaboradores.map((colab: any, index: number) => ({
-    cod: index + 1,
-    urlPhoto: colab.urlPhoto,
-    id: colab.id,
-    nome: colab.nome,
-    cpf: colab.cpf,
-    nasc: colab.dataNascimento,
-    cargo: colab.cargo,
-    unidade: colab.unidade,
-    sexo: colab.sexo,
-    email: colab.email,
-    isActive: colab.isActive,
-    password: colab.password,
-    actions: "...",
-  }));
+    const colaboradores = await JornadaColabAdmService.findColaboradores();
+    colaboradores.sort((a: any, b: any) => String(a.nome).localeCompare(b.nome));
+    completeData.value = colaboradores;
+
+    items.value = colaboradores.map((colab: any, index: number) => ({
+      cod: index + 1,
+      urlPhoto: colab.urlPhoto,
+      id: colab.id,
+      nome: colab.nome,
+      cpf: colab.cpf,
+      nasc: colab.dataNascimento,
+      cargo: colab.cargo,
+      unidade: colab.unidade,
+      sexo: colab.sexo,
+      email: colab.email,
+      isActive: colab.isActive,
+      password: colab.password,
+      actions: "...",
+    }));
+  } catch (error) {
+    console.error("Erro ao carregar colaboradores:", error);
+  } finally {
+    isLoading.value = false; // ✅ Finaliza o carregamento
+  }
 };
+
 
 
 

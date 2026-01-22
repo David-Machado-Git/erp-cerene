@@ -1,43 +1,92 @@
 <template>
   <v-main class="ma-6">
+    <v-container>
+      <v-row justify="center">
+        <v-col
+          cols="12"
+          md="11"
+        >
+          <v-card
+            class="pl-7 pt-7 pb-1 mb-4"
+            elevation="2"
+            rounded="lg"
+            color="blue-lighten-5"
+          >
+            <v-card-title
+              class="text-subtitle-1 font-weight-bold"
+              style="color:#1976D2;"
+            >
+              <v-icon
+                style="color:#0A111A;"
+                size="32"
+              >
+                mdi-chart-line
+              </v-icon>
+
+              Dashboard Geral
+            </v-card-title>
+
+            <p
+              class="text-body-2 mb-4"
+              style="color:#555;"
+            >
+              <span style="position: relative; left: 52px; top: -16px;">Acompanhe as estatísticas abaixo</span>
+            </p>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
     <VRow>
       <VCol>
         <VRow>
-          <VCol cols="12" sm="6">
+          <VCol
+            cols="12"
+            sm="6"
+          >
             <ReceitasPeriodo />
           </VCol>
           
           
 
-          <VCol cols="12" sm="6">
+          <VCol
+            cols="12"
+            sm="6"
+          >
             <VRow>
               <VCol cols="12">
-                <ListaHorizontal :itens="receitas" titulo="Receita" />
+                <ListaHorizontal
+                  :itens="receitas"
+                  titulo="Receita"
+                />
               </VCol>
             </VRow>
             <VRow>
               <VCol cols="12">
-                <ListaHorizontal :itens="despesas" titulo="Despesas" />
+                <ListaHorizontal
+                  :itens="despesas"
+                  titulo="Despesas"
+                />
               </VCol>
             </VRow>
             <VCol cols="12">
-            <OrcamentoMes />
+              <OrcamentoMes />
+            </VCol>
           </VCol>
-          </VCol>
-
         </VRow>
         <VRow align-content="stretch">
-          
-
-          
           <VCol>
-            <ListaVertical :itens="saldoEmConta" titulo="Ranking de faturamento" />
+            <ListaVertical
+              :itens="saldoEmConta"
+              titulo="Ranking de faturamento"
+            />
           </VCol>
 
-          <VCol cols="12" sm="6">
+          <VCol
+            cols="12"
+            sm="6"
+          >
             <FluxoCaixa />
           </VCol>
-
         </VRow>
       </VCol>
     </VRow>

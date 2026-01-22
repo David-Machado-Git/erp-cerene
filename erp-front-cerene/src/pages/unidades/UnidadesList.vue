@@ -1,32 +1,46 @@
 <template>
   <section class="p-4 animate-slideDown position-component">
-    <v-row
-      class="align-center justify-center"
-      no-gutters
-    >
-      <v-col
-        cols="12"
-        md="2"
-        no-gutters
-        class="d-flex justify-center mb-4 mb-md-0 ml-auto"
-      >
-        <v-btn
-          color="green"
-          class="d-flex align-center mb-4 py-2 px-4 text-uppercase font-weight-bold"
-          @click="openModal('CREATE', null)"
+    <v-container>
+      <v-row justify="center">
+        <v-col
+          cols="12"
+          md="11"
         >
-          <v-icon left>
-            mdi-plus-circle
-          </v-icon>
-          INSERIR - Unidade
-        </v-btn>
-      </v-col>
-    </v-row>
+          <v-card
+            class="pl-7 pt-7 pb-1 mb-4"
+            elevation="2"
+            rounded="lg"
+            color="blue-lighten-5"
+          >
+            <v-card-title
+              class="text-subtitle-1 font-weight-bold"
+              style="color:#1976D2;"
+            >
+              <v-icon
+                style="color:#0A111A;"
+                size="32"
+              >
+                mdi-home-city
+              </v-icon>
+              Unidades CERENE
+            </v-card-title>
+
+            <p
+              class="text-body-2 mb-4"
+              style="color:#555;"
+            >
+              <span style="position: relative; left: 52px; top: -16px;">Dados cadastrais abaixo</span>
+            </p>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+
+    
 
     <v-dialog
       v-model="dialog"
-      max-width="1200px"
-      height="680px"
+      max-width="1600px"
       class="custom-dialog"
     >
       <v-card>
@@ -49,7 +63,7 @@
           <v-card
             class="mx-auto pa-6"
             elevation="8"
-            max-width="1200"
+            max-width="1600"
             rounded="lg"
           >
             <VRow>
@@ -288,6 +302,8 @@
                   </VRow>
                 </v-card>
 
+                
+
                 <!-- Card: Contato -->
                 <v-card
                   class="pa-4 mb-6"
@@ -385,6 +401,59 @@
                     </VCol>
                   </VRow>
                 </v-card>
+
+                <v-card
+                  class="pa-4 mb-6"
+                  elevation="2"
+                  rounded="lg"
+                  color="blue-grey-lighten-5"
+                >
+                  <v-card-title
+                    class="text-subtitle-1 font-weight-bold"
+                    style="color:#1976D2;"
+                  >
+                    <v-icon
+                      left
+                      class="mr-2"
+                      color="primary"
+                    >
+                      mdi-map-marker
+                    </v-icon>
+                    Coordenadas Geográficas
+                  </v-card-title>
+
+                  <p
+                    class="text-body-2 mb-4"
+                    style="color:#555;"
+                  >
+                    Insira abaixo a latitude e longitude para que apareça no mapa.
+                  </p>
+
+                  <VRow>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="latitude"
+                        label="Latitude"
+                        variant="outlined"
+                        type="number"
+                      />
+                    </VCol>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="longitude"
+                        label="Longitude"
+                        variant="outlined"
+                        type="number"
+                      />
+                    </VCol>
+                  </VRow>
+                </v-card>
               </VCol>
             </VRow>
           </v-card>
@@ -424,7 +493,7 @@
     >
       <v-col
         cols="12"
-        md="4"
+        md="3"
         no-gutters
         class="d-flex justify-center mb-4 mb-md-0"
       >
@@ -439,7 +508,7 @@
       </v-col>
       <v-col
         cols="12"
-        md="4"
+        md="3"
         no-gutters
         class="d-flex justify-center mb-4 mb-md-0"
       >
@@ -454,7 +523,7 @@
       </v-col>
       <v-col
         cols="12"
-        md="4"
+        md="3"
         no-gutters
         class="d-flex justify-center mb-4 mb-md-0"
       >
@@ -468,7 +537,29 @@
         />
       </v-col>
     </v-row>
-    <main>
+    <main style="margin-bottom: 90px; width: 98%; margin: auto;">
+      <v-row
+        class="align-center justify-center"
+        no-gutters
+      >
+        <v-col
+          cols="12"
+          md="2"
+          no-gutters
+          class="d-flex justify-center mb-4 mb-md-0 ml-auto"
+        >
+          <v-btn
+            color="green"
+            class="d-flex align-center mb-4 py-2 px-4 text-uppercase font-weight-bold"
+            @click="openModal('CREATE', null)"
+          >
+            <v-icon left>
+              mdi-plus-circle
+            </v-icon>
+            INSERIR - Unidade
+          </v-btn>
+        </v-col>
+      </v-row>
       <v-data-table
         v-model:pagination="pagination"
         :headers="headers"
@@ -568,8 +659,67 @@
           </div>
         </template>
       </v-data-table>
+
+      <v-card
+        class="pa-4 mb-6"
+        elevation="2"
+        rounded="lg"
+        color="blue-grey-lighten-5"
+        style="width: 90%; margin: 0 auto; margin-top: 50px;"
+      >
+        <v-card-title
+          class="text-subtitle-1 font-weight-bold"
+          style="color:#1976D2;"
+        >
+          <v-icon
+            left
+            class="mr-2"
+            color="primary"
+          >
+            mdi-map
+          </v-icon>
+          Mapa Interativo com as unidades CERENE
+        </v-card-title>
+
+        <div
+          class="leaflet-wrapper"
+          style="margin-bottom: 50px;"
+        >
+          <l-map
+            style="height: 60vh; width: 100%;"
+            @ready="onMapReady"
+          >
+            <l-tile-layer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution="&copy; OpenStreetMap contributors"
+            />
+
+            <l-marker
+              v-for="(loc, index) in cereneLocations"
+              :key="index"
+              :lat-lng="[loc.lat, loc.lng]"
+              :icon="pulseIcon"
+            >
+              <l-popup :opened="index === 0">
+                <strong>{{ loc.name }}</strong><br>
+                Localização selecionada
+              </l-popup>
+            </l-marker>
+          </l-map>
+        </div>
+      </v-card>
     </main>
   </section>
+  <div
+    v-show="isLoading"
+    class="loader"
+  >
+    <v-img
+      class="position-custom"
+      max-width="64"
+      src="/_img/loader.gif"
+    />
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -582,6 +732,27 @@ import { VFileInput } from 'vuetify/components';
 import Swal from "sweetalert2";
 import { reactive } from 'vue'
 // import { unidadeEvenBus } from "@/eventBus";
+
+import * as L from 'leaflet';
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+
+import {
+  LMap,
+  LTileLayer,
+  LMarker,
+  LPopup
+} from '@vue-leaflet/vue-leaflet';
+
+
+L.Icon.Default.mergeOptions({
+  iconUrl,
+  iconRetinaUrl,
+  shadowUrl,
+});
+
+
 
 // interface ContaBancaria {
 //   banco: string;
@@ -673,6 +844,58 @@ const dadosEmpresa = reactive<Unidade>({
 });
 
 const toast = useToast();
+const isLoading = ref(true);
+
+// Lista de CERENEs (exemplo, substitua pelas coordenadas reais)
+const cereneLocations = [
+  { name: "CERENE - Blumenau (SC)", lat: -26.8011225, lng: -49.1102143 },
+  { name: "CERENE - Palhoça (SC)", lat: -27.6400, lng: -48.6673 },
+  { name: "CERENE - São Bento do Sul (SC)", lat: -26.23083, lng: -49.38419 },
+  { name: "CERENE - Lapa (PR)", lat: -25.77917, lng: -49.74399 },
+  { name: "CERENE - Ituporanga (SC)", lat: -27.4100, lng: -49.6000 },
+  { name: "CERENE - Gaspar (SC)", lat: -26.87351, lng: -48.92955 },
+];
+
+
+
+
+const latitude = ref(null);   // Blumenau
+const longitude = ref(null);
+// const marker = ref(null);
+
+// // Ícone azul moderno (3D-like)
+// const modernBlueIcon = L.icon({
+//   iconUrl: "https://png.pngtree.com/png-vector/20240327/ourmid/pngtree-3d-pinpoint-location-marker-icon-blue-for-maps-and-infographics-png-image_12245606.png", // marcador azul com estilo clean/3D
+//   iconSize: [85, 85],       // tamanho do ícone
+//   iconAnchor: [22, 45],     // ponto de ancoragem (base do ícone)
+//   popupAnchor: [0, -45],    // onde o popup abre em relação ao ícone
+// });
+
+// Ícone pulsante
+const pulseIcon = L.divIcon({
+  className: "pulse-wrapper",
+  iconSize: [30, 30],
+  iconAnchor: [15, 15],
+  popupAnchor: [0, -15],
+  html: `
+    <div class="pulse-marker">
+      <span class="ring"></span>
+      <span class="ring ring2"></span>
+    </div>
+  `,
+});
+
+
+
+
+
+
+// L.marker([-26.8011225, -49.1102143]).addTo(map)
+//   .bindPopup("CERENE - Blumenau")
+//   .openPopup();
+
+
+
 // const nome = ref("");
 const cpf = ref("");
 // const unidade = ref("");
@@ -809,6 +1032,27 @@ const resetForm = () => {
   })
 };
 
+// Ajustar zoom para mostrar todos
+const onMapReady = (map) => {
+  const bounds = L.latLngBounds(cereneLocations.map(loc => [loc.lat, loc.lng]));
+  map.fitBounds(bounds, { padding: [50, 50] });
+
+  // abrir só o popup de Blumenau
+  map.eachLayer((layer) => {
+    if (layer instanceof L.Marker) {
+      const { lat, lng } = layer.getLatLng();
+      if (lat === -26.8011225 && lng === -49.1102143) {
+        layer.openPopup();
+      }
+    }
+  });
+};
+
+
+
+
+
+
 // salvar (create/update) unidade
 const handleSaveUnidade = async () => {
   try {
@@ -887,20 +1131,27 @@ const handleDeleteUnidade = async (unidade: any) => {
 }
 
 // util
-const capitalizeWords = (text: string) =>
-  text
+const capitalizeWords = (text: string) => {
+    text
     .trim()
     .split(' ')
     .map(w => (w ? w[0].toUpperCase() + w.slice(1).toLowerCase() : ''))
     .join(' ')
+};
+  
 
 // atualizar grid (já entregue anteriormente)
 const atualizarGrid = async () => {
   try {
-    const unidades = await unidadeService.findUnidades()
+    // 🔹 Ativa o loader antes de buscar os dados
+    isLoading.value = true;
+
+    const unidades = await unidadeService.findUnidades();
 
     // ordena por nomeFantasia
-    unidades.sort((a: any, b: any) => a.nomeFantasia.localeCompare(b.nomeFantasia))
+    unidades.sort((a: any, b: any) =>
+      a.nomeFantasia.localeCompare(b.nomeFantasia)
+    );
 
     // mapeia para items.value com todos os campos
     items.value = unidades.map((unidade: any, index: number) => ({
@@ -928,12 +1179,16 @@ const atualizarGrid = async () => {
         ultimaAtualizacao: ''
       },
       urlPhoto: unidade.urlPhoto ?? ''
-    }))
+    }));
   } catch (error) {
-    console.error('Erro ao atualizar grid:', error)
-    toast.error('Erro ao carregar unidades.')
+    console.error('Erro ao atualizar grid:', error);
+    toast.error('Erro ao carregar unidades.');
+  } finally {
+    // 🔹 Desativa o loader ao final (sucesso ou erro)
+    isLoading.value = false;
   }
-}
+};
+
 
 
 
@@ -1420,7 +1675,7 @@ const pagination = ref({
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .scrollable-content {
   max-height: 620px;
   overflow-y: auto;
@@ -1437,7 +1692,7 @@ const pagination = ref({
 }
 
 .mg-pers {
-  margin-bottom: 70px;
+  margin-bottom: 20px;
 }
 
 .icon-pers {
@@ -1517,6 +1772,62 @@ const pagination = ref({
   50% { opacity: 0.3; }
   100% { opacity: 1; }
 }
+
+
+.leaflet-wrapper {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* garante que o wrapper não atrapalhe o layout do Leaflet */
+.pulse-wrapper.leaflet-div-icon {
+  background: transparent;
+  border: none;
+}
+
+/* bolinha central */
+.pulse-marker {
+  position: relative;
+  width: 16px;   /* antes 20px */
+  height: 16px;  /* antes 20px */
+  border-radius: 50%;
+  background: rgba(0, 123, 255, 0.9);
+  box-shadow: 0 0 0 6px rgba(0, 123, 255, 0.15); /* sombra proporcional */
+}
+
+
+/* ondas (elementos reais, não pseudo) */
+.pulse-marker .ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0.6);
+  background: rgba(0, 123, 255, 0.35);
+  animation: ripple 1.8s ease-out infinite;
+}
+
+.pulse-marker .ring2 {
+  animation-delay: 2.0s; /* intercalar a segunda onda */
+}
+
+@keyframes ripple {
+  0% {
+    transform: translate(-50%, -50%) scale(0.6);
+    opacity: 0.8;
+  }
+  70% {
+    transform: translate(-50%, -50%) scale(4.0); /* maior expansão */
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 
 
 
