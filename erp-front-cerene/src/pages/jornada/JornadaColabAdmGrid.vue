@@ -238,7 +238,7 @@
         cols="12"
         md="3"
         no-gutters
-        class="d-flex justify-center mb-4 mb-md-0"
+        class="d-flex justify-center mb-4 mb-md-0 mr-9"
       >
         <v-select
           v-model="filters.unidade"
@@ -253,7 +253,7 @@
         cols="12"
         md="3"
         no-gutters
-        class="d-flex justify-center mb-4 mb-md-0"
+        class="d-flex justify-center mb-4 mb-md-0 mr-9"
       >
         <v-select
           v-model="filters.sexo"
@@ -268,7 +268,7 @@
         cols="12"
         md="3"
         no-gutters
-        class="d-flex justify-center mb-4 mb-md-0"
+        class="d-flex justify-center mb-4 mb-md-0 mr-9"
       >
         <v-text-field
           v-model="filters.keyword"
@@ -582,7 +582,7 @@ const filteredItems = computed(() => {
 
 
 const goToCalendar = (colab: Colab) => {
-  console.log("CAIU NO GO TO CALENDAR COM OS DADOS =>", colab);
+  // console.log("CAIU NO GO TO CALENDAR COM OS DADOS =>", colab);
   eventBus.colab = colab; // agora funciona
   router.push("/dashboard/minha-jornada");
 };
@@ -676,7 +676,7 @@ const getPriorityColor = (sexo: string) => {
 
 const pagination = ref({
   page: 1,
-  rowsPerPage: 15,
+  rowsPerPage: 5,
 });
 
 </script>
@@ -688,6 +688,7 @@ const pagination = ref({
 }
 
 .position-component {
+  margin-right: 14px;
   padding-top: 80px;
   padding-left: 60px;
 }

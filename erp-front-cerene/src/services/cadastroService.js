@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { collection, doc, setDoc, addDoc  } from "firebase/firestore";
+import { collection, doc, setDoc, addDoc, query, getDocs  } from "firebase/firestore";
 import { db } from "@/firebase/ConectDb";
 
 class CadastroService {
@@ -96,6 +96,30 @@ capitalizeFirst(str) {
     .split(" ")
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
+}
+
+
+async findUnidadesConfiguracoes() {
+  // console.log('SIM BATEU NO SERVICE');
+  
+  try {
+    const q = query(collection(db, "unidades")); // sem select
+
+    const querySnapshot = await getDocs(q);
+    const unidades = [];
+
+    querySnapshot.forEach((doc) => {
+      unidades.push({
+        id: doc.id,
+        configuracoes: doc.data().configuracoes // pega só esse campo manualmente
+      });
+    });
+
+    return unidades;
+  } catch (error) {
+    console.error("Erro ao buscar configurações das unidades:", error);
+    throw error;
+  }
 }
 
 

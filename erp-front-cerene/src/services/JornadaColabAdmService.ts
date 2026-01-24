@@ -77,7 +77,7 @@ class JornadaColabAdmService {
     buscarRegistros = async (idUser: string): Promise<RegistroPonto[]> => {
       const registrosRef = ref(dbrt, `controlePonto/${idUser}/registros`);
       const snapshot = await get(registrosRef);
-      console.log('Buscando registro com o IDUSER => ', idUser);
+      // console.log('Buscando registro com o IDUSER => ', idUser);
       
       if (!snapshot.exists()) return [];
 

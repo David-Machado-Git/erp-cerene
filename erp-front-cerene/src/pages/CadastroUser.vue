@@ -243,7 +243,7 @@
                 v-model="unidade"
                 :items="unidadesMap"
                 item-title="desc"
-                item-value="enum"
+                item-value="id"
                 label="Unidade de Trabalho"
                 prepend-inner-icon="mdi-office-building"
                 prepend-inner-icon-color="orange"
@@ -369,19 +369,13 @@ const router = useRouter();
 const visible = ref(false);
 const nome = ref("");
 const cpf = ref("");
-const unidade = ref("");
+// const unidade = ref("");
 const nasc = ref("");
 const cargo = ref("");
-const unidadesMap = [
-  { desc: "Administração Central", enum: 1 },
-  { desc: "Cerene Blumenau", enum: 2 },
-  { desc: "Cerene Gaspar - NVR", enum: 3 },
-  { desc: "Cerene Joinville", enum: 4 },
-  { desc: "Cerene São Bento do Sul", enum: 5 },
-  { desc: "Cerene Lapa", enum: 6 },
-  { desc: "Cerene Ituporanga", enum: 7 },
-  { desc: "Cerene Palhoça", enum: 8 },
-];
+// array que vai alimentar o VSelect
+const unidadesMap = ref([])
+const unidade = ref(null) // valor selecionado
+
 const sexo = ref("");
 
 const usuariosMap = [
@@ -432,8 +426,8 @@ const cadastrar = async () => {
   // exemplo: sempre USER por padrão
   const usuarioSelecionado = usuariosMap.find((u) => u.role === "USER");
 
-  // encontra a unidade selecionada pelo enum
-  const unidadeSelecionada = unidadesMap.find((u) => u.enum === unidade.value);
+  // encontra a unidade selecionada pelo id
+  const unidadeSelecionada = unidadesMap.value.find((u) => u.id === unidade.value);
 
   const dadosCadastro = {
     nome: nome.value,
@@ -443,8 +437,8 @@ const cadastrar = async () => {
     email: email.value,
     unidade: [
       {
-        desc: unidadeSelecionada?.desc,
-        enum: unidadeSelecionada?.enum,
+        id: unidadeSelecionada?.id,
+        desc: unidadeSelecionada?.desc, // opcional, se quiser salvar o nome
       },
     ],
     sexo: sexo.value,
@@ -453,7 +447,6 @@ const cadastrar = async () => {
         login: email.value,
         password: password.value,
         role: usuarioSelecionado?.role,
-        enum: usuarioSelecionado?.enum,
       },
     ],
   };
@@ -467,12 +460,47 @@ const cadastrar = async () => {
   }
 };
 
-onMounted(() => {
-  const token = localStorage.getItem("token");
+
+onMounted(async () => {
+  const token = localStorage.getItem("token")
   if (token) {
-    router.push("/dashboard");
+    router.push("/dashboard")
   }
-});
+
+  await carregarUnidadesMap();
+  
+})
+
+// método isolado para carregar unidades
+const carregarUnidadesMap = async () => {
+  try {
+    const unidades = await cadastroService.findUnidadesConfiguracoes()
+    console.log("Configurações das unidades:", unidades)
+
+    const lista = []
+
+    for (const u of unidades) {
+      if (u.configuracoes?.mostrarSelect) {
+        lista.push({
+          id: u.id,
+          desc: u.configuracoes?.selectName || u.textoSelect || u.nomeFantasia || 'Sem nome'
+        })
+      }
+    }
+
+    console.log("Lista final para o VSelect:", lista)
+    unidadesMap.value = lista
+  } catch (error) {
+    console.error("Erro ao carregar unidades:", error)
+  }
+}
+
+
+
+
+
+
+
 
 watch(cpf, (newVal) => {
   cpf.value = formatCpf(newVal);

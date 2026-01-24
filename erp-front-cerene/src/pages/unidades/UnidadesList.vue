@@ -226,81 +226,183 @@
                     >
                       mdi-map-marker
                     </v-icon>
-                    Endereço
+                    Endereço da Unidade
                   </v-card-title>
-                  <VRow>
-                    <VCol
+
+                  <v-row>
+                    <!-- Campos de endereço -->
+                    <v-col
                       cols="12"
                       md="6"
                     >
-                      <VTextField
+                      <v-text-field
                         v-model="dadosEmpresa.endereco.logradouro"
                         label="Logradouro"
                         variant="outlined"
                       />
-                    </VCol>
-                    <VCol
+                    </v-col>
+                    <v-col
                       cols="12"
                       md="6"
                     >
-                      <VTextField
+                      <v-text-field
                         v-model="dadosEmpresa.endereco.numero"
                         label="Número"
                         variant="outlined"
                       />
-                    </VCol>
-                    <VCol
+                    </v-col>
+                    <v-col
                       cols="12"
                       md="6"
                     >
-                      <VTextField
+                      <v-text-field
                         v-model="dadosEmpresa.endereco.bairro"
                         label="Bairro"
                         variant="outlined"
                       />
-                    </VCol>
-                    <VCol
+                    </v-col>
+                    <v-col
                       cols="12"
                       md="6"
                     >
-                      <VTextField
+                      <v-text-field
                         v-model="dadosEmpresa.endereco.cidade"
                         label="Cidade"
                         variant="outlined"
                       />
-                    </VCol>
-                    <VCol
+                    </v-col>
+                    <v-col
                       cols="12"
                       md="6"
                     >
-                      <VTextField
+                      <v-text-field
                         v-model="dadosEmpresa.endereco.estado"
                         label="Estado"
                         variant="outlined"
                       />
-                    </VCol>
-                    <VCol
+                    </v-col>
+                    <v-col
                       cols="12"
                       md="6"
                     >
-                      <VTextField
+                      <v-text-field
                         v-model="dadosEmpresa.endereco.cep"
                         label="CEP"
                         variant="outlined"
                       />
-                    </VCol>
-                    <VCol
+                    </v-col>
+                    <v-col
                       cols="12"
-                      md="6"
                     >
-                      <VTextField
+                      <v-text-field
                         v-model="dadosEmpresa.endereco.pais"
                         label="País"
                         variant="outlined"
                       />
-                    </VCol>
-                  </VRow>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col
+                      cols="12"
+                      md="6"
+                    >
+                      <v-switch
+                        v-model="mostrarSelect"
+                        label="Select visivel?"
+                        inset
+                        color="primary"
+                        density="comfortable"
+                      />
+                      <span
+                        class="text-caption mt-1"
+                        style="color: #666;"
+                      >
+                        Quando visível, estará disponível para seleção no cadastro de colaboradores.
+                      </span>
+                    </v-col>
+
+
+                    
+
+
+                    <!-- Toggles lado a lado -->
+                    <!-- <v-col
+                      cols="12"
+                      md="6"
+                    >
+                </v-col> -->
+                    <!-- <v-row>
+                      
+                      
+                    </v-row> -->
+
+                    <!-- Texto visível no select -->
+                    <v-col
+                      v-if="mostrarSelect"
+                      cols="12"
+                    >
+                      <v-text-field
+                        v-model="dadosEmpresa.configuracoes.selectName"
+                        label="Texto visível no select (descrição da opção)"
+                        variant="outlined"
+                        clearable
+                      />
+                    </v-col>
+                
+                    
+
+                    <!-- Select que mostra o texto digitado como primeira opção -->
+                    <v-col
+                      v-if="mostrarSelect && textoSelect"
+                      cols="12"
+                    >
+                      <v-card-title
+                        class="text-subtitle-1 font-weight-bold"
+                        style="color:#1976D2;"
+                      >
+                        <v-icon
+                          left
+                          class="mr-2"
+                          color="primary"
+                        >
+                          mdi-form-select
+                        </v-icon>
+                        Ex: Como ficará o select
+                      </v-card-title>
+
+                      <v-select
+                        v-model="previewValue"
+                        :items="previewItems"
+                        item-title="title"
+                        item-value="value"
+                        label="Preview do select"
+                        variant="outlined"
+                        density="comfortable"
+                        :menu-props="{ closeOnContentClick: false }"
+                      />
+                    </v-col>
+
+
+
+
+                    <v-col
+                      cols="12"
+                    >
+                      <v-select
+                        v-model="dadosEmpresa.configuracoes.ativo"
+                        :items="[true, false]"
+                        :item-title="item => item ? 'Ativo' : 'Inativo'"
+                        :item-value="item => item"
+                        label="Situação Cadastral da Unidade"
+                        variant="outlined"
+                        density="comfortable"
+                        clearable
+                      />
+                    </v-col>
+                  </v-row>
                 </v-card>
+
+
 
                 
 
@@ -322,7 +424,7 @@
                     >
                       mdi-email-outline
                     </v-icon>
-                    Contato
+                    Contato da Unidade
                   </v-card-title>
                   <VRow>
                     <VCol
@@ -366,7 +468,7 @@
                     >
                       mdi-account-outline
                     </v-icon>
-                    Responsável
+                    Cordenador Responsável pela Unidade
                   </v-card-title>
                   <VRow>
                     <VCol
@@ -419,7 +521,7 @@
                     >
                       mdi-map-marker
                     </v-icon>
-                    Coordenadas Geográficas
+                    Coordenadas Geográficas da Unidade
                   </v-card-title>
 
                   <p
@@ -435,10 +537,11 @@
                       md="6"
                     >
                       <VTextField
-                        v-model="latitude"
+                        v-model="dadosEmpresa.cordenadas.lat"
                         label="Latitude"
                         variant="outlined"
-                        type="number"
+                        type="string"
+                        placeholder="Ex: -26.9200"
                       />
                     </VCol>
                     <VCol
@@ -446,10 +549,37 @@
                       md="6"
                     >
                       <VTextField
-                        v-model="longitude"
+                        v-model="dadosEmpresa.cordenadas.long"
                         label="Longitude"
                         variant="outlined"
-                        type="number"
+                        type="string"
+                        placeholder="Ex: -49.0650"
+                      />
+                    </VCol>
+                  </VRow>
+
+                  <VRow class="mt-4">
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <v-switch
+                        v-model="dadosEmpresa.cordenadas.mostrarUnidadeMapa"
+                        label="Mostrar unidade no mapa interativo?"
+                        inset
+                        color="primary"
+                        density="comfortable"
+                      />
+                    </VCol>
+                    <VCol
+                      cols="12"
+                      md="6"
+                    >
+                      <VTextField
+                        v-model="dadosEmpresa.cordenadas.descricao"
+                        label="Descrição da unidade"
+                        variant="outlined"
+                        placeholder="Ex: Unidade Blumenau"
                       />
                     </VCol>
                   </VRow>
@@ -495,7 +625,7 @@
         cols="12"
         md="3"
         no-gutters
-        class="d-flex justify-center mb-4 mb-md-0"
+        class="d-flex justify-center mb-4 mb-md-0 mr-9"
       >
         <v-select
           v-model="filters.unidade"
@@ -510,7 +640,7 @@
         cols="12"
         md="3"
         no-gutters
-        class="d-flex justify-center mb-4 mb-md-0"
+        class="d-flex justify-center mb-4 mb-md-0 mr-9"
       >
         <v-select
           v-model="filters.sexo"
@@ -525,7 +655,7 @@
         cols="12"
         md="3"
         no-gutters
-        class="d-flex justify-center mb-4 mb-md-0"
+        class="d-flex justify-center mb-4 mb-md-0 mr-9"
       >
         <v-text-field
           v-model="filters.keyword"
@@ -537,7 +667,7 @@
         />
       </v-col>
     </v-row>
-    <main style="margin-bottom: 90px; width: 98%; margin: auto;">
+    <main style="width: 98%; margin: auto; margin-right: 60px;">
       <v-row
         class="align-center justify-center"
         no-gutters
@@ -556,7 +686,7 @@
             <v-icon left>
               mdi-plus-circle
             </v-icon>
-            INSERIR - Unidade
+            CADASTRAR UNIDADE
           </v-btn>
         </v-col>
       </v-row>
@@ -661,6 +791,7 @@
       </v-data-table>
 
       <v-card
+        v-if="cereneLocations.length > 0"
         class="pa-4 mb-6"
         elevation="2"
         rounded="lg"
@@ -724,7 +855,6 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, watch, computed } from "vue";
-import colaboradorService from "@/services/colaboradorService";
 import UploadStorageService from "@/services/UploadStorageService";
 import unidadeService from "./UnidadeService";
 import { useToast } from "vue-toastification";
@@ -767,100 +897,130 @@ L.Icon.Default.mergeOptions({
 // }
 
 interface Unidade {
-    id: string;
-    razaoSocial: string;
-    nomeFantasia: string;
-    cnpj: string;
-    ie?: string;
-    im?: string;
-    urlPhoto: string;
-    endereco: {
-        logradouro: string;
-        numero: string;
-        bairro: string;
-        cidade: string;
-        estado: string;
-        cep: string;
-        pais: string;
-    };
-    contato: {
-        telefone: string;
-        email: string;
-    };
-    responsavel: {
-        nome: string;
-        cpf: string;
-        email: string;
-    };
-    configuracoes: {
-        ativo: boolean;
-        dataCadastro: string;
-        ultimaAtualizacao: string;
-    };
+  id: string
+  razaoSocial: string
+  nomeFantasia: string
+  cnpj: string
+  ie?: string
+  im?: string
+  urlPhoto: string
+  textoSelect: string
+  endereco: {
+    logradouro: string
+    numero: string
+    bairro: string
+    cidade: string
+    estado: string
+    cep: string
+    pais: string
+  }
+  contato: {
+    telefone: string
+    email: string
+  }
+  responsavel: {
+    nome: string
+    cpf: string
+    email: string
+  }
+  configuracoes: {
+    ativo: boolean
+    mostrarSelect: boolean
+    selectName: string
+    dataCadastro: string
+    ultimaAtualizacao: string
+  }
+  cordenadas: {
+    lat: number | null
+    long: number | null
+    mostrarUnidadeMapa: boolean
+    descricao: string
+  }
 }
 
 
 
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  priority: string;
-  dueDate: string;
-  category: { id: number; title: string };
-}
+// interface Task {
+//   id: string;
+//   title: string;
+//   description: string;
+//   priority: string;
+//   dueDate: string;
+//   category: { id: number; title: string };
+// }
 // const unidadeEventBus = unidadeEvenBus.unidade;
 const dadosEmpresa = reactive<Unidade>({
-    id: '',
-    razaoSocial: '',
-    nomeFantasia: '',
-    cnpj: '',
-    ie: '',
-    im: '',
-    urlPhoto: '',
-    endereco: {
-        logradouro: '',
-        numero: '',
-        bairro: '',
-        cidade: '',
-        estado: '',
-        cep: '',
-        pais: ''
-    },
-    contato: {
-        telefone: '',
-        email: ''
-    },
-    responsavel: {
-        nome: '',
-        cpf: '',
-        email: ''
-    },
-    configuracoes: {
-        ativo: true,
-        dataCadastro: '',
-        ultimaAtualizacao: ''
-    }
+  id: '',
+  razaoSocial: '',
+  nomeFantasia: '',
+  cnpj: '',
+  ie: '',
+  im: '',
+  urlPhoto: '',
+  endereco: {
+    logradouro: '',
+    numero: '',
+    bairro: '',
+    cidade: '',
+    estado: '',
+    cep: '',
+    pais: ''
+  },
+  contato: {
+    telefone: '',
+    email: ''
+  },
+  responsavel: {
+    nome: '',
+    cpf: '',
+    email: ''
+  },
+  configuracoes: {
+    ativo: true,
+    mostrarSelect: false,   // novo campo
+    selectName: '',
+    dataCadastro: '',
+    ultimaAtualizacao: ''
+  },
+  cordenadas: {             // novo bloco
+    lat: null,
+    long: null,
+    mostrarUnidadeMapa: false,
+    descricao: ''
+  },
+  textoSelect: ''           // novo campo
 });
+
 
 const toast = useToast();
 const isLoading = ref(true);
+const cpf = ref("");
+
+const textoSelect = ref('');
+const mostrarSelect = ref(false);
+const statusCadastro = ref(true);
+const markerName = ref('');
+const mostrarUnidadeMapa = ref(false);
+const latitude = ref(null);
+const longitude = ref(null);
+
+const cereneLocations = ref<any>([]) // reativo, se quiser usar no template
+
 
 // Lista de CERENEs (exemplo, substitua pelas coordenadas reais)
-const cereneLocations = [
-  { name: "CERENE - Blumenau (SC)", lat: -26.8011225, lng: -49.1102143 },
-  { name: "CERENE - Palhoça (SC)", lat: -27.6400, lng: -48.6673 },
-  { name: "CERENE - São Bento do Sul (SC)", lat: -26.23083, lng: -49.38419 },
-  { name: "CERENE - Lapa (PR)", lat: -25.77917, lng: -49.74399 },
-  { name: "CERENE - Ituporanga (SC)", lat: -27.4100, lng: -49.6000 },
-  { name: "CERENE - Gaspar (SC)", lat: -26.87351, lng: -48.92955 },
-];
+// const cereneLocations = [
+//   { name: "CERENE - Blumenau (SC)", lat: -26.8011225, lng: -49.1102143 },
+//   { name: "CERENE - Palhoça (SC)", lat: -27.6400, lng: -48.6673 },
+//   { name: "CERENE - São Bento do Sul (SC)", lat: -26.23083, lng: -49.38419 },
+//   { name: "CERENE - Lapa (PR)", lat: -25.77917, lng: -49.74399 },
+//   { name: "CERENE - Ituporanga (SC)", lat: -27.4100, lng: -49.6000 },
+//   { name: "CERENE - Gaspar (SC)", lat: -26.87351, lng: -48.92955 },
+// ];
 
 
 
 
-const latitude = ref(null);   // Blumenau
-const longitude = ref(null);
+
 // const marker = ref(null);
 
 // // Ícone azul moderno (3D-like)
@@ -897,7 +1057,7 @@ const pulseIcon = L.divIcon({
 
 
 // const nome = ref("");
-const cpf = ref("");
+
 // const unidade = ref("");
 // const nasc = ref("");
 // const cargo = ref("");
@@ -939,7 +1099,7 @@ const headers = ref([
   { title: "Ações", sortable: false, value: "actions" },
 ]);
 
-const recuverData = ref<Task | null>(null);
+const recuverData = ref<any | null>(null);
 const typeAction = ref("CREATE");
 
 const filters = ref({
@@ -951,12 +1111,75 @@ const dialog = ref(false);
 // const visible = ref(false);
 const items = ref<any[]>([]);
 
+const previewValue = ref('')
+
+
+// Opções fixas
+const fixedItems = [
+  { title: 'Outras opções de ex:', value: 'outros' }
+]
+
+// Items reativos: primeiro o que o usuário digitou, depois as fixas
+const previewItems = computed(() => {
+  const user = (textoSelect.value || '').trim()
+  const first = {
+    title: user || '(defina o texto da opção)',
+    value: user || '(defina o texto da opção)'
+  }
+  return [first, ...fixedItems]
+})
+
+// Mantém o valor selecionado sempre válido dentro dos items
+watch(textoSelect, (val) => {
+  const user = (val || '').trim() || '(defina o texto da opção)'
+  previewValue.value = user
+}, { immediate: true })
+
+
+// 🔍 Watch para sincronizar sempre que mudar
+watch(mostrarSelect, (newVal, oldVal) => {
+  dadosEmpresa.configuracoes.mostrarSelect = newVal
+  console.log(`mostrarSelect alterado: de ${oldVal} para ${newVal}`)
+  console.log("dadosEmpresa.configuracoes.mostrarSelect atualizado =>", dadosEmpresa.configuracoes.mostrarSelect)
+});
+
+
+
+// // watchers individuais
+// watch(latitude, (newVal, oldVal) => {
+//   console.log(`Latitude alterada: de ${oldVal} para ${newVal}`)
+// })
+
+// watch(longitude, (newVal, oldVal) => {
+//   console.log(`Longitude alterada: de ${oldVal} para ${newVal}`)
+// })
+
+// watch(mostrarUnidadeMapa, (newVal, oldVal) => {
+//   console.log(`Mostrar unidade no mapa: de ${oldVal} para ${newVal}`)
+// })
+
+// watch(markerName, (newVal, oldVal) => {
+//   console.log(`Descrição da unidade alterada: de "${oldVal}" para "${newVal}"`)
+// })
+
+// // watcher em grupo (opcional)
+// watch([latitude, longitude, mostrarUnidadeMapa, markerName], ([lat, long, mostrar, desc]) => {
+//   console.log('Valores atuais =>', { lat, long, mostrar, desc })
+// })
+
+
+
+
 const openModal = (action: 'CREATE' | 'EDIT', unidade?: any) => {
   typeAction.value = action
   dialog.value = true
 
+    // 🔍 único log completo
+    console.log("Objeto final para edição:", unidade)
+
   if (action === 'EDIT' && unidade) {
     recuverData.value = unidade
+
     Object.assign(dadosEmpresa, {
       id: unidade.id ?? '',
       razaoSocial: unidade.razaoSocial ?? '',
@@ -981,23 +1204,39 @@ const openModal = (action: 'CREATE' | 'EDIT', unidade?: any) => {
         email: unidade.responsavel?.email ?? ''
       },
       configuracoes: {
-        ativo: unidade.configuracoes?.ativo ?? true,
-        dataCadastro: unidade.configuracoes?.dataCadastro ?? '',
-        ultimaAtualizacao: new Date().toISOString()
+          ativo: unidade.configuracoes?.ativo ?? true,   // ✅ usa o valor do objeto
+          mostrarSelect: unidade.configuracoes?.mostrarSelect ?? false,
+          dataCadastro: unidade.configuracoes?.dataCadastro ?? '',
+          selectName: unidade.configuracoes?.selectName,
+          ultimaAtualizacao: new Date().toISOString()
+        },
+      cordenadas: {
+        lat: unidade.cordenadas?.lat ?? null,
+        long: unidade.cordenadas?.long ?? null,
+        mostrarUnidadeMapa: unidade.cordenadas?.mostrarUnidadeMapa ?? true,
+        descricao: unidade.cordenadas?.descricao ?? '',
       },
+      textoSelect: textoSelect.value ?? '',
       ie: unidade.ie ?? '',
       im: unidade.im ?? '',
       urlPhoto: unidade.urlPhoto ?? ''
     })
-
-    // ?? reflete a foto no avatar
+    mostrarSelect.value = dadosEmpresa.configuracoes.mostrarSelect;
+    // latitude.value = unidade.cordenadas?.lat ?? null;
+    // longitude.value = unidade.cordenadas?.long ?? null;
+    // markerName.value = unidade.cordenadas?.descricao ?? null;
+    // reflete a foto no avatar
     urlPhoto.value = unidade.urlPhoto || ''
+
+  
+
   } else {
     recuverData.value = null
     resetForm()
-    urlPhoto.value = '' // limpa apenas no CREATE
+    urlPhoto.value = ''
   }
-};
+}
+
 
 const resetForm = () => {
   Object.assign(dadosEmpresa, {
@@ -1023,30 +1262,86 @@ const resetForm = () => {
       email: ''
     },
     configuracoes: {
-      ativo: true,
+      ativo: true,          // volta para true como padrão
+      mostrarSelect: false, // zera o toggle
       dataCadastro: '',
       ultimaAtualizacao: ''
     },
+    cordenadas: {
+      lat: null,            // zera latitude
+      long: null,           // zera longitude
+      mostrarUnidadeMapa: false,
+      descricao: ''
+    },
+    textoSelect: '',        // zera texto digitado
     ie: '',
-    im: ''
+    im: '',
+    urlPhoto: ''
   })
+
+  // também pode resetar as refs diretamente, se necessário:
+  textoSelect.value = ''
+  mostrarSelect.value = false
+  statusCadastro.value = true
+  markerName.value = ''
+  mostrarUnidadeMapa.value = false
+  latitude.value = null
+  longitude.value = null
 };
 
-// Ajustar zoom para mostrar todos
-const onMapReady = (map) => {
-  const bounds = L.latLngBounds(cereneLocations.map(loc => [loc.lat, loc.lng]));
-  map.fitBounds(bounds, { padding: [50, 50] });
 
-  // abrir só o popup de Blumenau
-  map.eachLayer((layer) => {
-    if (layer instanceof L.Marker) {
-      const { lat, lng } = layer.getLatLng();
-      if (lat === -26.8011225 && lng === -49.1102143) {
-        layer.openPopup();
+const onMapReady = (map) => {
+  // 🔹 Filtra apenas coordenadas válidas
+  const coords = cereneLocations.value.filter(
+    (loc) => !isNaN(loc.lat) && !isNaN(loc.lng)
+  );
+
+  // 🔹 Ajusta o zoom para mostrar todas as unidades
+  if (coords.length > 0) {
+    const bounds = L.latLngBounds(coords.map((loc) => [loc.lat, loc.lng]));
+    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 7 });
+  } else {
+    // fallback: centraliza em Blumenau
+    map.setView([-26.8011225, -49.1102143], 7);
+  }
+
+  // 🔹 Aguarda o próximo tick para garantir que os markers já estão renderizados
+  setTimeout(() => {
+    let popupAberto = false;
+
+    map.eachLayer((layer) => {
+      if (layer instanceof L.Marker) {
+        const popupContent = layer.getPopup()?.getContent();
+
+        if (
+          typeof popupContent === "string" &&
+          popupContent.includes("Blumenau")
+        ) {
+          layer.openPopup();
+          popupAberto = true;
+        }
+      }
+    });
+
+    // 🔹 Se não encontrou Blumenau, abre o primeiro marker
+    if (!popupAberto) {
+      let primeiroMarker = null;
+      map.eachLayer((layer) => {
+        if (layer instanceof L.Marker && !primeiroMarker) {
+          primeiroMarker = layer;
+        }
+      });
+      if (primeiroMarker) {
+        primeiroMarker.openPopup();
       }
     }
-  });
+  }, 1000); // pequeno delay para garantir que os popups já existem
 };
+
+
+
+
+
 
 
 
@@ -1065,20 +1360,23 @@ const handleSaveUnidade = async () => {
       toast.error('Informe o CNPJ.')
       return
     }
-
+    // console.log("## SAINDO PAYLOAD ==>> ", dadosEmpresa);
     const payload = {
       ...dadosEmpresa,
       configuracoes: {
-        ativo: dadosEmpresa.configuracoes.ativo,
+        ...dadosEmpresa.configuracoes,
         dataCadastro:
           typeAction.value === 'CREATE'
             ? new Date().toISOString()
             : dadosEmpresa.configuracoes.dataCadastro || '',
         ultimaAtualizacao: new Date().toISOString()
       },
+      cordenadas: {
+        ...dadosEmpresa.cordenadas
+      },
       // normalizações úteis
-      nomeFantasia: capitalizeWords(dadosEmpresa.nomeFantasia),
-      cnpj: dadosEmpresa.cnpj,
+      nomeFantasia: capitalizeWords(dadosEmpresa.nomeFantasia || ''),
+      cnpj: dadosEmpresa.cnpj?.trim() || '',
       contato: {
         telefone: dadosEmpresa.contato.telefone,
         email: (dadosEmpresa.contato.email || '').toLowerCase()
@@ -1087,12 +1385,18 @@ const handleSaveUnidade = async () => {
       im: dadosEmpresa.im || ''
     }
 
+
+
     if (typeAction.value === 'CREATE') {
       await unidadeService.inserirUnidade(payload)
       toast.success('Unidade cadastrada com sucesso!')
+      resetForm();
     } else if (typeAction.value === 'EDIT' && recuverData.value?.id) {
+      
+      
       await unidadeService.atualizarUnidade(recuverData.value.id, payload)
       toast.success('Unidade atualizada com sucesso!')
+      resetForm();
     }
 
     dialog.value = false
@@ -1132,62 +1436,87 @@ const handleDeleteUnidade = async (unidade: any) => {
 
 // util
 const capitalizeWords = (text: string) => {
-    text
+  return text
     .trim()
     .split(' ')
     .map(w => (w ? w[0].toUpperCase() + w.slice(1).toLowerCase() : ''))
-    .join(' ')
+    .join(' ');
 };
+
   
 
 // atualizar grid (já entregue anteriormente)
 const atualizarGrid = async () => {
   try {
-    // 🔹 Ativa o loader antes de buscar os dados
     isLoading.value = true;
 
     const unidades = await unidadeService.findUnidades();
-
+    console.log("AS CORDENADAS DAS UNIDADES SÃO => ", unidades);
+    
     // ordena por nomeFantasia
-    unidades.sort((a: any, b: any) =>
+    unidades.sort((a: Unidade, b: Unidade) =>
       a.nomeFantasia.localeCompare(b.nomeFantasia)
     );
 
-    // mapeia para items.value com todos os campos
-    items.value = unidades.map((unidade: any, index: number) => ({
+    // 🔹 monta cereneLocations dinamicamente
+    cereneLocations.value = unidades
+    .filter((u) => u.cordenadas?.mostrarUnidadeMapa)
+    .map((u) => {
+      const latStr = String(u.cordenadas?.lat ?? "0").replace(",", ".");
+      const lngStr = String(u.cordenadas?.long ?? "0").replace(",", ".");
+      return {
+        name: u.cordenadas?.descricao || u.nomeFantasia || "Sem nome",
+        lat: parseFloat(latStr),
+        lng: parseFloat(lngStr),
+      };
+    });
+
+
+
+    // 🔹 mapeia para items.value com todos os campos
+    items.value = unidades.map((unidade: Unidade, index: number) => ({
       cod: index + 1,
       id: unidade.id,
-      razaoSocial: unidade.razaoSocial ?? '',
-      nomeFantasia: unidade.nomeFantasia ?? '',
-      cnpj: unidade.cnpj ?? '',
-      ie: unidade.ie ?? '',
-      im: unidade.im ?? '',
+      razaoSocial: unidade.razaoSocial ?? "",
+      nomeFantasia: unidade.nomeFantasia ?? "",
+      cnpj: unidade.cnpj ?? "",
+      ie: unidade.ie ?? "",
+      im: unidade.im ?? "",
       endereco: unidade.endereco ?? {
-        logradouro: '',
-        numero: '',
-        bairro: '',
-        cidade: '',
-        estado: '',
-        cep: '',
-        pais: ''
+        logradouro: "",
+        numero: "",
+        bairro: "",
+        cidade: "",
+        estado: "",
+        cep: "",
+        pais: "",
       },
-      contato: unidade.contato ?? { telefone: '', email: '' },
-      responsavel: unidade.responsavel ?? { nome: '', cpf: '', email: '' },
+      contato: unidade.contato ?? { telefone: "", email: "" },
+      responsavel: unidade.responsavel ?? { nome: "", cpf: "", email: "" },
       configuracoes: unidade.configuracoes ?? {
         ativo: true,
-        dataCadastro: '',
-        ultimaAtualizacao: ''
+        mostrarSelect: false,
+        dataCadastro: "",
+        ultimaAtualizacao: "",
       },
-      urlPhoto: unidade.urlPhoto ?? ''
+      cordenadas: unidade.cordenadas ?? {
+        lat: null,
+        long: null,
+        mostrarUnidadeMapa: false,
+        descricao: "",
+      },
+      textoSelect: unidade.textoSelect ?? "",
+      urlPhoto: unidade.urlPhoto ?? "",
     }));
   } catch (error) {
-    console.error('Erro ao atualizar grid:', error);
-    toast.error('Erro ao carregar unidades.');
+    console.error("Erro ao atualizar grid:", error);
+    toast.error("Erro ao carregar unidades.");
   } finally {
-    // 🔹 Desativa o loader ao final (sucesso ou erro)
     isLoading.value = false;
   }
 };
+
+
 
 
 
@@ -1417,9 +1746,9 @@ const filteredItems = computed(() => {
       idRaw.includes(keywordLower); // 👈 busca por id
 
     // 🔎 LOGS para debug
-    console.log("[filteredItems] Avaliando item:", item);
-    console.log("[filteredItems] Filtros =>", filters.value);
-    console.log("[filteredItems] matchUnidade:", matchUnidade, "matchSexo:", matchSexo, "matchesKeyword:", matchesKeyword);
+    // console.log("[filteredItems] Avaliando item:", item);
+    // console.log("[filteredItems] Filtros =>", filters.value);
+    // console.log("[filteredItems] matchUnidade:", matchUnidade, "matchSexo:", matchSexo, "matchesKeyword:", matchesKeyword);
 
     return matchUnidade && matchSexo && matchesKeyword;
   });
@@ -1535,13 +1864,17 @@ watch(cpf, (newVal) => {
 
 const toggleActiveStatus = async (item: any) => {
   try {
-    const novoStatus = !item.isActive;
+    const novoStatus = !item.configuracoes.ativo;
 
-    await colaboradorService.atualizarColaborador(item.id, {
-      isActive: novoStatus,
+    await unidadeService.atualizarStatusUnidade(item.id, {
+      configuracoes: {
+        ...item.configuracoes,
+        ativo: novoStatus,
+        ultimaAtualizacao: new Date().toISOString()
+      }
     });
 
-    item.isActive = novoStatus; // atualiza localmente
+    item.configuracoes.ativo = novoStatus; // atualiza localmente
     toast.success(
       novoStatus
         ? "Cadastro liberado com sucesso!"
@@ -1554,6 +1887,7 @@ const toggleActiveStatus = async (item: any) => {
     console.error(error);
   }
 };
+
 
 
 
@@ -1671,7 +2005,7 @@ onMounted(async () => {
 
 const pagination = ref({
   page: 1,
-  rowsPerPage: 15,
+  rowsPerPage: 5,
 });
 </script>
 
@@ -1682,8 +2016,10 @@ const pagination = ref({
 }
 
 .position-component {
-  padding-top: 80px;
-  padding-left: 60px;
+    margin-right: 14px;
+    padding-top: 80px;
+    padding-left: 60px;
+    padding-bottom: 60px;
 }
 
 .hover-row:hover {

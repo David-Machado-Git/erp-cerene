@@ -66,7 +66,6 @@
             elevation="8"
             max-width="1600"
             rounded="lg"
-            color=""
           >
             <VRow>
               <VCol>
@@ -374,7 +373,7 @@
                         v-model="unidade"
                         :items="unidadesMap"
                         item-title="desc"
-                        item-value="enum"
+                        item-value="id"
                         label="Unidade de Trabalho"
                         prepend-inner-icon="mdi-office-building"
                         prepend-inner-icon-color="orange"
@@ -858,7 +857,7 @@
         cols="12"
         md="3"
         no-gutters
-        class="d-flex justify-center mb-4 mb-md-0"
+        class="d-flex justify-center mb-4 mb-md-0 mr-9"
       >
         <v-select
           v-model="filters.unidade"
@@ -873,7 +872,7 @@
         cols="12"
         md="3"
         no-gutters
-        class="d-flex justify-center mb-4 mb-md-0"
+        class="d-flex justify-center mb-4 mb-md-0 mr-9"
       >
         <v-select
           v-model="filters.sexo"
@@ -888,7 +887,7 @@
         cols="12"
         md="3"
         no-gutters
-        class="d-flex justify-center mb-4 mb-md-0"
+        class="d-flex justify-center mb-4 mb-md-0 mr-9"
       >
         <v-text-field
           v-model="filters.keyword"
@@ -919,7 +918,7 @@
             <v-icon left>
               mdi-plus-circle
             </v-icon>
-            INSERIR COLABORADOR
+            CADASTRAR COLABORADOR
           </v-btn>
         </v-col>
       </v-row>
@@ -1043,21 +1042,23 @@ import Swal from "sweetalert2";
 const toast = useToast();
 const nome = ref("");
 const cpf = ref("");
-const unidade = ref("");
+// const unidade = ref("");
+const unidadesMap = ref([]) // começa vazio
+const unidade = ref(null)   // valor selecionado
 const nasc = ref("");
 const cargo = ref("");
 const completeData: any = ref("");
 const isLoading = ref(true);
-const unidadesMap = [
-  { desc: "Administração Central", enum: 1 },
-  { desc: "Cerene Blumenau", enum: 2 },
-  { desc: "Cerene Gaspar - NVR", enum: 3 },
-  { desc: "Cerene Joinville", enum: 4 },
-  { desc: "Cerene São Bento do Sul", enum: 5 },
-  { desc: "Cerene Lapa", enum: 6 },
-  { desc: "Cerene Ituporanga", enum: 7 },
-  { desc: "Cerene Palhoça", enum: 8 },
-];
+// const unidadesMap = [
+//   { desc: "Administração Central", enum: 1 },
+//   { desc: "Cerene Blumenau", enum: 2 },
+//   { desc: "Cerene Gaspar - NVR", enum: 3 },
+//   { desc: "Cerene Joinville", enum: 4 },
+//   { desc: "Cerene São Bento do Sul", enum: 5 },
+//   { desc: "Cerene Lapa", enum: 6 },
+//   { desc: "Cerene Ituporanga", enum: 7 },
+//   { desc: "Cerene Palhoça", enum: 8 },
+// ];
 const sexo = ref("");
 
 const usuariosMap = [
@@ -1125,7 +1126,7 @@ const openModal = (typeOfAction: string, data: any | null) => {
     cpf.value = infoData.cpf;
     nasc.value = infoData.nasc;
     cargo.value = infoData.cargo;
-    unidade.value = infoData.unidade?.[0]?.enum;
+    unidade.value = infoData.unidade?.[0]?.id;
     sexo.value = infoData.sexo;
     email.value = infoData.email;
     id.value = infoData.id;
@@ -1330,7 +1331,7 @@ const copiarEmail = (data) => {
 
 const handleSavePerson = async () => {
   try {
-    const unidadeSelecionada = unidadesMap.find((u) => u.enum === Number(unidade.value));
+    const unidadeSelecionada = unidadesMap.value.find((u) => u.id === unidade.value);
     const usuarioSelecionado = usuariosMap.find((u) => u.role === "USER");
 
     const dadosCadastro = {
@@ -1342,7 +1343,7 @@ const handleSavePerson = async () => {
       unidade: [
         {
           desc: unidadeSelecionada?.desc ?? null,
-          enum: unidadeSelecionada?.enum ?? null,
+          id: unidadeSelecionada?.id ?? null,
         },
       ],
       sexo: sexo.value ?? null,
@@ -1383,6 +1384,8 @@ const handleSavePerson = async () => {
       await cadastroService.registrarUsuario(dadosCadastro);
       toast.success("Cadastro realizado com sucesso!");
     } else if (typeAction.value === "EDIT" && recuverData.value?.id) {
+      console.log('SIM AQUI EM EDIÇÃO DE PESSOAS COM OS DADOS => ', dadosCadastro);
+      
       await colaboradorService.atualizarColaborador(recuverData.value.id, dadosCadastro);
       toast.success("Colaborador atualizado com sucesso!");
     }
@@ -1612,8 +1615,32 @@ const toggleActiveStatus = async (item: any) => {
 
 onMounted(async () => {
   await atualizarGrid();
+  await carregarUnidadesMap();
   // popularBaseDeTeste();
 });
+
+const carregarUnidadesMap = async () => {
+  try {
+    const unidades = await cadastroService.findUnidadesConfiguracoes()
+    console.log("Configurações das unidades:", unidades)
+
+    const lista = []
+
+    for (const u of unidades) {
+      if (u.configuracoes?.mostrarSelect) {
+        lista.push({
+          id: u.id, // será usado como item-value
+          desc: u.configuracoes?.selectName || u.textoSelect || u.nomeFantasia || "Sem nome"
+        })
+      }
+    }
+
+    console.log("Lista final para o VSelect:", lista)
+    unidadesMap.value = lista
+  } catch (error) {
+    console.error("Erro ao carregar unidades:", error)
+  }
+};
 
 // const popularBaseDeTeste = async () => {
 //   const nomes = [
@@ -1732,7 +1759,7 @@ const getPriorityColor = (sexo: string) => {
 
 const pagination = ref({
   page: 1,
-  rowsPerPage: 15,
+  rowsPerPage: 5,
 });
 </script>
 
@@ -1743,6 +1770,7 @@ const pagination = ref({
 }
 
 .position-component {
+  margin-right: 14px;
   padding-top: 80px;
   padding-left: 60px;
 }

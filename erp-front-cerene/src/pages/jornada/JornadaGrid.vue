@@ -703,11 +703,13 @@
 
       <!-- Tabela de registros -->
       <v-data-table
+        v-model:pagination="pagination"
         :headers="headers"
         :items="filteredItems"
         item-key="id"
         class="elevation-1 mg-pers"
         :items-per-page-options="[5, 10, 15]"
+        :items-per-page="pagination.rowsPerPage"
       >
         <template #item="{ item }">
           <tr
@@ -802,9 +804,6 @@ const isLoading = ref(true);
 // const urlPhoto = ref<any>(colab?.urlPhoto || null);
 if (!colab) {
   router.push("/dashboard/jornada-colaborador");
-} else {
-  console.log("Recebi o colaborador via eventBus:", colab);
-  console.log("Aqui recebemos o id para fazer a requisição e obter os dados. O ID É => :", colab.id);
 }
 
 let audio;
@@ -1041,7 +1040,7 @@ const registrarHorario = async (item, campo) => {
   item[campo] = horaAtual();
   item.idUser = idUser;
 
-  console.log('CHEGOU NA FN REGISTRA HORÁRIO COM AS PROPRIEDADES: => ', item);
+  // console.log('CHEGOU NA FN REGISTRA HORÁRIO COM AS PROPRIEDADES: => ', item);
   
 
   calcularSomatoria(item); // sempre tenta calcular
@@ -1116,7 +1115,7 @@ const filteredItems = computed(() => {
     return passaKeyword && passaData;
   });
 
-  console.log(">>> Resultado do filteredItems:", resultado);
+  // console.log(">>> Resultado do filteredItems:", resultado);
   return resultado;
 });
 
@@ -1157,7 +1156,7 @@ const totalHorasTrabalhadasFormatado = computed(() => {
 
 const abrirJustificativa = (data) => {
   statusJustificativa.value = data.statusJustificativa || "Aguardando Aprovação"
-  console.log("Abrir justificativa para registro:", data);
+  // console.log("Abrir justificativa para registro:", data);
 
   dataJustificInsert.value = data;
   justificativa.value = data.justificativa || "";
@@ -1275,7 +1274,7 @@ onMounted(async () => {
       items.value = gerarDiaAtual("sem-id");
     } else {
       const registros = (await JornadaColabAdmService.buscarRegistros(colab.id)) || [];
-      console.log("REGISTROS =>>", registros);
+      // console.log("REGISTROS =>>", registros);
 
       const hojeId = getLocalDateId(); // data local, não UTC
       const jaTemHoje = registros.some((r) => getRegistroId(r) === hojeId);
@@ -1410,7 +1409,10 @@ const calcularSomatoria = (item) => {
 };
 
 
-
+const pagination = ref({
+  page: 1,
+  rowsPerPage: 5,
+});
 
 </script>
 

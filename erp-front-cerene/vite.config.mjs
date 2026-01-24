@@ -48,7 +48,7 @@ export default defineConfig({
     interval: 100, // checa mudanças a cada 100ms
   },
   port: 8060,
-  allowedHosts: ['*', 'all', 'localhost', 'f1222574cedf.ngrok-free.app'],
+  allowedHosts: ['*', 'all', 'localhost', '6e3e13abb6af.ngrok-free.app'],
 }
 
 });
