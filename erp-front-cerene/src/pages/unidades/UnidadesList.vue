@@ -203,6 +203,33 @@
                             variant="outlined"
                           />
                         </v-col>
+                        <v-col
+                          class="pa-6 text-center"
+                          cols="12"
+                          md="6"
+                        >
+                          <v-icon
+                            color="blue"
+                            class="mr-1"
+                          >
+                            mdi-identifier
+                          </v-icon>
+                          <span
+                            class="text-caption cursor-pointer"
+                            style="text-decoration: underline; color: #1976D2;"
+                            @click="copiarId(dadosEmpresa.id)"
+                          >
+                            <strong>ID:</strong> {{ dadosEmpresa.id || "" }}
+                          </span>
+                          <v-icon
+                            class="ml-2"
+                            color="primary"
+                            size="small"
+                            @click="copiarId(dadosEmpresa.id)"
+                          >
+                            mdi-content-copy
+                          </v-icon>
+                        </v-col>
                       </v-row>
                     </v-col>
                   </v-row>
@@ -630,13 +657,15 @@
         <v-select
           v-model="filters.unidade"
           label="Filtrar por unidade"
-          :items="['Administração Central', 'Cerene de Blumenau', 'Cerene Gaspar - NVR', 'Cerene Joinville', 'Cerene São Bento do Sul', 'Cerene Lapa', 'Cerene Ituporanga', 'Cerene Palhoça']"
+          :items="unidadesMap"
+          item-title="desc"
+          item-value="desc"
           prepend-icon="mdi-filter"
           class="ml-3"
           clearable
         />
       </v-col>
-      <v-col
+      <!-- <v-col
         cols="12"
         md="3"
         no-gutters
@@ -650,10 +679,10 @@
           class="ml-3"
           clearable
         />
-      </v-col>
+      </v-col> -->
       <v-col
         cols="12"
-        md="3"
+        md="6"
         no-gutters
         class="d-flex justify-center mb-4 mb-md-0 mr-9"
       >
@@ -666,8 +695,27 @@
           clearable
         />
       </v-col>
+      <v-col
+        cols="12"
+        md="2"
+        no-gutters
+        class="d-flex justify-center mb-4 mb-md-0 pb-4"
+      >
+        <v-btn
+          color="blue"
+          variant="outlined"
+          size="small"
+          class="ml-3"
+          @click="limparFiltros"
+        >
+          <v-icon start>
+            mdi-broom
+          </v-icon>
+          Limpar filtros
+        </v-btn>
+      </v-col>
     </v-row>
-    <main style="width: 98%; margin: auto; margin-right: 60px;">
+    <main style="width: 98%; margin: auto; margin-right: 60px; margin-left: 16px; margin-top: 20px;">
       <v-row
         class="align-center justify-center"
         no-gutters
@@ -686,7 +734,7 @@
             <v-icon left>
               mdi-plus-circle
             </v-icon>
-            CADASTRAR UNIDADE
+            NOVO CADASTRO
           </v-btn>
         </v-col>
       </v-row>
@@ -715,40 +763,66 @@
             </td>
 
             <!-- Nome Fantasia -->
-            <td class="py-3 px-4">
+            <!-- <td class="py-3 px-4">
               {{ props.item.nomeFantasia }}
-            </td>
+            </td> -->
 
             <!-- CNPJ -->
-            <td class="py-3 px-4">
+            <td class="py-3 px-4 align-center">
               {{ props.item.cnpj }}
+              <v-icon
+                class="ml-2"
+                color="primary"
+                size="small"
+                @click="copiarValor(props.item.cnpj)"
+              >
+                mdi-content-copy
+              </v-icon>
             </td>
+
 
             <!-- IE -->
-            <td class="py-3 px-4">
-              {{ props.item.ie }}
-            </td>
+            <template v-if="/\d/.test(props.item.ie)">
+              <td class="py-3 px-4">
+                {{ props.item.ie }}
+                <!-- <v-icon
+                  class="ml-2"
+                  color="primary"
+                  size="small"
+                  @click="copiarValor(props.item.ie)"
+                >
+                  mdi-content-copy
+                </v-icon> -->
+              </td>
+            </template>
+            <template v-else>
+              <td class="py-3 px-4">
+                <span class="ml-4">------------</span>
+              </td>
+            </template>
+
+
 
             <!-- IM -->
-            <td class="py-3 px-4">
+            <!-- <td class="py-3 px-4">
               {{ props.item.im }}
-            </td>
+            </td> -->
 
             <!-- Contato -->
-            <td class="py-3 px-4">
+            <!-- <td class="py-3 px-4">
               <div>
                 <span>{{ props.item.contato?.telefone }}</span><br>
                 <span>{{ props.item.contato?.email }}</span>
               </div>
-            </td>
+            </td> -->
 
             <!-- Responsável -->
-            <td class="py-3 px-4">
+            <!-- <td class="py-3 px-4">
               <div>
                 <span>{{ props.item.responsavel?.nome }}</span><br>
                 <span>{{ props.item.responsavel?.email }}</span>
               </div>
-            </td>
+            </td> -->
 
             <!-- Ações -->
             <td class="py-3 px-4">
@@ -856,6 +930,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch, computed } from "vue";
 import UploadStorageService from "@/services/UploadStorageService";
+import cadastroService from "@/services/cadastroService";
 import unidadeService from "./UnidadeService";
 import { useToast } from "vue-toastification";
 import { VFileInput } from 'vuetify/components';
@@ -1095,7 +1170,6 @@ const headers = ref([
   { title: "Unidade", sortable: true, value: "nomeFantasia" },
   { title: "CNPJ", sortable: true, value: "cnpj" },
   { title: "IE", sortable: true, value: "ie" },
-  { title: "IM", sortable: true, value: "im" },
   { title: "Ações", sortable: false, value: "actions" },
 ]);
 
@@ -1110,7 +1184,7 @@ const filters = ref({
 const dialog = ref(false);
 // const visible = ref(false);
 const items = ref<any[]>([]);
-
+const unidadesMap = ref([]) // começa vazio
 const previewValue = ref('')
 
 
@@ -1129,6 +1203,26 @@ const previewItems = computed(() => {
   return [first, ...fixedItems]
 })
 
+const copiarValor = (valor: string) => {
+  if (!valor) return;
+  navigator.clipboard.writeText(valor)
+    .then(() => {
+      toast.success(`Copiado: ${valor}`); // dispara o toast de sucesso
+    })
+    .catch(err => {
+      console.error("Erro ao copiar: ", err);
+      toast.error("Erro ao copiar"); // dispara toast de erro
+    });
+};
+
+const limparFiltros = () => {
+  filters.value.unidade = null;
+  filters.value.sexo = null;
+  filters.value.keyword = "";
+};
+
+
+
 // Mantém o valor selecionado sempre válido dentro dos items
 watch(textoSelect, (val) => {
   const user = (val || '').trim() || '(defina o texto da opção)'
@@ -1136,12 +1230,20 @@ watch(textoSelect, (val) => {
 }, { immediate: true })
 
 
+watch(
+  () => filters.value.unidade, // observa o campo unidade
+  (novo, antigo) => {
+    console.log("[watch unidade] mudou:", { antigo, novo });
+  }
+);
+
+
 // 🔍 Watch para sincronizar sempre que mudar
-watch(mostrarSelect, (newVal, oldVal) => {
-  dadosEmpresa.configuracoes.mostrarSelect = newVal
-  console.log(`mostrarSelect alterado: de ${oldVal} para ${newVal}`)
-  console.log("dadosEmpresa.configuracoes.mostrarSelect atualizado =>", dadosEmpresa.configuracoes.mostrarSelect)
-});
+// watch(mostrarSelect, (newVal, oldVal) => {
+//   dadosEmpresa.configuracoes.mostrarSelect = newVal
+//   console.log(`mostrarSelect alterado: de ${oldVal} para ${newVal}`)
+//   console.log("dadosEmpresa.configuracoes.mostrarSelect atualizado =>", dadosEmpresa.configuracoes.mostrarSelect)
+// });
 
 
 
@@ -1610,15 +1712,16 @@ const triggerUpload = () => {
 //   pixContas.value.splice(index, 1);
 // };
 
-// const copiarId = async () => {
-//   try {
-//     await navigator.clipboard.writeText(id.value || "");
-//     toast.success("ID copiado para a área de transferência!");
-//   } catch (err) {
-//     console.error("Erro ao copiar ID:", err);
-//     toast.error("Não foi possível copiar o ID.");
-//   }
-// };
+const copiarId = async (id) => {
+  try {
+    await navigator.clipboard.writeText(id || "");
+    toast.success("ID copiado para a área de transferência!");
+  } catch (err) {
+    console.error("Erro ao copiar ID:", err);
+    toast.error("Não foi possível copiar o ID.");
+  }
+};
+
 
 
 
@@ -1705,54 +1808,80 @@ function normalizeText(text = "") {
 
 const filteredItems = computed(() => {
   return items.value.filter((item) => {
-    const itemUnidade = normalizeText(item.unidade?.[0]?.desc ?? "");
-    const filtroUnidade = normalizeText(filters.value.unidade ?? "");
+    // 🔍 Unidade: compara pelo selectName
+    const itemUnidadeName = normalizeText(item.configuracoes?.selectName ?? "");
+    const filtroUnidadeName = normalizeText(filters.value.unidade ?? "");
 
     const matchUnidade =
-      !filters.value.unidade || itemUnidade === filtroUnidade;
+      !filters.value.unidade || itemUnidadeName === filtroUnidadeName;
 
+    // 🔍 Sexo
     const matchSexo =
       !filters.value.sexo || item.sexo === filters.value.sexo;
 
-    // keyword
+    // 🔍 Keyword
     const keywordRaw = (filters.value.keyword ?? "").trim();
-    const keywordNorm = normalizeText(keywordRaw);
     const keywordLower = keywordRaw.toLowerCase();
-
-    // campos normalizados
-    const nomeNorm = normalizeText(item.nome ?? "");
-    const unidadeNorm = itemUnidade;
-    const sexoNorm = normalizeText(item.sexo ?? "");
-
-    // e-mail (mantém caracteres especiais)
-    const emailRaw = String(item.email ?? "").toLowerCase();
-
-    // cpf
-    const cpfRaw = String(item.cpf ?? "").toLowerCase();
-    const cpfPlain = normalizeCpf(item.cpf ?? "");
     const keywordCpfPlain = normalizeCpf(keywordRaw);
 
-    // id
-    const idRaw = String(item.id ?? "").toLowerCase();
+    // 🔍 Campos a serem pesquisados
+    const campos = [
+      item.id,
+      item.cnpj,
+      item.ie,
+      item.im,
+      item.nome,
+      item.nomeFantasia,
+      item.razaoSocial,
+      item.configuracoes?.selectName,
+      item.configuracoes?.textoSelect,
+      item.configuracoes?.ativo?.toString(),
+      item.configuracoes?.dataCadastro,
+      item.configuracoes?.ultimaAtualizacao,
+      item.contato?.email,
+      item.contato?.telefone,
+      item.cordenadas?.descricao,
+      item.cordenadas?.lat,
+      item.cordenadas?.long,
+      item.endereco?.bairro,
+      item.endereco?.cep,
+      item.endereco?.cidade,
+      item.endereco?.estado,
+      item.endereco?.logradouro,
+      item.endereco?.numero,
+      item.endereco?.pais,
+      item.responsavel?.nome,
+      item.responsavel?.email,
+      item.responsavel?.cpf,
+    ].map((v) => String(v ?? "").toLowerCase());
 
+    // 🔍 Verifica se keyword bate em algum campo
     const matchesKeyword =
       !keywordRaw ||
-      nomeNorm.includes(keywordNorm) ||
-      unidadeNorm.includes(keywordNorm) ||
-      sexoNorm.includes(keywordNorm) ||
-      emailRaw.includes(keywordLower) || // busca por e-mail
-      cpfRaw.includes(keywordNorm) ||
-      (keywordCpfPlain && cpfPlain.includes(keywordCpfPlain)) ||
-      idRaw.includes(keywordLower); // 👈 busca por id
+      campos.some((campo) => campo.includes(keywordLower)) ||
+      (keywordCpfPlain &&
+        campos.some((campo) => normalizeCpf(campo).includes(keywordCpfPlain)));
 
     // 🔎 LOGS para debug
-    // console.log("[filteredItems] Avaliando item:", item);
-    // console.log("[filteredItems] Filtros =>", filters.value);
-    // console.log("[filteredItems] matchUnidade:", matchUnidade, "matchSexo:", matchSexo, "matchesKeyword:", matchesKeyword);
+    console.log("[filteredItems] Avaliando item:", {
+      id: item.id,
+      nome: item.nome,
+      unidadeSelectName: item.configuracoes?.selectName,
+      filtroUnidadeName: filters.value.unidade,
+      matchUnidade,
+      matchSexo,
+      matchesKeyword,
+    });
 
     return matchUnidade && matchSexo && matchesKeyword;
   });
 });
+
+
+
+
+
+
 
 
 
@@ -1892,10 +2021,34 @@ const toggleActiveStatus = async (item: any) => {
 
 
 onMounted(async () => {
+  await carregarUnidadesMap();
   await atualizarGrid();
   // popularBaseDeTeste();
     // inserir();
 });
+
+const carregarUnidadesMap = async () => {
+  try {
+    const unidades = await cadastroService.findUnidadesConfiguracoes()
+    console.log("Configurações das unidades:", unidades)
+
+    const lista = []
+
+    for (const u of unidades) {
+      if (u.configuracoes?.mostrarSelect) {
+        lista.push({
+          id: u.id, // será usado como item-value
+          desc: u.configuracoes?.selectName || u.textoSelect || u.nomeFantasia || "Sem nome"
+        })
+      }
+    }
+
+    console.log("Lista final para o VSelect:", lista)
+    unidadesMap.value = lista
+  } catch (error) {
+    console.error("Erro ao carregar unidades:", error)
+  }
+};
 
 // const popularBaseDeTeste = async () => {
 //   const nomes = [

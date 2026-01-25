@@ -263,6 +263,14 @@
                           >
                             <strong>ID:</strong> {{ id || "" }}
                           </span>
+                          <v-icon
+                            class="ml-2"
+                            color="primary"
+                            size="small"
+                            @click="copiarId"
+                          >
+                            mdi-content-copy
+                          </v-icon>
                         </v-col>
                       </v-row>
                     </v-col>
@@ -862,7 +870,9 @@
         <v-select
           v-model="filters.unidade"
           label="Filtrar por unidade"
-          :items="['Administração Central', 'Cerene de Blumenau', 'Cerene Gaspar - NVR', 'Cerene Joinville', 'Cerene São Bento do Sul', 'Cerene Lapa', 'Cerene Ituporanga', 'Cerene Palhoça']"
+          :items="unidadesMap"
+          item-title="desc"
+          item-value="desc"
           prepend-icon="mdi-filter"
           class="ml-3"
           clearable
@@ -898,8 +908,27 @@
           clearable
         />
       </v-col>
+      <v-col
+        cols="12"
+        md="2"
+        no-gutters
+        class="d-flex justify-center mb-4 mb-md-0 pb-4"
+      >
+        <v-btn
+          color="blue"
+          variant="outlined"
+          size="small"
+          class="ml-3"
+          @click="limparFiltros"
+        >
+          <v-icon start>
+            mdi-broom
+          </v-icon>
+          Limpar filtros
+        </v-btn>
+      </v-col>
     </v-row>
-    <main style="margin-bottom: 90px; width: 98%; margin: auto;">
+    <main style="margin-bottom: 90px; width: 98%; margin: auto; margin-top: 20px;">
       <v-row
         class="align-center justify-center"
         no-gutters
@@ -918,7 +947,7 @@
             <v-icon left>
               mdi-plus-circle
             </v-icon>
-            CADASTRAR COLABORADOR
+            NOVO CADASTRO
           </v-btn>
         </v-col>
       </v-row>
@@ -1278,6 +1307,11 @@ const triggerUpload = () => {
 };
 
 
+const limparFiltros = () => {
+  filters.value.unidade = null;
+  filters.value.sexo = null;
+  filters.value.keyword = "";
+};
 
 
 
@@ -1614,8 +1648,8 @@ const toggleActiveStatus = async (item: any) => {
 
 
 onMounted(async () => {
-  await atualizarGrid();
   await carregarUnidadesMap();
+  await atualizarGrid();
   // popularBaseDeTeste();
 });
 

@@ -243,7 +243,9 @@
         <v-select
           v-model="filters.unidade"
           label="Filtrar por unidade"
-          :items="['Administração Central', 'Cerene de Blumenau', 'Cerene Gaspar - NVR', 'Cerene Joinville', 'Cerene São Bento do Sul', 'Cerene Lapa', 'Cerene Ituporanga', 'Cerene Palhoça']"
+          :items="unidadesMap"
+          item-title="desc"
+          item-value="desc"
           prepend-icon="mdi-filter"
           class="ml-3"
           clearable
@@ -278,6 +280,25 @@
           prepend-icon="mdi-magnify"
           clearable
         />
+      </v-col>
+      <v-col
+        cols="12"
+        md="2"
+        no-gutters
+        class="d-flex justify-center mb-4 mb-md-0 pb-4"
+      >
+        <v-btn
+          color="blue"
+          variant="outlined"
+          size="small"
+          class="ml-3"
+          @click="limparFiltros"
+        >
+          <v-icon start>
+            mdi-broom
+          </v-icon>
+          Limpar filtros
+        </v-btn>
       </v-col>
     </v-row>
     <main style="margin-bottom: 90px; width: 98%; margin: auto;">
@@ -404,18 +425,18 @@ const nasc = ref("");
 const cargo = ref("");
 const completeData: any = ref("");
 const isLoading = ref(true);
-const unidadesMap = [
-  { desc: "Administração Central", enum: 1 },
-  { desc: "Cerene Blumenau", enum: 2 },
-  { desc: "Cerene Gaspar - NVR", enum: 3 },
-  { desc: "Cerene Joinville", enum: 4 },
-  { desc: "Cerene São Bento do Sul", enum: 5 },
-  { desc: "Cerene Lapa", enum: 6 },
-  { desc: "Cerene Ituporanga", enum: 7 },
-  { desc: "Cerene Palhoça", enum: 8 },
-];
+// const unidadesMap = [
+//   { desc: "Administração Central", enum: 1 },
+//   { desc: "Cerene Blumenau", enum: 2 },
+//   { desc: "Cerene Gaspar - NVR", enum: 3 },
+//   { desc: "Cerene Joinville", enum: 4 },
+//   { desc: "Cerene São Bento do Sul", enum: 5 },
+//   { desc: "Cerene Lapa", enum: 6 },
+//   { desc: "Cerene Ituporanga", enum: 7 },
+//   { desc: "Cerene Palhoça", enum: 8 },
+// ];
 const sexo = ref("");
-
+const unidadesMap = ref([]) // começa vazio
 const usuariosMap = [
   { desc: "Administrador", role: "ADMIN", enum: 1 },
   { desc: "Gerente", role: "MANAGER", enum: 2 },
@@ -479,7 +500,8 @@ const items = ref<any[]>([]);
 
 const handleSavePerson = async () => {
   try {
-    const unidadeSelecionada = unidadesMap.find((u) => u.enum === Number(unidade.value));
+    // const unidadeSelecionada = unidadesMap.find((u) => u.enum === Number(unidade.value));
+    const unidadeSelecionada = unidadesMap.value.find((u) => u.desc === filters.value.unidade);
     const usuarioSelecionado = usuariosMap.find((u) => u.role === "USER");
 
     const dadosCadastro = {
@@ -578,6 +600,11 @@ const filteredItems = computed(() => {
   });
 });
 
+const limparFiltros = () => {
+  filters.value.unidade = null;
+  filters.value.sexo = null;
+  filters.value.keyword = "";
+};
 
 
 
@@ -660,8 +687,32 @@ const atualizarGrid = async () => {
 
 
 onMounted(async () => {
+  await carregarUnidadesMap();
   await atualizarGrid();
 });
+
+const carregarUnidadesMap = async () => {
+  try {
+    const unidades = await cadastroService.findUnidadesConfiguracoes()
+    console.log("Configurações das unidades:", unidades)
+
+    const lista = []
+
+    for (const u of unidades) {
+      if (u.configuracoes?.mostrarSelect) {
+        lista.push({
+          id: u.id, // será usado como item-value
+          desc: u.configuracoes?.selectName || u.textoSelect || u.nomeFantasia || "Sem nome"
+        })
+      }
+    }
+
+    console.log("Lista final para o VSelect:", lista)
+    unidadesMap.value = lista
+  } catch (error) {
+    console.error("Erro ao carregar unidades:", error)
+  }
+};
 
 const getPriorityColor = (sexo: string) => {
   switch (sexo) {
