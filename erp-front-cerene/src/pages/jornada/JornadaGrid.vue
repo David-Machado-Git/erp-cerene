@@ -1247,6 +1247,10 @@ watch(cpf, (newVal) => {
 const items = ref<any[]>([]);
 
 onMounted(async () => {
+
+  console.log('OS DADOS DO USUÁRIO A CHEGAR => ', colab);
+  
+
   // 🔊 Som de clique
   audio = new Audio("/sound_click.mp3");
   audio.volume = 0.5;
@@ -1274,7 +1278,7 @@ onMounted(async () => {
       items.value = gerarDiaAtual("sem-id");
     } else {
       const registros = (await JornadaColabAdmService.buscarRegistros(colab.id)) || [];
-      // console.log("REGISTROS =>>", registros);
+      console.log("REGISTROS =>>", registros);
 
       const hojeId = getLocalDateId(); // data local, não UTC
       const jaTemHoje = registros.some((r) => getRegistroId(r) === hojeId);

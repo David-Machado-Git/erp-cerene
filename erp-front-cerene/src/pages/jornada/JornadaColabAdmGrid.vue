@@ -414,6 +414,7 @@ interface Colab {
   unidade: Unidade[];
   sexo: string;
   usuario: Usuario[];
+  configuracoes: any[];
 }
 
 const router = useRouter();
@@ -567,38 +568,38 @@ const filteredItems = computed(() => {
 
     // keyword
     const keywordRaw = (filters.value.keyword ?? "").trim();
-    const keywordNorm = normalizeText(keywordRaw);
     const keywordLower = keywordRaw.toLowerCase();
+    const keywordCpfPlain = normalizeCpf(keywordRaw);
 
-    // campos normalizados
+    // campos principais
     const nomeNorm = normalizeText(item.nome ?? "");
     const unidadeNorm = itemUnidade;
     const sexoNorm = normalizeText(item.sexo ?? "");
-
-    // e-mail (mantém caracteres especiais)
     const emailRaw = String(item.email ?? "").toLowerCase();
-
-    // cpf
     const cpfRaw = String(item.cpf ?? "").toLowerCase();
     const cpfPlain = normalizeCpf(item.cpf ?? "");
-    const keywordCpfPlain = normalizeCpf(keywordRaw);
-
-    // id
     const idRaw = String(item.id ?? "").toLowerCase();
 
+    // 🔍 pega dinamicamente todos os campos de configuracoes
+    const configuracoesCampos = Object.values(item.configuracoes ?? {})
+      .map((v) => String(v ?? "").toLowerCase());
+
+    // 🔍 verifica se keyword bate em qualquer campo
     const matchesKeyword =
       !keywordRaw ||
-      nomeNorm.includes(keywordNorm) ||
-      unidadeNorm.includes(keywordNorm) ||
-      sexoNorm.includes(keywordNorm) ||
-      emailRaw.includes(keywordLower) || // busca por e-mail
-      cpfRaw.includes(keywordNorm) ||
+      nomeNorm.includes(keywordLower) ||
+      unidadeNorm.includes(keywordLower) ||
+      sexoNorm.includes(keywordLower) ||
+      emailRaw.includes(keywordLower) ||
+      cpfRaw.includes(keywordLower) ||
       (keywordCpfPlain && cpfPlain.includes(keywordCpfPlain)) ||
-      idRaw.includes(keywordLower); // 👈 busca por id
+      idRaw.includes(keywordLower) ||
+      configuracoesCampos.some((campo) => campo.includes(keywordLower));
 
     return matchUnidade && matchSexo && matchesKeyword;
   });
 });
+
 
 const limparFiltros = () => {
   filters.value.unidade = null;
@@ -611,6 +612,8 @@ const limparFiltros = () => {
 const goToCalendar = (colab: Colab) => {
   // console.log("CAIU NO GO TO CALENDAR COM OS DADOS =>", colab);
   eventBus.colab = colab; // agora funciona
+  // console.log('ANTES DE ENVIAR OS DADOS SÃO: => ', colab);
+  
   router.push("/dashboard/minha-jornada");
 };
 
@@ -658,9 +661,15 @@ const atualizarGrid = async () => {
     isLoading.value = true; // ⏳ Inicia o carregamento
 
     const colaboradores = await JornadaColabAdmService.findColaboradores();
-    colaboradores.sort((a: any, b: any) => String(a.nome).localeCompare(b.nome));
+
+    // Ordena por nome
+    colaboradores.sort((a: any, b: any) =>
+      String(a.nome).localeCompare(b.nome)
+    );
+
     completeData.value = colaboradores;
 
+    // Mapeia os dados para a tabela
     items.value = colaboradores.map((colab: any, index: number) => ({
       cod: index + 1,
       urlPhoto: colab.urlPhoto,
@@ -675,6 +684,9 @@ const atualizarGrid = async () => {
       isActive: colab.isActive,
       password: colab.password,
       actions: "...",
+
+      // 🔍 inclui dinamicamente todos os campos de configuracoes
+      configuracoes: { ...colab.configuracoes },
     }));
   } catch (error) {
     console.error("Erro ao carregar colaboradores:", error);
@@ -682,6 +694,7 @@ const atualizarGrid = async () => {
     isLoading.value = false; // ✅ Finaliza o carregamento
   }
 };
+
 
 
 
@@ -694,7 +707,7 @@ onMounted(async () => {
 const carregarUnidadesMap = async () => {
   try {
     const unidades = await cadastroService.findUnidadesConfiguracoes()
-    console.log("Configurações das unidades:", unidades)
+    // console.log("Configurações das unidades:", unidades)
 
     const lista = []
 
@@ -707,7 +720,7 @@ const carregarUnidadesMap = async () => {
       }
     }
 
-    console.log("Lista final para o VSelect:", lista)
+    // console.log("Lista final para o VSelect:", lista)
     unidadesMap.value = lista
   } catch (error) {
     console.error("Erro ao carregar unidades:", error)

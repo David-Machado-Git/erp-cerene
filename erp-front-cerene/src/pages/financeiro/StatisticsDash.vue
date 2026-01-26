@@ -77,7 +77,7 @@
           <VCol>
             <ListaVertical
               :itens="saldoEmConta"
-              titulo="Ranking de faturamento"
+              titulo="Apontamentos recentes"
             />
           </VCol>
 
@@ -145,7 +145,7 @@ const saldoEmConta = [
   {
     icone: "mingcute:bank-fill",
     iconeCor: "success",
-    valor: "R$ 2.500,56",
+    valor: " 2.500,56",
     valorCor: "success",
     descricao: "Dogão do Japa",
   },
